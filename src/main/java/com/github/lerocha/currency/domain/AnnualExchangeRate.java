@@ -1,4 +1,4 @@
-package com.github.lerocha.domain;
+package com.github.lerocha.currency.domain;
 
 import org.joda.time.DateTime;
 import org.springframework.data.annotation.CreatedDate;

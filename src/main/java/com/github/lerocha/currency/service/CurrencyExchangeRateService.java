@@ -1,4 +1,4 @@
-package com.github.lerocha.service;
+package com.github.lerocha.currency.service;
 
 /**
  * Created by lrocha3 on 2/1/17.

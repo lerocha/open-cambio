@@ -1,6 +1,6 @@
-package com.github.lerocha.repository;
+package com.github.lerocha.currency.repository;
 
-import com.github.lerocha.domain.AnnualExchangeRate;
+import com.github.lerocha.currency.domain.AnnualExchangeRate;
 import org.springframework.data.repository.CrudRepository;
 
 /**

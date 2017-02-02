@@ -1,8 +1,8 @@
-package com.github.lerocha.service;
+package com.github.lerocha.currency.service;
 
-import com.github.lerocha.client.ofx.*;
-import com.github.lerocha.domain.AnnualExchangeRate;
-import com.github.lerocha.repository.AnnualExchangeRateRepository;
+import com.github.lerocha.currency.client.ofx.*;
+import com.github.lerocha.currency.domain.AnnualExchangeRate;
+import com.github.lerocha.currency.repository.AnnualExchangeRateRepository;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

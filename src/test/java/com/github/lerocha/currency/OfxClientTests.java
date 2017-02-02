@@ -1,10 +1,10 @@
-package com.github.lerocha;
+package com.github.lerocha.currency;
 
-import com.github.lerocha.client.ofx.Frequency;
-import com.github.lerocha.client.ofx.HistoricalExchangeRate;
-import com.github.lerocha.client.ofx.OfxClient;
-import com.github.lerocha.client.ofx.ReportingPeriod;
-import com.github.lerocha.service.CurrencyExchangeRateService;
+import com.github.lerocha.currency.client.ofx.Frequency;
+import com.github.lerocha.currency.client.ofx.HistoricalExchangeRate;
+import com.github.lerocha.currency.client.ofx.OfxClient;
+import com.github.lerocha.currency.client.ofx.ReportingPeriod;
+import com.github.lerocha.currency.service.CurrencyExchangeRateService;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;

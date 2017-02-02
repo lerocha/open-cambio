@@ -1,4 +1,4 @@
-package com.github.lerocha.client.ofx;
+package com.github.lerocha.currency.client.ofx;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;

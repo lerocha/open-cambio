@@ -1,4 +1,4 @@
-package com.github.lerocha.client.ofx;
+package com.github.lerocha.currency.client.ofx;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
