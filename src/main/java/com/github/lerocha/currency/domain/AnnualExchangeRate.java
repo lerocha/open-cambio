@@ -9,7 +9,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 
 /**
- * Created by lrocha3 on 2/1/17.
+ * Created by lerocha on 2/1/17.
  */
 @Entity
 public class AnnualExchangeRate implements Serializable {

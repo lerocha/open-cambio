@@ -6,7 +6,7 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 /**
- * Created by lrocha3 on 2/1/17.
+ * Created by lerocha on 2/1/17.
  */
 @Service
 public class OfxClientImpl implements OfxClient {
