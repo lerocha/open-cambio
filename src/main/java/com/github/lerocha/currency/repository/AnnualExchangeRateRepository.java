@@ -7,4 +7,7 @@ import org.springframework.data.repository.CrudRepository;
  * Created by lerocha on 2/1/17.
  */
 public interface AnnualExchangeRateRepository extends CrudRepository<AnnualExchangeRate, Long> {
+    Iterable<AnnualExchangeRate> findByCurrencyCode(String currencyCode);
+
+    Iterable<AnnualExchangeRate> findByCurrencyCodeAndYear(String currencyCode, Integer year);
 }
