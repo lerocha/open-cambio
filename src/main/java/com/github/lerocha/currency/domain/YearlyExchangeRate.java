@@ -12,7 +12,7 @@ import java.math.BigDecimal;
  * Created by lerocha on 2/1/17.
  */
 @Entity
-public class AnnualExchangeRate implements Serializable {
+public class YearlyExchangeRate implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

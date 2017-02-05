@@ -1,8 +1,8 @@
 package com.github.lerocha.currency.service;
 
 import com.github.lerocha.currency.client.ofx.*;
-import com.github.lerocha.currency.domain.AnnualExchangeRate;
-import com.github.lerocha.currency.repository.AnnualExchangeRateRepository;
+import com.github.lerocha.currency.domain.YearlyExchangeRate;
+import com.github.lerocha.currency.repository.YearlyExchangeRateRepository;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,13 +19,13 @@ public class CurrencyExchangeRateServiceImpl implements CurrencyExchangeRateServ
 
     private static final Logger logger = LoggerFactory.getLogger(CurrencyExchangeRateService.class);
 
-    private AnnualExchangeRateRepository annualExchangeRateRepository;
+    private YearlyExchangeRateRepository yearlyExchangeRateRepository;
 
     private OfxClient ofxClient;
 
     @Autowired
-    public CurrencyExchangeRateServiceImpl(AnnualExchangeRateRepository annualExchangeRateRepository, OfxClient ofxClient) {
-        this.annualExchangeRateRepository = annualExchangeRateRepository;
+    public CurrencyExchangeRateServiceImpl(YearlyExchangeRateRepository yearlyExchangeRateRepository, OfxClient ofxClient) {
+        this.yearlyExchangeRateRepository = yearlyExchangeRateRepository;
         this.ofxClient = ofxClient;
     }
 
@@ -38,11 +38,11 @@ public class CurrencyExchangeRateServiceImpl implements CurrencyExchangeRateServ
                 if (historicalExchangeRates.getHistoricalPoints() != null) {
                     for (HistoricalPoint historicalPoint : historicalExchangeRates.getHistoricalPoints()) {
                         DateTime dateTime = new DateTime(historicalPoint.getPointInTime());
-                        AnnualExchangeRate annualExchangeRate = new AnnualExchangeRate();
-                        annualExchangeRate.setYear(dateTime.getYear());
-                        annualExchangeRate.setCurrencyCode(historicalExchangeRates.getToCurrencyCode());
-                        annualExchangeRate.setExchangeRate(new BigDecimal(historicalPoint.getInterbankRate()));
-                        annualExchangeRateRepository.save(annualExchangeRate);
+                        YearlyExchangeRate yearlyExchangeRate = new YearlyExchangeRate();
+                        yearlyExchangeRate.setYear(dateTime.getYear());
+                        yearlyExchangeRate.setCurrencyCode(historicalExchangeRates.getToCurrencyCode());
+                        yearlyExchangeRate.setExchangeRate(new BigDecimal(historicalPoint.getInterbankRate()));
+                        yearlyExchangeRateRepository.save(yearlyExchangeRate);
                     }
                     logger.info("status=ok; currencyCode={}", currencyCode);
                 }
