@@ -1,0 +1,14 @@
+package com.github.lerocha.currency.repository;
+
+import com.github.lerocha.currency.domain.ExchangeRate;
+import org.joda.time.LocalDate;
+import org.springframework.data.repository.CrudRepository;
+
+import java.util.List;
+
+/**
+ * Created by lerocha on 2/14/17.
+ */
+public interface ExchangeRateRepository extends CrudRepository<ExchangeRate, Long> {
+    List<ExchangeRate> findByExchangeDateOrderByCurrencyCode(LocalDate exchangeDate);
+}

@@ -4,7 +4,7 @@ import com.github.lerocha.currency.client.ofx.Frequency;
 import com.github.lerocha.currency.client.ofx.HistoricalExchangeRate;
 import com.github.lerocha.currency.client.ofx.OfxClient;
 import com.github.lerocha.currency.client.ofx.ReportingPeriod;
-import com.github.lerocha.currency.service.CurrencyExchangeRateService;
+import com.github.lerocha.currency.service.ExchangeRateService;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,7 +20,7 @@ public class OfxClientTests {
     OfxClient ofxClient;
 
     @Autowired
-    CurrencyExchangeRateService currencyExchangeRateService;
+    ExchangeRateService exchangeRateService;
 
     @Test
     public void getHistoricalExchangeRates() {
@@ -31,6 +31,6 @@ public class OfxClientTests {
 
     //@Test
     public void refreshAnnualExchangeRates() {
-        currencyExchangeRateService.refreshAnnualExchangeRates();
+        exchangeRateService.refreshAnnualExchangeRates();
     }
 }

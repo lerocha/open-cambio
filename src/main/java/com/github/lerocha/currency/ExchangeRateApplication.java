@@ -4,9 +4,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class CurrencyApplication {
+public class ExchangeRateApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(CurrencyApplication.class, args);
+        SpringApplication.run(ExchangeRateApplication.class, args);
     }
 }
