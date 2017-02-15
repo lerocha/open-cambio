@@ -1,9 +1,9 @@
 package com.github.lerocha.currency.dto;
 
-import org.joda.time.LocalDate;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 

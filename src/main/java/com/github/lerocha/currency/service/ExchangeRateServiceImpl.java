@@ -6,13 +6,13 @@ import com.github.lerocha.currency.domain.YearlyExchangeRate;
 import com.github.lerocha.currency.repository.ExchangeRateRepository;
 import com.github.lerocha.currency.repository.YearlyExchangeRateRepository;
 import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 

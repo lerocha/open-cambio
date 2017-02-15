@@ -2,10 +2,11 @@ package com.github.lerocha.currency.controller;
 
 import com.github.lerocha.currency.dto.HistoricalExchangeRate;
 import com.github.lerocha.currency.service.ExchangeRateService;
-import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
 
 /**
  * Created by lerocha on 2/4/17.

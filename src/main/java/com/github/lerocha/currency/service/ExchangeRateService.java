@@ -1,7 +1,8 @@
 package com.github.lerocha.currency.service;
 
 import com.github.lerocha.currency.dto.HistoricalExchangeRate;
-import org.joda.time.LocalDate;
+
+import java.time.LocalDate;
 
 /**
  * Created by lerocha on 2/1/17.

@@ -1,9 +1,9 @@
 package com.github.lerocha.currency.repository;
 
 import com.github.lerocha.currency.domain.ExchangeRate;
-import org.joda.time.LocalDate;
 import org.springframework.data.repository.CrudRepository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 /**
