@@ -21,7 +21,7 @@ public class ExchangeRateController {
         this.exchangeRateService = exchangeRateService;
     }
 
-    @RequestMapping(path = "rates/historical/{date}", method = RequestMethod.GET)
+    @RequestMapping(path = "/rates/historical/{date}", method = RequestMethod.GET)
     public ResponseEntity<HistoricalExchangeRate> getHistoricalRates(@PathVariable(name = "date") String date,
                                                                      @RequestParam(name = "base", required = false) String base) {
         return ResponseEntity.ok(exchangeRateService.getHistoricalExchangeRate(LocalDate.parse(date), base));
