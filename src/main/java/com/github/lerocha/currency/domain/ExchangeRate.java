@@ -2,6 +2,7 @@ package com.github.lerocha.currency.domain;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -13,6 +14,7 @@ import java.time.LocalDateTime;
  * Created by lerocha on 2/14/17.
  */
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 @Table(uniqueConstraints = {
         @UniqueConstraint(name = "UK_ExchangeRate_currency_code_exchange_date", columnNames = {"currencyCode", "exchangeDate"})
 })
