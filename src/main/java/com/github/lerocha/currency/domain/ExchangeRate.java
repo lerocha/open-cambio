@@ -26,12 +26,10 @@ public class ExchangeRate implements Serializable {
 
     @Column(nullable = false)
     @CreatedDate
-//    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private LocalDateTime createdDate;
 
     @Column(nullable = false)
     @LastModifiedDate
-//    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private LocalDateTime lastModifiedDate;
 
     @Column(length = 4, nullable = false)
