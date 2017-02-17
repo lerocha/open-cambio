@@ -41,6 +41,15 @@ public class ExchangeRate implements Serializable {
     @Column(precision = 19, scale = 4, nullable = false)
     private BigDecimal exchangeRate;
 
+    public ExchangeRate() {
+    }
+
+    public ExchangeRate(LocalDate exchangeDate, String currencyCode, BigDecimal exchangeRate) {
+        this.exchangeDate = exchangeDate;
+        this.currencyCode = currencyCode;
+        this.exchangeRate = exchangeRate;
+    }
+
     public Long getId() {
         return id;
     }

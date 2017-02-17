@@ -17,8 +17,10 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Created by lerocha on 2/1/17.
@@ -42,14 +44,15 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
     private static final String DEFAULT_BASE = "EUR";
 
     @Override
-    public com.github.lerocha.currency.dto.HistoricalExchangeRate getHistoricalExchangeRate(LocalDate date, String base) {
+    public HistoricalExchangeRate getHistoricalExchangeRate(LocalDate date, String base) {
         HistoricalExchangeRate historicalExchangeRate = new com.github.lerocha.currency.dto.HistoricalExchangeRate();
         historicalExchangeRate.setDate(date);
         historicalExchangeRate.setBase(base != null ? base : DEFAULT_BASE);
         BigDecimal baseRate = null;
 
         List<ExchangeRate> rates = exchangeRateRepository.findByExchangeDateOrderByCurrencyCode(date);
-        for (ExchangeRate rate : rates) {
+        rates.add(new ExchangeRate(date, DEFAULT_BASE, BigDecimal.ONE));
+        for (ExchangeRate rate : rates.stream().sorted(Comparator.comparing(o -> o.getCurrencyCode())).collect(Collectors.toList())) {
             historicalExchangeRate.getRates().put(rate.getCurrencyCode(), rate.getExchangeRate());
             if (rate.getCurrencyCode().equalsIgnoreCase(base)) {
                 baseRate = rate.getExchangeRate();
