@@ -1,8 +1,12 @@
 package com.github.lerocha.currency.service;
 
-import com.github.lerocha.currency.client.ofx.*;
+import com.github.lerocha.currency.client.ofx.Frequency;
+import com.github.lerocha.currency.client.ofx.HistoricalPoint;
+import com.github.lerocha.currency.client.ofx.OfxClient;
+import com.github.lerocha.currency.client.ofx.ReportingPeriod;
 import com.github.lerocha.currency.domain.ExchangeRate;
 import com.github.lerocha.currency.domain.YearlyExchangeRate;
+import com.github.lerocha.currency.dto.HistoricalExchangeRate;
 import com.github.lerocha.currency.repository.ExchangeRateRepository;
 import com.github.lerocha.currency.repository.YearlyExchangeRateRepository;
 import org.joda.time.DateTime;
@@ -39,7 +43,7 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
 
     @Override
     public com.github.lerocha.currency.dto.HistoricalExchangeRate getHistoricalExchangeRate(LocalDate date, String base) {
-        com.github.lerocha.currency.dto.HistoricalExchangeRate historicalExchangeRate = new com.github.lerocha.currency.dto.HistoricalExchangeRate();
+        HistoricalExchangeRate historicalExchangeRate = new com.github.lerocha.currency.dto.HistoricalExchangeRate();
         historicalExchangeRate.setDate(date);
         historicalExchangeRate.setBase(base != null ? base : DEFAULT_BASE);
         BigDecimal baseRate = null;
@@ -54,7 +58,7 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
 
         if (baseRate != null) {
             for (Map.Entry<String, BigDecimal> entry : historicalExchangeRate.getRates().entrySet()) {
-                entry.setValue(entry.getValue().divide(baseRate));
+                entry.setValue(entry.getValue().divide(baseRate, baseRate.scale(), BigDecimal.ROUND_CEILING));
             }
         }
         return historicalExchangeRate;
@@ -65,7 +69,7 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
         for (String currencyCode : CURRENCY_CODES) {
             try {
                 if (currencyCode.equals("USD")) continue;
-                HistoricalExchangeRate historicalExchangeRates = ofxClient.getHistoricalExchangeRates("USD", currencyCode, ReportingPeriod.ALL_TIME, 4, Frequency.YEARLY);
+                com.github.lerocha.currency.client.ofx.HistoricalExchangeRate historicalExchangeRates = ofxClient.getHistoricalExchangeRates("USD", currencyCode, ReportingPeriod.ALL_TIME, 4, Frequency.YEARLY);
                 if (historicalExchangeRates.getHistoricalPoints() != null) {
                     for (HistoricalPoint historicalPoint : historicalExchangeRates.getHistoricalPoints()) {
                         DateTime dateTime = new DateTime(historicalPoint.getPointInTime());

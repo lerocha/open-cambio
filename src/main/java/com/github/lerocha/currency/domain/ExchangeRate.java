@@ -88,4 +88,13 @@ public class ExchangeRate implements Serializable {
     public void setExchangeDate(LocalDate exchangeDate) {
         this.exchangeDate = exchangeDate;
     }
+
+    @Override
+    public String toString() {
+        return new StringBuilder()
+                .append("code=").append(currencyCode)
+                .append("; date=").append(exchangeDate)
+                .append("; rate=").append(exchangeRate)
+                .toString();
+    }
 }
