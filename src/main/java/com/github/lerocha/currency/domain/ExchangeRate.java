@@ -1,36 +1,21 @@
 package com.github.lerocha.currency.domain;
 
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 /**
  * Created by lerocha on 2/14/17.
  */
 @Entity
-@EntityListeners(AuditingEntityListener.class)
 @Table(uniqueConstraints = {
         @UniqueConstraint(name = "UK_ExchangeRate_currency_code_exchange_date", columnNames = {"currencyCode", "exchangeDate"})
 })
-public class ExchangeRate implements Serializable {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Column(nullable = false)
-    @CreatedDate
-    private LocalDateTime createdDate;
-
-    @Column(nullable = false)
-    @LastModifiedDate
-    private LocalDateTime lastModifiedDate;
+public class ExchangeRate extends AbstractEntity implements Serializable {
 
     @Column(length = 4, nullable = false)
     private String currencyCode;
@@ -38,7 +23,7 @@ public class ExchangeRate implements Serializable {
     @Column(nullable = false)
     private LocalDate exchangeDate;
 
-    @Column(precision = 19, scale = 4, nullable = false)
+    @Column(precision = 19, scale = 6, nullable = false)
     private BigDecimal exchangeRate;
 
     public ExchangeRate() {
@@ -48,30 +33,6 @@ public class ExchangeRate implements Serializable {
         this.exchangeDate = exchangeDate;
         this.currencyCode = currencyCode;
         this.exchangeRate = exchangeRate;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public LocalDateTime getCreatedDate() {
-        return createdDate;
-    }
-
-    public void setCreatedDate(LocalDateTime createdDate) {
-        this.createdDate = createdDate;
-    }
-
-    public LocalDateTime getLastModifiedDate() {
-        return lastModifiedDate;
-    }
-
-    public void setLastModifiedDate(LocalDateTime lastModifiedDate) {
-        this.lastModifiedDate = lastModifiedDate;
     }
 
     public String getCurrencyCode() {
