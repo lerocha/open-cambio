@@ -26,7 +26,7 @@ public class EcbClientTests {
 
     @Test
     public void getCurrentExchangeRate() {
-        ResponseEntity<Envelope> response = ecbClient.getCurrentExchangeRate();
+        ResponseEntity<Envelope> response = ecbClient.getCurrentExchangeRates();
         Assert.assertEquals(response.getStatusCode(), HttpStatus.OK);
         Envelope envelope = response.getBody();
         Assert.assertNotNull(envelope);

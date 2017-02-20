@@ -7,5 +7,9 @@ import org.springframework.http.ResponseEntity;
  * Created by lerocha on 2/20/17.
  */
 public interface EcbClient {
-    ResponseEntity<Envelope> getCurrentExchangeRate();
+    ResponseEntity<Envelope> getCurrentExchangeRates();
+
+    ResponseEntity<Envelope> getLast90DaysExchangeRates();
+
+    ResponseEntity<Envelope> getAllExchangeRates();
 }

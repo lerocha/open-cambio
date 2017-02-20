@@ -19,10 +19,21 @@ public class EcbClientImpl implements EcbClient {
         this.restTemplate = restTemplate;
     }
 
-    private static final String URL = "http://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml";
+    @Override
+    public ResponseEntity<Envelope> getCurrentExchangeRates() {
+        final String url = "http://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml";
+        return restTemplate.exchange(url, HttpMethod.GET, null, Envelope.class);
+    }
 
     @Override
-    public ResponseEntity<Envelope> getCurrentExchangeRate() {
-        return restTemplate.exchange(URL, HttpMethod.GET, null, Envelope.class);
+    public ResponseEntity<Envelope> getLast90DaysExchangeRates() {
+        final String url = "http://www.ecb.europa.eu/stats/eurofxref/eurofxref-hist-90d.xml";
+        return restTemplate.exchange(url, HttpMethod.GET, null, Envelope.class);
+    }
+
+    @Override
+    public ResponseEntity<Envelope> getAllExchangeRates() {
+        final String url = "http://www.ecb.europa.eu/stats/eurofxref/eurofxref-hist.xml";
+        return restTemplate.exchange(url, HttpMethod.GET, null, Envelope.class);
     }
 }
