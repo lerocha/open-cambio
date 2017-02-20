@@ -8,6 +8,8 @@ import java.time.LocalDate;
  * Created by lerocha on 2/1/17.
  */
 public interface ExchangeRateService {
+    HistoricalExchangeRate getLatestExchangeRate(String base);
+
     HistoricalExchangeRate getHistoricalExchangeRate(LocalDate date, String base);
 
     void refreshAnnualExchangeRates();

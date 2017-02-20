@@ -44,6 +44,16 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
     private static final String DEFAULT_BASE = "EUR";
 
     @Override
+    public HistoricalExchangeRate getLatestExchangeRate(String base) {
+        LocalDate date = exchangeRateRepository.findMaxExchangeDate();
+        if (date == null) {
+            return null;
+        }
+
+        return getHistoricalExchangeRate(date, base);
+    }
+
+    @Override
     public HistoricalExchangeRate getHistoricalExchangeRate(LocalDate date, String base) {
         HistoricalExchangeRate historicalExchangeRate = new com.github.lerocha.currency.dto.HistoricalExchangeRate();
         historicalExchangeRate.setDate(date);
