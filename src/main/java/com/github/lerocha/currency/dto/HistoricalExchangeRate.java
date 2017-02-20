@@ -15,6 +15,14 @@ public class HistoricalExchangeRate implements Serializable {
     private String base;
     private Map<String, BigDecimal> rates = new LinkedHashMap<>();
 
+    public HistoricalExchangeRate() {
+    }
+
+    public HistoricalExchangeRate(LocalDate date, String base) {
+        this.date = date;
+        this.base = base;
+    }
+
     public LocalDate getDate() {
         return date;
     }

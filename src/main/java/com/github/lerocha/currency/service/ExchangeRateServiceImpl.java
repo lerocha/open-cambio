@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -55,12 +56,13 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
 
     @Override
     public HistoricalExchangeRate getHistoricalExchangeRate(LocalDate date, String base) {
-        HistoricalExchangeRate historicalExchangeRate = new com.github.lerocha.currency.dto.HistoricalExchangeRate();
-        historicalExchangeRate.setDate(date);
-        historicalExchangeRate.setBase(base != null ? base : DEFAULT_BASE);
-        BigDecimal baseRate = null;
-
         List<ExchangeRate> rates = exchangeRateRepository.findByExchangeDateOrderByCurrencyCode(date);
+        return getHistoricalExchangeRate(date, base, rates);
+    }
+
+    private HistoricalExchangeRate getHistoricalExchangeRate(LocalDate date, String base, List<ExchangeRate> rates) {
+        HistoricalExchangeRate historicalExchangeRate = new HistoricalExchangeRate(date, base != null ? base : DEFAULT_BASE);
+        BigDecimal baseRate = null;
         rates.add(new ExchangeRate(date, DEFAULT_BASE, BigDecimal.ONE));
         for (ExchangeRate rate : rates.stream().sorted(Comparator.comparing(o -> o.getCurrencyCode())).collect(Collectors.toList())) {
             historicalExchangeRate.getRates().put(rate.getCurrencyCode(), rate.getExchangeRate());
@@ -75,6 +77,29 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
             }
         }
         return historicalExchangeRate;
+    }
+
+    @Override
+    public List<HistoricalExchangeRate> getHistoricalExchangeRates(LocalDate startDate, LocalDate endDate, String base) {
+        List<HistoricalExchangeRate> historicalExchangeRates = new ArrayList<>();
+        List<ExchangeRate> allRates = exchangeRateRepository.findByExchangeDateBetweenOrderByExchangeDate(startDate, endDate);
+        List<ExchangeRate> rates = new ArrayList<>();
+        LocalDate date = null;
+        for (ExchangeRate rate : allRates) {
+            if (date == null) {
+                date = rate.getExchangeDate();
+            } else if (!date.equals(rate.getExchangeDate())) {
+                historicalExchangeRates.add(getHistoricalExchangeRate(date, base, rates));
+                rates.clear();
+                date = rate.getExchangeDate();
+            }
+            rates.add(rate);
+        }
+        if (rates.size() > 0) {
+            historicalExchangeRates.add(getHistoricalExchangeRate(date, base, rates));
+        }
+
+        return historicalExchangeRates;
     }
 
     @Override

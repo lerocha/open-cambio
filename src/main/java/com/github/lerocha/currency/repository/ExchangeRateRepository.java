@@ -15,4 +15,6 @@ public interface ExchangeRateRepository extends CrudRepository<ExchangeRate, Lon
     LocalDate findMaxExchangeDate();
 
     List<ExchangeRate> findByExchangeDateOrderByCurrencyCode(LocalDate exchangeDate);
+
+    List<ExchangeRate> findByExchangeDateBetweenOrderByExchangeDate(LocalDate startDate, LocalDate endDate);
 }

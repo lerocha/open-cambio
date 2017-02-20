@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 /**
  * Created by lerocha on 2/4/17.
@@ -22,13 +23,20 @@ public class ExchangeRateController {
     }
 
     @RequestMapping(path = "/rates/latest", method = RequestMethod.GET)
-    public ResponseEntity<HistoricalExchangeRate> getHistoricalRates(@RequestParam(name = "base", required = false) String base) {
+    public ResponseEntity<HistoricalExchangeRate> getLatestExchangeRate(@RequestParam(name = "base", required = false) String base) {
         return ResponseEntity.ok(exchangeRateService.getLatestExchangeRate(base));
     }
 
     @RequestMapping(path = "/rates/{date}", method = RequestMethod.GET)
-    public ResponseEntity<HistoricalExchangeRate> getHistoricalRates(@PathVariable(name = "date") String date,
-                                                                     @RequestParam(name = "base", required = false) String base) {
+    public ResponseEntity<HistoricalExchangeRate> getHistoricalExchangeRate(@PathVariable(name = "date") String date,
+                                                                            @RequestParam(name = "base", required = false) String base) {
         return ResponseEntity.ok(exchangeRateService.getHistoricalExchangeRate(LocalDate.parse(date), base));
+    }
+
+    @RequestMapping(path = "/rates/period", method = RequestMethod.GET)
+    public ResponseEntity<List<HistoricalExchangeRate>> getHistoricalExchangeRates(@RequestParam(name = "startDate") String startDate,
+                                                                                   @RequestParam(name = "endDate") String endDate,
+                                                                                   @RequestParam(name = "base", required = false) String base) {
+        return ResponseEntity.ok(exchangeRateService.getHistoricalExchangeRates(LocalDate.parse(startDate), LocalDate.parse(endDate), base));
     }
 }
