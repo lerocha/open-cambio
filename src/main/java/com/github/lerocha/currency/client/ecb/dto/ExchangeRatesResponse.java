@@ -1,26 +1,29 @@
 package com.github.lerocha.currency.client.ecb.dto;
 
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
+
+import java.util.List;
 
 /**
  * Created by lerocha on 2/20/17.
  */
 @JacksonXmlRootElement(namespace = "gesmes")
-public class Envelope {
+public class ExchangeRatesResponse {
     @JacksonXmlProperty(namespace = "gesmes")
     private String subject;
     @JacksonXmlProperty(namespace = "gesmes", localName = "Sender")
     private Sender sender;
-    @JacksonXmlProperty(localName = "Cube")
-    private Cube cube;
+    @JacksonXmlElementWrapper(localName = "Cube")
+    private List<DailyExchangeRate> dailyExchangeRates;
 
-    public Cube getCube() {
-        return cube;
+    public List<DailyExchangeRate> getDailyExchangeRates() {
+        return dailyExchangeRates;
     }
 
-    public void setCube(Cube cube) {
-        this.cube = cube;
+    public void setDailyExchangeRates(List<DailyExchangeRate> cube) {
+        this.dailyExchangeRates = cube;
     }
 
     public Sender getSender() {
@@ -44,7 +47,6 @@ public class Envelope {
         return new StringBuilder()
                 .append("subject=").append(subject)
                 .append("; sender=").append(sender)
-                .append("; cube=").append(cube)
                 .toString();
     }
 }

@@ -19,8 +19,6 @@ public class Sender {
 
     @Override
     public String toString() {
-        return new StringBuilder()
-                .append("name=").append(name)
-                .toString();
+        return name;
     }
 }

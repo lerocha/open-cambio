@@ -1,6 +1,6 @@
 package com.github.lerocha.currency.client.ecb;
 
-import com.github.lerocha.currency.client.ecb.dto.Envelope;
+import com.github.lerocha.currency.client.ecb.dto.ExchangeRatesResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -20,20 +20,20 @@ public class EcbClientImpl implements EcbClient {
     }
 
     @Override
-    public ResponseEntity<Envelope> getCurrentExchangeRates() {
+    public ResponseEntity<ExchangeRatesResponse> getCurrentExchangeRates() {
         final String url = "http://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml";
-        return restTemplate.exchange(url, HttpMethod.GET, null, Envelope.class);
+        return restTemplate.exchange(url, HttpMethod.GET, null, ExchangeRatesResponse.class);
     }
 
     @Override
-    public ResponseEntity<Envelope> getLast90DaysExchangeRates() {
+    public ResponseEntity<ExchangeRatesResponse> getLast90DaysExchangeRates() {
         final String url = "http://www.ecb.europa.eu/stats/eurofxref/eurofxref-hist-90d.xml";
-        return restTemplate.exchange(url, HttpMethod.GET, null, Envelope.class);
+        return restTemplate.exchange(url, HttpMethod.GET, null, ExchangeRatesResponse.class);
     }
 
     @Override
-    public ResponseEntity<Envelope> getAllExchangeRates() {
+    public ResponseEntity<ExchangeRatesResponse> getAllExchangeRates() {
         final String url = "http://www.ecb.europa.eu/stats/eurofxref/eurofxref-hist.xml";
-        return restTemplate.exchange(url, HttpMethod.GET, null, Envelope.class);
+        return restTemplate.exchange(url, HttpMethod.GET, null, ExchangeRatesResponse.class);
     }
 }
