@@ -67,7 +67,7 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
         Assert.notNull(rates);
         HistoricalExchangeRate historicalExchangeRate = new HistoricalExchangeRate(date, base != null ? base : DEFAULT_BASE);
         BigDecimal baseRate = null;
-        rates.add(new ExchangeRate(date, DEFAULT_BASE, BigDecimal.ONE));
+        rates.add(new ExchangeRate(date, DEFAULT_BASE, BigDecimal.ONE.setScale(6, BigDecimal.ROUND_HALF_UP)));
         for (ExchangeRate rate : rates.stream().sorted(Comparator.comparing(o -> o.getCurrencyCode())).collect(Collectors.toList())) {
             historicalExchangeRate.getRates().put(rate.getCurrencyCode(), rate.getExchangeRate());
             if (rate.getCurrencyCode().equalsIgnoreCase(base)) {
