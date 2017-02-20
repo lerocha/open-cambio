@@ -3,6 +3,7 @@ package com.github.lerocha.currency.controller;
 import com.github.lerocha.currency.dto.HistoricalExchangeRate;
 import com.github.lerocha.currency.service.ExchangeRateService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,13 +31,23 @@ public class ExchangeRateController {
     @RequestMapping(path = "/rates/{date}", method = RequestMethod.GET)
     public ResponseEntity<HistoricalExchangeRate> getHistoricalExchangeRate(@PathVariable(name = "date") String date,
                                                                             @RequestParam(name = "base", required = false) String base) {
-        return ResponseEntity.ok(exchangeRateService.getHistoricalExchangeRate(LocalDate.parse(date), base));
+        LocalDate localDate = safeParse(date);
+        if (localDate == null) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        return ResponseEntity.ok(exchangeRateService.getHistoricalExchangeRate(localDate, base));
     }
 
-    @RequestMapping(path = "/rates/period", method = RequestMethod.GET)
-    public ResponseEntity<List<HistoricalExchangeRate>> getHistoricalExchangeRates(@RequestParam(name = "startDate") String startDate,
-                                                                                   @RequestParam(name = "endDate") String endDate,
+    @RequestMapping(path = "/rates", method = RequestMethod.GET)
+    public ResponseEntity<List<HistoricalExchangeRate>> getHistoricalExchangeRates(@RequestParam(name = "startDate", required = false) String startDate,
+                                                                                   @RequestParam(name = "endDate", required = false) String endDate,
                                                                                    @RequestParam(name = "base", required = false) String base) {
-        return ResponseEntity.ok(exchangeRateService.getHistoricalExchangeRates(LocalDate.parse(startDate), LocalDate.parse(endDate), base));
+        return ResponseEntity.ok(exchangeRateService.getHistoricalExchangeRates(safeParse(startDate), safeParse(endDate), base));
+    }
+
+    private static LocalDate safeParse(String date) {
+        try {
+            return date != null ? LocalDate.parse(date) : null;
+        } catch (Exception e) {
+            return null;
+        }
     }
 }

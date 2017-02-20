@@ -11,6 +11,9 @@ import java.util.List;
  * Created by lerocha on 2/14/17.
  */
 public interface ExchangeRateRepository extends CrudRepository<ExchangeRate, Long> {
+    @Query(nativeQuery = true, value = "SELECT min(exchange_date) FROM exchange_rate")
+    LocalDate findMinExchangeDate();
+
     @Query(nativeQuery = true, value = "SELECT max(exchange_date) FROM exchange_rate")
     LocalDate findMaxExchangeDate();
 

@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -56,11 +57,14 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
 
     @Override
     public HistoricalExchangeRate getHistoricalExchangeRate(LocalDate date, String base) {
+        Assert.notNull(date);
         List<ExchangeRate> rates = exchangeRateRepository.findByExchangeDateOrderByCurrencyCode(date);
         return getHistoricalExchangeRate(date, base, rates);
     }
 
     private HistoricalExchangeRate getHistoricalExchangeRate(LocalDate date, String base, List<ExchangeRate> rates) {
+        Assert.notNull(date);
+        Assert.notNull(rates);
         HistoricalExchangeRate historicalExchangeRate = new HistoricalExchangeRate(date, base != null ? base : DEFAULT_BASE);
         BigDecimal baseRate = null;
         rates.add(new ExchangeRate(date, DEFAULT_BASE, BigDecimal.ONE));
@@ -82,6 +86,12 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
     @Override
     public List<HistoricalExchangeRate> getHistoricalExchangeRates(LocalDate startDate, LocalDate endDate, String base) {
         List<HistoricalExchangeRate> historicalExchangeRates = new ArrayList<>();
+        if (startDate == null) {
+            startDate = exchangeRateRepository.findMinExchangeDate();
+        }
+        if (endDate == null) {
+            endDate = exchangeRateRepository.findMaxExchangeDate();
+        }
         List<ExchangeRate> allRates = exchangeRateRepository.findByExchangeDateBetweenOrderByExchangeDate(startDate, endDate);
         List<ExchangeRate> rates = new ArrayList<>();
         LocalDate date = null;
