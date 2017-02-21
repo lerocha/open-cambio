@@ -16,7 +16,7 @@ public class ExchangeRateServiceTests {
     @Autowired
     private ExchangeRateService exchangeRateService;
 
-//    @Test
+    @Test
     public void refreshExchangeRates() {
         exchangeRateService.refreshExchangeRates();
     }

@@ -17,6 +17,4 @@ public interface ExchangeRateService {
     List<HistoricalExchangeRate> getHistoricalExchangeRates(LocalDate startDate, LocalDate endDate, String base);
 
     List<ExchangeRate> refreshExchangeRates();
-
-    void refreshAnnualExchangeRates();
 }
