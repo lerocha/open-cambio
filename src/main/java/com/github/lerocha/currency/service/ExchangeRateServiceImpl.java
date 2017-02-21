@@ -1,5 +1,9 @@
 package com.github.lerocha.currency.service;
 
+import com.github.lerocha.currency.client.ecb.EcbClient;
+import com.github.lerocha.currency.client.ecb.dto.CurrencyExchangeRate;
+import com.github.lerocha.currency.client.ecb.dto.DailyExchangeRate;
+import com.github.lerocha.currency.client.ecb.dto.ExchangeRatesResponse;
 import com.github.lerocha.currency.client.ofx.Frequency;
 import com.github.lerocha.currency.client.ofx.HistoricalPoint;
 import com.github.lerocha.currency.client.ofx.OfxClient;
@@ -13,6 +17,7 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
@@ -34,12 +39,17 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
 
     private ExchangeRateRepository exchangeRateRepository;
     private YearlyExchangeRateRepository yearlyExchangeRateRepository;
+    private EcbClient ecbClient;
     private OfxClient ofxClient;
 
     @Autowired
-    public ExchangeRateServiceImpl(ExchangeRateRepository exchangeRateRepository, YearlyExchangeRateRepository yearlyExchangeRateRepository, OfxClient ofxClient) {
+    public ExchangeRateServiceImpl(ExchangeRateRepository exchangeRateRepository,
+                                   YearlyExchangeRateRepository yearlyExchangeRateRepository,
+                                   EcbClient ecbClient,
+                                   OfxClient ofxClient) {
         this.exchangeRateRepository = exchangeRateRepository;
         this.yearlyExchangeRateRepository = yearlyExchangeRateRepository;
+        this.ecbClient = ecbClient;
         this.ofxClient = ofxClient;
     }
 
@@ -110,6 +120,52 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
         }
 
         return historicalExchangeRates;
+    }
+
+    @Override
+    public List<ExchangeRate> refreshExchangeRates() {
+        LocalDate lastRefresh = exchangeRateRepository.findMaxExchangeDate();
+        logger.info("refreshExchangeRates; status=starting; lastRefresh={}", lastRefresh);
+        ResponseEntity<ExchangeRatesResponse> response;
+        if (lastRefresh == null || lastRefresh.isBefore(LocalDate.now().minusDays(90))) {
+            // Full refresh if more than 90 days since last refresh.
+            response = ecbClient.getAllExchangeRates();
+        } else if (lastRefresh.isBefore(LocalDate.now().minusDays(1))) {
+            // Partial refresh if less than 90 days since last refresh.
+            response = ecbClient.getLast90DaysExchangeRates();
+        } else {
+            // Daily refresh.
+            response = ecbClient.getCurrentExchangeRates();
+        }
+        if (!response.getStatusCode().is2xxSuccessful() ||
+                response.getBody() == null ||
+                response.getBody().getDailyExchangeRates() == null) {
+            logger.error("refreshExchangeRates; status={}; body={}", response.getStatusCode(), response.getBody());
+            return null;
+        }
+
+        // Filter and sort results.
+        List<DailyExchangeRate> dailyExchangeRates = response.getBody().getDailyExchangeRates().stream()
+                .filter(o -> lastRefresh == null || o.getDate().isAfter(lastRefresh))
+                .sorted(Comparator.comparing(DailyExchangeRate::getDate))
+                .collect(Collectors.toList());
+
+        // Convert into entity objects.
+        List<ExchangeRate> exchangeRates = new ArrayList<>();
+        for (DailyExchangeRate dailyExchangeRate : dailyExchangeRates) {
+            exchangeRates.addAll(dailyExchangeRate.getCurrencyExchangeRates().stream()
+                    .sorted(Comparator.comparing(CurrencyExchangeRate::getCurrency))
+                    .map(o -> new ExchangeRate(dailyExchangeRate.getDate(), o.getCurrency(), o.getRate()))
+                    .collect(Collectors.toList()));
+        }
+
+        // Bulk save.
+        exchangeRates = (List<ExchangeRate>) exchangeRateRepository.save(exchangeRates);
+        logger.info("refreshExchangeRates; status=ok; startDate={}; endDate={}; total={}",
+                exchangeRates.size() > 0 ? exchangeRates.get(0).getExchangeDate() : null,
+                exchangeRates.size() > 0 ? exchangeRates.get(exchangeRates.size() - 1).getExchangeDate() : null,
+                exchangeRates.size());
+        return exchangeRates;
     }
 
     @Override
