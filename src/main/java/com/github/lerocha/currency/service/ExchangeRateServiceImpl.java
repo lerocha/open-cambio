@@ -56,6 +56,7 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
     public HistoricalExchangeRate getHistoricalExchangeRate(LocalDate date, String base) {
         Assert.notNull(date);
         List<ExchangeRate> rates = exchangeRateRepository.findByExchangeDateOrderByCurrencyCode(date);
+        logger.info("getHistoricalExchangeRate; date={}; base={}", date, base);
         return getHistoricalExchangeRate(date, base, rates);
     }
 
@@ -106,6 +107,7 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
             historicalExchangeRates.add(getHistoricalExchangeRate(date, base, rates));
         }
 
+        logger.info("getHistoricalExchangeRates; startDate={}; endDate={}; base={}; total={}", startDate, endDate, base, historicalExchangeRates.size());
         return historicalExchangeRates;
     }
 
