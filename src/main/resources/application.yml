@@ -6,7 +6,7 @@ spring:
     profiles: default
 
 server:
-    port: 7070
+    port: 5000
 
 spring.datasource:
     driverClassName: com.mysql.jdbc.Driver
@@ -40,6 +40,3 @@ spring.jackson.serialization:
 ---
 spring:
     profiles: production
-
-server:
-    port: 7070
