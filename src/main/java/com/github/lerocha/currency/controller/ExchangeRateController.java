@@ -23,12 +23,12 @@ public class ExchangeRateController {
         this.exchangeRateService = exchangeRateService;
     }
 
-    @RequestMapping(path = "/rates/latest", method = RequestMethod.GET)
+    @RequestMapping(path = "/api/rates/latest", method = RequestMethod.GET)
     public ResponseEntity<HistoricalExchangeRate> getLatestExchangeRate(@RequestParam(name = "base", required = false) String base) {
         return ResponseEntity.ok(exchangeRateService.getLatestExchangeRate(base));
     }
 
-    @RequestMapping(path = "/rates/{date}", method = RequestMethod.GET)
+    @RequestMapping(path = "/api/rates/{date}", method = RequestMethod.GET)
     public ResponseEntity<HistoricalExchangeRate> getHistoricalExchangeRate(@PathVariable(name = "date") String date,
                                                                             @RequestParam(name = "base", required = false) String base) {
         LocalDate localDate = safeParse(date);
@@ -36,7 +36,7 @@ public class ExchangeRateController {
         return ResponseEntity.ok(exchangeRateService.getHistoricalExchangeRate(localDate, base));
     }
 
-    @RequestMapping(path = "/rates", method = RequestMethod.GET)
+    @RequestMapping(path = "/api/rates", method = RequestMethod.GET)
     public ResponseEntity<List<HistoricalExchangeRate>> getHistoricalExchangeRates(@RequestParam(name = "startDate", required = false) String startDate,
                                                                                    @RequestParam(name = "endDate", required = false) String endDate,
                                                                                    @RequestParam(name = "base", required = false) String base) {
