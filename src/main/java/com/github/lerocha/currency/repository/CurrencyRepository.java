@@ -15,6 +15,6 @@ public interface CurrencyRepository extends JpaRepository<Currency, String> {
     @Query(nativeQuery = true, value = "UPDATE currency c CROSS JOIN " +
             "(SELECT currency_code, min(exchange_date) AS start_date, max(exchange_date) AS end_date FROM exchange_rate GROUP BY currency_code) cdate\n" +
             "SET c.start_date = cdate.start_date, c.end_date = cdate.end_date\n" +
-            "WHERE c.currency_code = cdate.currency_code")
+            "WHERE c.code = cdate.currency_code")
     int updateCurrencyStartAndEndDates();
 }

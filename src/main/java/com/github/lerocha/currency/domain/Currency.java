@@ -10,10 +10,10 @@ import java.time.LocalDate;
  * Created by lerocha on 2/24/17.
  */
 @Entity
-public class Currency implements Serializable {
+public class Currency extends AbstractEntity implements Serializable {
     @Id
     @Column(length = 3)
-    private String currencyCode;
+    private String code;
     private String displayName;
     private LocalDate startDate;
     private LocalDate endDate;
@@ -21,24 +21,24 @@ public class Currency implements Serializable {
     public Currency() {
     }
 
-    public Currency(String currencyCode, String displayName) {
-        this.currencyCode = currencyCode;
+    public Currency(String code, String displayName) {
+        this.code = code;
         this.displayName = displayName;
     }
 
-    public Currency(String currencyCode, String displayName, LocalDate startDate, LocalDate endDate) {
-        this.currencyCode = currencyCode;
-        this.displayName = displayName != null ? displayName : java.util.Currency.getInstance(currencyCode).getDisplayName();
+    public Currency(String code, String displayName, LocalDate startDate, LocalDate endDate) {
+        this.code = code;
+        this.displayName = displayName != null ? displayName : java.util.Currency.getInstance(code).getDisplayName();
         this.startDate = startDate;
         this.endDate = endDate;
     }
 
-    public String getCurrencyCode() {
-        return currencyCode;
+    public String getCode() {
+        return code;
     }
 
-    public void setCurrencyCode(String currencyCode) {
-        this.currencyCode = currencyCode;
+    public void setCode(String code) {
+        this.code = code;
     }
 
     public String getDisplayName() {
@@ -68,7 +68,7 @@ public class Currency implements Serializable {
     @Override
     public String toString() {
         return new StringBuilder()
-                .append("currencyCode=").append(currencyCode)
+                .append("code=").append(code)
                 .append("; displayName=").append(displayName)
                 .append("; startDate=").append(startDate)
                 .append("; endDate=").append(endDate)

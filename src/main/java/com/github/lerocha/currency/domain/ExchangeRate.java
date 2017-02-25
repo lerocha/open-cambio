@@ -10,7 +10,7 @@ import java.time.LocalDate;
  */
 @Entity
 @Table(uniqueConstraints = {
-        @UniqueConstraint(name = "UK_ExchangeRate_currency_code_exchange_date", columnNames = {"currencyCode", "exchangeDate"})
+        @UniqueConstraint(name = "UK_ExchangeRate_currency_id_exchange_date", columnNames = {"currency_code", "exchangeDate"})
 })
 public class ExchangeRate extends AbstractEntity implements Serializable {
 
@@ -18,8 +18,8 @@ public class ExchangeRate extends AbstractEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(length = 4, nullable = false)
-    private String currencyCode;
+    @ManyToOne
+    private Currency currency;
 
     @Column(nullable = false)
     private LocalDate exchangeDate;
@@ -30,9 +30,9 @@ public class ExchangeRate extends AbstractEntity implements Serializable {
     public ExchangeRate() {
     }
 
-    public ExchangeRate(LocalDate exchangeDate, String currencyCode, BigDecimal exchangeRate) {
+    public ExchangeRate(LocalDate exchangeDate, Currency currency, BigDecimal exchangeRate) {
         this.exchangeDate = exchangeDate;
-        this.currencyCode = currencyCode;
+        this.currency = currency;
         this.exchangeRate = exchangeRate;
     }
 
@@ -44,12 +44,12 @@ public class ExchangeRate extends AbstractEntity implements Serializable {
         this.id = id;
     }
 
-    public String getCurrencyCode() {
-        return currencyCode;
+    public Currency getCurrency() {
+        return currency;
     }
 
-    public void setCurrencyCode(String currencyCode) {
-        this.currencyCode = currencyCode;
+    public void setCurrency(Currency currency) {
+        this.currency = currency;
     }
 
     public BigDecimal getExchangeRate() {
@@ -71,7 +71,7 @@ public class ExchangeRate extends AbstractEntity implements Serializable {
     @Override
     public String toString() {
         return new StringBuilder()
-                .append("code=").append(currencyCode)
+                .append("code=").append(currency != null ? currency.getCode() : null)
                 .append("; date=").append(exchangeDate)
                 .append("; rate=").append(exchangeRate)
                 .toString();

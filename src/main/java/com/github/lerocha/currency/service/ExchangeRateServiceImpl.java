@@ -66,11 +66,11 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
     private HistoricalExchangeRate getHistoricalExchangeRate(LocalDate date, String base, List<ExchangeRate> rates) {
         Assert.notNull(date);
         Assert.notNull(rates);
-        HistoricalExchangeRate historicalExchangeRate = new HistoricalExchangeRate(date, base != null ? base : BASE_CURRENCY.getCurrencyCode());
+        HistoricalExchangeRate historicalExchangeRate = new HistoricalExchangeRate(date, base != null ? base : BASE_CURRENCY.getCode());
         BigDecimal baseRate = null;
-        for (ExchangeRate rate : rates.stream().sorted(Comparator.comparing(o -> o.getCurrencyCode())).collect(Collectors.toList())) {
-            historicalExchangeRate.getRates().put(rate.getCurrencyCode(), rate.getExchangeRate());
-            if (rate.getCurrencyCode().equalsIgnoreCase(base)) {
+        for (ExchangeRate rate : rates.stream().sorted(Comparator.comparing(o -> o.getCurrency().getCode())).collect(Collectors.toList())) {
+            historicalExchangeRate.getRates().put(rate.getCurrency().getCode(), rate.getExchangeRate());
+            if (rate.getCurrency().getCode().equalsIgnoreCase(base)) {
                 baseRate = rate.getExchangeRate();
             }
         }
@@ -129,7 +129,7 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
             currencies.add(currency);
         }
         logger.info("getAvailableCurrencies; locale={}; total={}", locale, currencies.size());
-        return currencies.stream().sorted(Comparator.comparing(Currency::getCurrencyCode)).collect(Collectors.toList());
+        return currencies.stream().sorted(Comparator.comparing(Currency::getCode)).collect(Collectors.toList());
     }
 
     @Override
@@ -149,7 +149,7 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
         }
 
         Map<String, Currency> currencyMap = currencies.stream()
-                .collect(Collectors.toMap(o -> o.getCurrencyCode(), o -> o));
+                .collect(Collectors.toMap(o -> o.getCode(), o -> o));
 
         ResponseEntity<ExchangeRatesResponse> response;
         if (lastRefresh == null || lastRefresh.isBefore(LocalDate.now().minusDays(90))) {
@@ -180,10 +180,10 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
         for (DailyExchangeRate dailyExchangeRate : dailyExchangeRates) {
             List<CurrencyExchangeRate> currencyExchangeRates = dailyExchangeRate.getCurrencyExchangeRates();
             // Add the base currency with exchange rate = 1.0 since it is not part of the response.
-            currencyExchangeRates.add(new CurrencyExchangeRate(BASE_CURRENCY.getCurrencyCode(), BigDecimal.ONE.setScale(6, BigDecimal.ROUND_HALF_UP)));
+            currencyExchangeRates.add(new CurrencyExchangeRate(BASE_CURRENCY.getCode(), BigDecimal.ONE.setScale(6, BigDecimal.ROUND_HALF_UP)));
             exchangeRates.addAll(currencyExchangeRates.stream()
                     .sorted(Comparator.comparing(CurrencyExchangeRate::getCurrency))
-                    .map(o -> new ExchangeRate(dailyExchangeRate.getDate(), o.getCurrency(), o.getRate()))
+                    .map(o -> new ExchangeRate(dailyExchangeRate.getDate(), currencyMap.get(o.getCurrency()), o.getRate()))
                     .collect(Collectors.toList()));
         }
 
