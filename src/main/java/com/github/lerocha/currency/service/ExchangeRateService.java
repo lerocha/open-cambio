@@ -1,7 +1,7 @@
 package com.github.lerocha.currency.service;
 
 import com.github.lerocha.currency.domain.ExchangeRate;
-import com.github.lerocha.currency.dto.CurrencyDto;
+import com.github.lerocha.currency.domain.Currency;
 import com.github.lerocha.currency.dto.HistoricalExchangeRate;
 
 import java.time.LocalDate;
@@ -18,7 +18,7 @@ public interface ExchangeRateService {
 
     List<HistoricalExchangeRate> getHistoricalExchangeRates(LocalDate startDate, LocalDate endDate, String base);
 
-    List<CurrencyDto> getAvailableCurrencies(Locale locale);
+    List<Currency> getAvailableCurrencies(Locale locale);
 
     List<ExchangeRate> refreshExchangeRates();
 }

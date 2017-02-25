@@ -1,6 +1,6 @@
 package com.github.lerocha.currency.controller;
 
-import com.github.lerocha.currency.dto.CurrencyDto;
+import com.github.lerocha.currency.domain.Currency;
 import com.github.lerocha.currency.service.ExchangeRateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +25,7 @@ public class CurrencyController {
     }
 
     @RequestMapping(path = "/api/currencies")
-    public ResponseEntity<List<CurrencyDto>> getAvailableCurrencies(@RequestParam(name = "locale", required = false, defaultValue = "en_US") Locale locale) {
+    public ResponseEntity<List<Currency>> getAvailableCurrencies(@RequestParam(name = "locale", required = false, defaultValue = "en_US") Locale locale) {
         return ResponseEntity.ok(exchangeRateService.getAvailableCurrencies(locale));
     }
 }

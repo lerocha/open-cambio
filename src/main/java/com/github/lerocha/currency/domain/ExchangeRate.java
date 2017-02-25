@@ -1,9 +1,6 @@
 package com.github.lerocha.currency.domain;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -16,6 +13,10 @@ import java.time.LocalDate;
         @UniqueConstraint(name = "UK_ExchangeRate_currency_code_exchange_date", columnNames = {"currencyCode", "exchangeDate"})
 })
 public class ExchangeRate extends AbstractEntity implements Serializable {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @Column(length = 4, nullable = false)
     private String currencyCode;
@@ -33,6 +34,14 @@ public class ExchangeRate extends AbstractEntity implements Serializable {
         this.exchangeDate = exchangeDate;
         this.currencyCode = currencyCode;
         this.exchangeRate = exchangeRate;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getCurrencyCode() {

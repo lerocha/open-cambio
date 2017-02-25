@@ -13,6 +13,14 @@ public class CurrencyExchangeRate {
     @JacksonXmlProperty
     private BigDecimal rate;
 
+    public CurrencyExchangeRate() {
+    }
+
+    public CurrencyExchangeRate(String currency, BigDecimal rate) {
+        this.currency = currency;
+        this.rate = rate;
+    }
+
     public String getCurrency() {
         return currency;
     }

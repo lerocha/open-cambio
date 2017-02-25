@@ -4,15 +4,17 @@ import com.github.lerocha.currency.client.ecb.EcbClient;
 import com.github.lerocha.currency.client.ecb.dto.CurrencyExchangeRate;
 import com.github.lerocha.currency.client.ecb.dto.DailyExchangeRate;
 import com.github.lerocha.currency.client.ecb.dto.ExchangeRatesResponse;
+import com.github.lerocha.currency.domain.Currency;
 import com.github.lerocha.currency.domain.ExchangeRate;
-import com.github.lerocha.currency.dto.CurrencyDto;
 import com.github.lerocha.currency.dto.HistoricalExchangeRate;
+import com.github.lerocha.currency.repository.CurrencyRepository;
 import com.github.lerocha.currency.repository.ExchangeRateRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import java.math.BigDecimal;
@@ -28,18 +30,20 @@ import java.util.stream.Collectors;
 public class ExchangeRateServiceImpl implements ExchangeRateService {
 
     private static final Logger logger = LoggerFactory.getLogger(ExchangeRateService.class);
+    private static final Currency BASE_CURRENCY = new Currency("EUR", null, LocalDate.parse("1999-01-04"), LocalDate.now());
 
+    private final CurrencyRepository currencyRepository;
     private final ExchangeRateRepository exchangeRateRepository;
     private final EcbClient ecbClient;
 
     @Autowired
     public ExchangeRateServiceImpl(ExchangeRateRepository exchangeRateRepository,
+                                   CurrencyRepository currencyRepository,
                                    EcbClient ecbClient) {
         this.exchangeRateRepository = exchangeRateRepository;
+        this.currencyRepository = currencyRepository;
         this.ecbClient = ecbClient;
     }
-
-    private static final String DEFAULT_BASE = "EUR";
 
     @Override
     public HistoricalExchangeRate getLatestExchangeRate(String base) {
@@ -62,9 +66,8 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
     private HistoricalExchangeRate getHistoricalExchangeRate(LocalDate date, String base, List<ExchangeRate> rates) {
         Assert.notNull(date);
         Assert.notNull(rates);
-        HistoricalExchangeRate historicalExchangeRate = new HistoricalExchangeRate(date, base != null ? base : DEFAULT_BASE);
+        HistoricalExchangeRate historicalExchangeRate = new HistoricalExchangeRate(date, base != null ? base : BASE_CURRENCY.getCurrencyCode());
         BigDecimal baseRate = null;
-        rates.add(new ExchangeRate(date, DEFAULT_BASE, BigDecimal.ONE.setScale(6, BigDecimal.ROUND_HALF_UP)));
         for (ExchangeRate rate : rates.stream().sorted(Comparator.comparing(o -> o.getCurrencyCode())).collect(Collectors.toList())) {
             historicalExchangeRate.getRates().put(rate.getCurrencyCode(), rate.getExchangeRate());
             if (rate.getCurrencyCode().equalsIgnoreCase(base)) {
@@ -111,39 +114,43 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
     }
 
     @Override
-    public List<CurrencyDto> getAvailableCurrencies(Locale locale) {
+    public List<Currency> getAvailableCurrencies(Locale locale) {
         Assert.notNull(locale);
-        List<CurrencyDto> currencies = new ArrayList<>();
-        CurrencyDto baseCurrency = new CurrencyDto(DEFAULT_BASE, Currency.getInstance(DEFAULT_BASE).getDisplayName(locale), LocalDate.MAX, LocalDate.MIN);
+
+        List<Currency> currencies = new ArrayList<>();
         List<Object[]> results = exchangeRateRepository.findAvailableCurrencies();
         for (Object[] result : results) {
-            CurrencyDto currencyDto = new CurrencyDto();
-            currencyDto.setCurrencyCode((String) result[0]);
+            String currencyCode = (String) result[0];
+            Currency currency = new Currency(currencyCode, java.util.Currency.getInstance(currencyCode).getDisplayName(locale));
             Date startDate = (Date) result[1];
-            currencyDto.setStartDate(startDate.toLocalDate());
+            currency.setStartDate(startDate.toLocalDate());
             Date endDate = (Date) result[2];
-            currencyDto.setEndDate(endDate.toLocalDate());
-            Currency currency = Currency.getInstance(currencyDto.getCurrencyCode());
-            currencyDto.setDisplayName(currency.getDisplayName(locale != null ? locale : Locale.US));
-            currencies.add(currencyDto);
-
-            // Update base currency start and end dates.
-            if (currencyDto.getStartDate().isBefore(baseCurrency.getStartDate())) {
-                baseCurrency.setStartDate(currencyDto.getStartDate());
-            }
-            if (currencyDto.getEndDate().isAfter(baseCurrency.getEndDate())) {
-                baseCurrency.setEndDate(currencyDto.getEndDate());
-            }
+            currency.setEndDate(endDate.toLocalDate());
+            currencies.add(currency);
         }
-        currencies.add(baseCurrency);
         logger.info("getAvailableCurrencies; locale={}; total={}", locale, currencies.size());
-        return currencies.stream().sorted(Comparator.comparing(CurrencyDto::getCurrencyCode)).collect(Collectors.toList());
+        return currencies.stream().sorted(Comparator.comparing(Currency::getCurrencyCode)).collect(Collectors.toList());
     }
 
     @Override
+    @Transactional
     public List<ExchangeRate> refreshExchangeRates() {
         LocalDate lastRefresh = exchangeRateRepository.findMaxExchangeDate();
         logger.info("refreshExchangeRates; status=starting; lastRefresh={}", lastRefresh);
+
+        // Initialize currency table.
+        List<Currency> currencies = currencyRepository.findAll();
+        if (currencies.size() == 0) {
+            currencies = java.util.Currency.getAvailableCurrencies().stream()
+                    .sorted(Comparator.comparing(java.util.Currency::getCurrencyCode))
+                    .map(o -> new Currency(o.getCurrencyCode(), o.getDisplayName()))
+                    .collect(Collectors.toList());
+            currencies = currencyRepository.save(currencies);
+        }
+
+        Map<String, Currency> currencyMap = currencies.stream()
+                .collect(Collectors.toMap(o -> o.getCurrencyCode(), o -> o));
+
         ResponseEntity<ExchangeRatesResponse> response;
         if (lastRefresh == null || lastRefresh.isBefore(LocalDate.now().minusDays(90))) {
             // Full refresh if more than 90 days since last refresh.
@@ -171,18 +178,23 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
         // Convert into entity objects.
         List<ExchangeRate> exchangeRates = new ArrayList<>();
         for (DailyExchangeRate dailyExchangeRate : dailyExchangeRates) {
-            exchangeRates.addAll(dailyExchangeRate.getCurrencyExchangeRates().stream()
+            List<CurrencyExchangeRate> currencyExchangeRates = dailyExchangeRate.getCurrencyExchangeRates();
+            // Add the base currency with exchange rate = 1.0 since it is not part of the response.
+            currencyExchangeRates.add(new CurrencyExchangeRate(BASE_CURRENCY.getCurrencyCode(), BigDecimal.ONE.setScale(6, BigDecimal.ROUND_HALF_UP)));
+            exchangeRates.addAll(currencyExchangeRates.stream()
                     .sorted(Comparator.comparing(CurrencyExchangeRate::getCurrency))
                     .map(o -> new ExchangeRate(dailyExchangeRate.getDate(), o.getCurrency(), o.getRate()))
                     .collect(Collectors.toList()));
         }
 
-        // Bulk save.
+        // Bulk save exchange rates.
         exchangeRates = (List<ExchangeRate>) exchangeRateRepository.save(exchangeRates);
-        logger.info("refreshExchangeRates; status=ok; startDate={}; endDate={}; total={}",
+        int totalCurrencies = currencyRepository.updateCurrencyStartAndEndDates();
+        logger.info("refreshExchangeRates; status=ok; startDate={}; endDate={}; totalRates={}; totalCurrencies={}",
                 exchangeRates.size() > 0 ? exchangeRates.get(0).getExchangeDate() : null,
                 exchangeRates.size() > 0 ? exchangeRates.get(exchangeRates.size() - 1).getExchangeDate() : null,
-                exchangeRates.size());
+                exchangeRates.size(),
+                totalCurrencies);
         return exchangeRates;
     }
 }

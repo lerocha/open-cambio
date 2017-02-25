@@ -1,23 +1,34 @@
-package com.github.lerocha.currency.dto;
+package com.github.lerocha.currency.domain;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
 import java.io.Serializable;
 import java.time.LocalDate;
 
 /**
  * Created by lerocha on 2/24/17.
  */
-public class CurrencyDto implements Serializable {
+@Entity
+public class Currency implements Serializable {
+    @Id
+    @Column(length = 3)
     private String currencyCode;
     private String displayName;
     private LocalDate startDate;
     private LocalDate endDate;
 
-    public CurrencyDto() {
+    public Currency() {
     }
 
-    public CurrencyDto(String currencyCode, String displayName, LocalDate startDate, LocalDate endDate) {
+    public Currency(String currencyCode, String displayName) {
         this.currencyCode = currencyCode;
         this.displayName = displayName;
+    }
+
+    public Currency(String currencyCode, String displayName, LocalDate startDate, LocalDate endDate) {
+        this.currencyCode = currencyCode;
+        this.displayName = displayName != null ? displayName : java.util.Currency.getInstance(currencyCode).getDisplayName();
         this.startDate = startDate;
         this.endDate = endDate;
     }
