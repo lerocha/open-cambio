@@ -16,7 +16,7 @@ import java.util.List;
 @RestController
 public class ExchangeRateController {
 
-    private ExchangeRateService exchangeRateService;
+    private final ExchangeRateService exchangeRateService;
 
     @Autowired
     public ExchangeRateController(ExchangeRateService exchangeRateService) {

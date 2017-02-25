@@ -5,6 +5,7 @@ import com.github.lerocha.currency.client.ecb.dto.CurrencyExchangeRate;
 import com.github.lerocha.currency.client.ecb.dto.DailyExchangeRate;
 import com.github.lerocha.currency.client.ecb.dto.ExchangeRatesResponse;
 import com.github.lerocha.currency.domain.ExchangeRate;
+import com.github.lerocha.currency.dto.CurrencyDto;
 import com.github.lerocha.currency.dto.HistoricalExchangeRate;
 import com.github.lerocha.currency.repository.ExchangeRateRepository;
 import org.slf4j.Logger;
@@ -15,11 +16,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import java.math.BigDecimal;
+import java.sql.Date;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -109,6 +108,28 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
 
         logger.info("getHistoricalExchangeRates; startDate={}; endDate={}; base={}; total={}", startDate, endDate, base, historicalExchangeRates.size());
         return historicalExchangeRates;
+    }
+
+    @Override
+    public List<CurrencyDto> getAvailableCurrencies(Locale locale) {
+        Assert.notNull(locale);
+        List<CurrencyDto> currencies = new ArrayList<>();
+        CurrencyDto baseCurrency = new CurrencyDto(DEFAULT_BASE, Currency.getInstance(DEFAULT_BASE).getDisplayName(locale), LocalDate.MIN, LocalDate.MAX);
+        List<Object[]> results = exchangeRateRepository.findAvailableCurrencies();
+        for (Object[] result : results) {
+            CurrencyDto currencyDto = new CurrencyDto();
+            currencyDto.setCurrencyCode((String) result[0]);
+            Date startDate = (Date) result[1];
+            currencyDto.setStartDate(startDate.toLocalDate());
+            Date endDate = (Date) result[2];
+            currencyDto.setEndDate(endDate.toLocalDate());
+            Currency currency = Currency.getInstance(currencyDto.getCurrencyCode());
+            currencyDto.setDisplayName(currency.getDisplayName(locale != null ? locale : Locale.US));
+            currencies.add(currencyDto);
+        }
+        currencies.add(baseCurrency);
+        logger.info("getAvailableCurrencies; locale={}; total={}", locale, currencies.size());
+        return currencies.stream().sorted(Comparator.comparing(CurrencyDto::getCurrencyCode)).collect(Collectors.toList());
     }
 
     @Override
