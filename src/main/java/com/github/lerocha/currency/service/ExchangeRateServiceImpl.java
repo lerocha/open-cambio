@@ -114,7 +114,7 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
     public List<CurrencyDto> getAvailableCurrencies(Locale locale) {
         Assert.notNull(locale);
         List<CurrencyDto> currencies = new ArrayList<>();
-        CurrencyDto baseCurrency = new CurrencyDto(DEFAULT_BASE, Currency.getInstance(DEFAULT_BASE).getDisplayName(locale), LocalDate.MIN, LocalDate.MAX);
+        CurrencyDto baseCurrency = new CurrencyDto(DEFAULT_BASE, Currency.getInstance(DEFAULT_BASE).getDisplayName(locale), LocalDate.MAX, LocalDate.MIN);
         List<Object[]> results = exchangeRateRepository.findAvailableCurrencies();
         for (Object[] result : results) {
             CurrencyDto currencyDto = new CurrencyDto();
@@ -126,6 +126,14 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
             Currency currency = Currency.getInstance(currencyDto.getCurrencyCode());
             currencyDto.setDisplayName(currency.getDisplayName(locale != null ? locale : Locale.US));
             currencies.add(currencyDto);
+
+            // Update base currency start and end dates.
+            if (currencyDto.getStartDate().isBefore(baseCurrency.getStartDate())) {
+                baseCurrency.setStartDate(currencyDto.getStartDate());
+            }
+            if (currencyDto.getEndDate().isAfter(baseCurrency.getEndDate())) {
+                baseCurrency.setEndDate(currencyDto.getEndDate());
+            }
         }
         currencies.add(baseCurrency);
         logger.info("getAvailableCurrencies; locale={}; total={}", locale, currencies.size());
