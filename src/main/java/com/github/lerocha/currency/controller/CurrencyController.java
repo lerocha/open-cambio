@@ -24,7 +24,7 @@ public class CurrencyController {
         this.exchangeRateService = exchangeRateService;
     }
 
-    @RequestMapping(path = "/api/currencies")
+    @RequestMapping(path = "/currencies/available")
     public ResponseEntity<List<Currency>> getAvailableCurrencies(@RequestParam(name = "locale", required = false, defaultValue = "en_US") Locale locale) {
         return ResponseEntity.ok(exchangeRateService.getAvailableCurrencies(locale));
     }
