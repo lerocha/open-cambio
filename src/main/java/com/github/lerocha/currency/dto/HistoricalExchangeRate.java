@@ -1,7 +1,5 @@
 package com.github.lerocha.currency.dto;
 
-
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.LinkedHashMap;
@@ -10,7 +8,7 @@ import java.util.Map;
 /**
  * Created by lerocha on 2/14/17.
  */
-public class HistoricalExchangeRate implements Serializable {
+public class HistoricalExchangeRate {
     private LocalDate date;
     private String base;
     private Map<String, BigDecimal> rates = new LinkedHashMap<>();

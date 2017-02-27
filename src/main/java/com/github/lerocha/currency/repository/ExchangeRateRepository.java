@@ -3,6 +3,7 @@ package com.github.lerocha.currency.repository;
 import com.github.lerocha.currency.domain.ExchangeRate;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -10,6 +11,7 @@ import java.util.List;
 /**
  * Created by lerocha on 2/14/17.
  */
+@RepositoryRestResource(exported = false)
 public interface ExchangeRateRepository extends CrudRepository<ExchangeRate, Long> {
     @Query(nativeQuery = true, value = "SELECT min(exchange_date) FROM exchange_rate")
     LocalDate findMinExchangeDate();
