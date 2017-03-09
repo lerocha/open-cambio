@@ -24,10 +24,10 @@ public class ScheduledTasks {
 
     /**
      * Scheduled task to refresh exchange rates.
-     * ECB usually updates exchange rates around 16:00 CET (07:00 PST) on every working day, except on TARGET closing days.
+     * ECB usually updates exchange rates around 16:00 CET on every working day, except on TARGET closing days.
      * Source: http://www.ecb.europa.eu/stats/policy_and_exchange_rates/euro_reference_exchange_rates/html/index.en.html
      */
-    @Scheduled(cron = "0 30 7 * * *")
+    @Scheduled(cron = "0 30 16 * * *")
     public void refreshExchangeRatesTask() {
         try {
             exchangeRateService.refreshExchangeRates();
