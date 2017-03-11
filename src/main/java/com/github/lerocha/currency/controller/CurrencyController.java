@@ -59,7 +59,7 @@ public class CurrencyController {
                                                             @RequestParam(name = "endDate", required = false) String endDate) {
         LocalDate localDateStart = safeParse(startDate);
         LocalDate localDateEnd = safeParse(endDate);
-        List<Rate> rates = currencyService.getCurrencyRates(localDateStart, localDateEnd, code);
+        List<Rate> rates = currencyService.getCurrencyRates(code, localDateStart, localDateEnd);
         ControllerLinkBuilder builder = linkTo(methodOn(CurrencyController.class).getCurrencyRates(startDate, endDate, code));
         Resources<Rate> resources = new Resources<>(rates, builder.withSelfRel());
         return ResponseEntity.ok(resources);
@@ -72,7 +72,7 @@ public class CurrencyController {
         if (localDate == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        Rate rate = currencyService.getCurrencyRatesByDate(localDate, code);
+        Rate rate = currencyService.getCurrencyRatesByDate(code, localDate);
         ControllerLinkBuilder builder = linkTo(methodOn(CurrencyController.class).getCurrencyRatesByDate(date, code));
         HttpHeaders headers = new HttpHeaders();
         headers.setLocation(builder.toUri());

@@ -16,9 +16,9 @@ public interface CurrencyService {
 
     Currency getCurrency(String code, Locale locale);
 
-    List<Rate> getCurrencyRates(LocalDate startDate, LocalDate endDate, String base);
+    List<Rate> getCurrencyRates(String code, LocalDate startDate, LocalDate endDate);
 
-    Rate getCurrencyRatesByDate(LocalDate date, String base);
+    Rate getCurrencyRatesByDate(String code, LocalDate date);
 
     Rate getLatestCurrencyRates(String base);
 

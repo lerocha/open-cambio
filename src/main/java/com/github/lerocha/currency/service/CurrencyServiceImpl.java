@@ -72,7 +72,7 @@ public class CurrencyServiceImpl implements CurrencyService {
     }
 
     @Override
-    public List<Rate> getCurrencyRates(LocalDate startDate, LocalDate endDate, String base) {
+    public List<Rate> getCurrencyRates(String code, LocalDate startDate, LocalDate endDate) {
         List<Rate> rates = new ArrayList<>();
         if (startDate == null) {
             startDate = exchangeRateRepository.findMinExchangeDate();
@@ -87,45 +87,45 @@ public class CurrencyServiceImpl implements CurrencyService {
             if (date == null) {
                 date = exchangeRate.getExchangeDate();
             } else if (!date.equals(exchangeRate.getExchangeDate())) {
-                rates.add(getCurrencyRatesByDate(date, base, exchangeRates));
+                rates.add(getCurrencyRatesByDate(code, date, exchangeRates));
                 exchangeRates.clear();
                 date = exchangeRate.getExchangeDate();
             }
             exchangeRates.add(exchangeRate);
         }
         if (exchangeRates.size() > 0) {
-            rates.add(getCurrencyRatesByDate(date, base, exchangeRates));
+            rates.add(getCurrencyRatesByDate(code, date, exchangeRates));
         }
 
-        logger.info("getCurrencyRates; startDate={}; endDate={}; base={}; total={}", startDate, endDate, base, rates.size());
+        logger.info("getCurrencyRates; code={}; startDate={}; endDate={}; total={}", code, startDate, endDate, rates.size());
         return rates;
     }
 
     @Override
-    public Rate getCurrencyRatesByDate(LocalDate date, String base) {
+    public Rate getCurrencyRatesByDate(String code, LocalDate date) {
         Assert.notNull(date);
         List<ExchangeRate> exchangeRates = exchangeRateRepository.findByExchangeDateOrderByCurrencyCode(date);
-        logger.info("getCurrencyRatesByDate; date={}; base={}", date, base);
-        return getCurrencyRatesByDate(date, base, exchangeRates);
+        logger.info("getCurrencyRatesByDate; code={}; date={}", code, date);
+        return getCurrencyRatesByDate(code, date, exchangeRates);
     }
 
     @Override
-    public Rate getLatestCurrencyRates(String base) {
+    public Rate getLatestCurrencyRates(String code) {
         LocalDate date = exchangeRateRepository.findMaxExchangeDate();
         if (date == null) {
             return null;
         }
-        return getCurrencyRatesByDate(date, base);
+        return getCurrencyRatesByDate(code, date);
     }
 
-    private Rate getCurrencyRatesByDate(LocalDate date, String base, List<ExchangeRate> rates) {
+    private Rate getCurrencyRatesByDate(String code, LocalDate date, List<ExchangeRate> rates) {
         Assert.notNull(date);
         Assert.notNull(rates);
-        Rate rate = new Rate(date, base != null ? base : BASE_CURRENCY.getCode());
+        Rate rate = new Rate(date, code != null ? code : BASE_CURRENCY.getCode());
         BigDecimal baseRate = null;
         for (ExchangeRate exchangeRate : rates.stream().sorted(Comparator.comparing(o -> o.getCurrency().getCode())).collect(Collectors.toList())) {
             rate.getRates().put(exchangeRate.getCurrency().getCode(), exchangeRate.getExchangeRate());
-            if (exchangeRate.getCurrency().getCode().equalsIgnoreCase(base)) {
+            if (exchangeRate.getCurrency().getCode().equalsIgnoreCase(code)) {
                 baseRate = exchangeRate.getExchangeRate();
             }
         }
