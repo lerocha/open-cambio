@@ -8,15 +8,15 @@ import java.util.Map;
 /**
  * Created by lerocha on 2/14/17.
  */
-public class HistoricalExchangeRate {
+public class Rate {
     private LocalDate date;
     private String base;
     private Map<String, BigDecimal> rates = new LinkedHashMap<>();
 
-    public HistoricalExchangeRate() {
+    public Rate() {
     }
 
-    public HistoricalExchangeRate(LocalDate date, String base) {
+    public Rate(LocalDate date, String base) {
         this.date = date;
         this.base = base;
     }

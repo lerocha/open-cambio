@@ -1,7 +1,7 @@
 package com.github.lerocha.currency.controller;
 
 import com.github.lerocha.currency.domain.Currency;
-import com.github.lerocha.currency.dto.HistoricalExchangeRate;
+import com.github.lerocha.currency.dto.Rate;
 import com.github.lerocha.currency.service.ExchangeRateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Resource;
@@ -54,39 +54,39 @@ public class CurrencyController {
     }
 
     @GetMapping(path = "{code}/rates")
-    public ResponseEntity<Resources<HistoricalExchangeRate>> getCurrencyRates(@PathVariable(name = "code") String code,
-                                                                              @RequestParam(name = "startDate", required = false) String startDate,
-                                                                              @RequestParam(name = "endDate", required = false) String endDate) {
+    public ResponseEntity<Resources<Rate>> getCurrencyRates(@PathVariable(name = "code") String code,
+                                                            @RequestParam(name = "startDate", required = false) String startDate,
+                                                            @RequestParam(name = "endDate", required = false) String endDate) {
         LocalDate localDateStart = safeParse(startDate);
         LocalDate localDateEnd = safeParse(endDate);
-        List<HistoricalExchangeRate> historicalExchangeRates = exchangeRateService.getHistoricalExchangeRates(localDateStart, localDateEnd, code);
+        List<Rate> rates = exchangeRateService.getCurrencyRates(localDateStart, localDateEnd, code);
         ControllerLinkBuilder builder = linkTo(methodOn(CurrencyController.class).getCurrencyRates(startDate, endDate, code));
-        Resources<HistoricalExchangeRate> resources = new Resources<>(historicalExchangeRates, builder.withSelfRel());
+        Resources<Rate> resources = new Resources<>(rates, builder.withSelfRel());
         return ResponseEntity.ok(resources);
     }
 
     @GetMapping(path = "{code}/rates/{date}")
-    public ResponseEntity<Resource<HistoricalExchangeRate>> getCurrencyRatesByDate(@PathVariable(name = "code") String code,
-                                                                                   @PathVariable(name = "date") String date) {
+    public ResponseEntity<Resource<Rate>> getCurrencyRatesByDate(@PathVariable(name = "code") String code,
+                                                                 @PathVariable(name = "date") String date) {
         LocalDate localDate = safeParse(date);
         if (localDate == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        HistoricalExchangeRate historicalExchangeRate = exchangeRateService.getHistoricalExchangeRate(localDate, code);
+        Rate rate = exchangeRateService.getCurrencyRatesByDate(localDate, code);
         ControllerLinkBuilder builder = linkTo(methodOn(CurrencyController.class).getCurrencyRatesByDate(date, code));
         HttpHeaders headers = new HttpHeaders();
         headers.setLocation(builder.toUri());
-        Resource<HistoricalExchangeRate> resource = new Resource(historicalExchangeRate, builder.withSelfRel());
+        Resource<Rate> resource = new Resource(rate, builder.withSelfRel());
         return new ResponseEntity<>(resource, headers, HttpStatus.OK);
     }
 
     @GetMapping(path = "{code}/rates/latest")
-    public ResponseEntity<Resource<HistoricalExchangeRate>> getCurrencyLatestRates(@PathVariable(name = "code") String code) {
-        HistoricalExchangeRate historicalExchangeRate = exchangeRateService.getLatestExchangeRate(code);
+    public ResponseEntity<Resource<Rate>> getCurrencyLatestRates(@PathVariable(name = "code") String code) {
+        Rate rate = exchangeRateService.getLatestCurrencyRates(code);
         ControllerLinkBuilder builder = linkTo(methodOn(CurrencyController.class).getCurrencyLatestRates(code));
         HttpHeaders headers = new HttpHeaders();
         headers.setLocation(builder.toUri());
-        Resource<HistoricalExchangeRate> resource = new Resource(historicalExchangeRate, builder.withSelfRel());
+        Resource<Rate> resource = new Resource(rate, builder.withSelfRel());
         return new ResponseEntity<>(resource, headers, HttpStatus.OK);
     }
 

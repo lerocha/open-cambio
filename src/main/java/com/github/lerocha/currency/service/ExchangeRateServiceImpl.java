@@ -6,7 +6,7 @@ import com.github.lerocha.currency.client.ecb.dto.DailyExchangeRate;
 import com.github.lerocha.currency.client.ecb.dto.ExchangeRatesResponse;
 import com.github.lerocha.currency.domain.Currency;
 import com.github.lerocha.currency.domain.ExchangeRate;
-import com.github.lerocha.currency.dto.HistoricalExchangeRate;
+import com.github.lerocha.currency.dto.Rate;
 import com.github.lerocha.currency.repository.CurrencyRepository;
 import com.github.lerocha.currency.repository.ExchangeRateRepository;
 import org.slf4j.Logger;
@@ -46,71 +46,71 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
     }
 
     @Override
-    public HistoricalExchangeRate getLatestExchangeRate(String base) {
+    public Rate getLatestCurrencyRates(String base) {
         LocalDate date = exchangeRateRepository.findMaxExchangeDate();
         if (date == null) {
             return null;
         }
 
-        return getHistoricalExchangeRate(date, base);
+        return getCurrencyRatesByDate(date, base);
     }
 
     @Override
-    public HistoricalExchangeRate getHistoricalExchangeRate(LocalDate date, String base) {
+    public Rate getCurrencyRatesByDate(LocalDate date, String base) {
         Assert.notNull(date);
-        List<ExchangeRate> rates = exchangeRateRepository.findByExchangeDateOrderByCurrencyCode(date);
-        logger.info("getHistoricalExchangeRate; date={}; base={}", date, base);
-        return getHistoricalExchangeRate(date, base, rates);
+        List<ExchangeRate> exchangeRates = exchangeRateRepository.findByExchangeDateOrderByCurrencyCode(date);
+        logger.info("getCurrencyRatesByDate; date={}; base={}", date, base);
+        return getCurrencyRatesByDate(date, base, exchangeRates);
     }
 
-    private HistoricalExchangeRate getHistoricalExchangeRate(LocalDate date, String base, List<ExchangeRate> rates) {
+    private Rate getCurrencyRatesByDate(LocalDate date, String base, List<ExchangeRate> rates) {
         Assert.notNull(date);
         Assert.notNull(rates);
-        HistoricalExchangeRate historicalExchangeRate = new HistoricalExchangeRate(date, base != null ? base : BASE_CURRENCY.getCode());
+        Rate rate = new Rate(date, base != null ? base : BASE_CURRENCY.getCode());
         BigDecimal baseRate = null;
-        for (ExchangeRate rate : rates.stream().sorted(Comparator.comparing(o -> o.getCurrency().getCode())).collect(Collectors.toList())) {
-            historicalExchangeRate.getRates().put(rate.getCurrency().getCode(), rate.getExchangeRate());
-            if (rate.getCurrency().getCode().equalsIgnoreCase(base)) {
-                baseRate = rate.getExchangeRate();
+        for (ExchangeRate exchangeRate : rates.stream().sorted(Comparator.comparing(o -> o.getCurrency().getCode())).collect(Collectors.toList())) {
+            rate.getRates().put(exchangeRate.getCurrency().getCode(), exchangeRate.getExchangeRate());
+            if (exchangeRate.getCurrency().getCode().equalsIgnoreCase(base)) {
+                baseRate = exchangeRate.getExchangeRate();
             }
         }
 
         if (baseRate != null) {
-            for (Map.Entry<String, BigDecimal> entry : historicalExchangeRate.getRates().entrySet()) {
+            for (Map.Entry<String, BigDecimal> entry : rate.getRates().entrySet()) {
                 entry.setValue(entry.getValue().divide(baseRate, baseRate.scale(), BigDecimal.ROUND_CEILING));
             }
         }
-        return historicalExchangeRate;
+        return rate;
     }
 
     @Override
-    public List<HistoricalExchangeRate> getHistoricalExchangeRates(LocalDate startDate, LocalDate endDate, String base) {
-        List<HistoricalExchangeRate> historicalExchangeRates = new ArrayList<>();
+    public List<Rate> getCurrencyRates(LocalDate startDate, LocalDate endDate, String base) {
+        List<Rate> rates = new ArrayList<>();
         if (startDate == null) {
             startDate = exchangeRateRepository.findMinExchangeDate();
         }
         if (endDate == null) {
             endDate = exchangeRateRepository.findMaxExchangeDate();
         }
-        List<ExchangeRate> allRates = exchangeRateRepository.findByExchangeDateBetweenOrderByExchangeDate(startDate, endDate);
-        List<ExchangeRate> rates = new ArrayList<>();
+        List<ExchangeRate> allExchangeRates = exchangeRateRepository.findByExchangeDateBetweenOrderByExchangeDate(startDate, endDate);
+        List<ExchangeRate> exchangeRates = new ArrayList<>();
         LocalDate date = null;
-        for (ExchangeRate rate : allRates) {
+        for (ExchangeRate exchangeRate : allExchangeRates) {
             if (date == null) {
-                date = rate.getExchangeDate();
-            } else if (!date.equals(rate.getExchangeDate())) {
-                historicalExchangeRates.add(getHistoricalExchangeRate(date, base, rates));
-                rates.clear();
-                date = rate.getExchangeDate();
+                date = exchangeRate.getExchangeDate();
+            } else if (!date.equals(exchangeRate.getExchangeDate())) {
+                rates.add(getCurrencyRatesByDate(date, base, exchangeRates));
+                exchangeRates.clear();
+                date = exchangeRate.getExchangeDate();
             }
-            rates.add(rate);
+            exchangeRates.add(exchangeRate);
         }
-        if (rates.size() > 0) {
-            historicalExchangeRates.add(getHistoricalExchangeRate(date, base, rates));
+        if (exchangeRates.size() > 0) {
+            rates.add(getCurrencyRatesByDate(date, base, exchangeRates));
         }
 
-        logger.info("getHistoricalExchangeRates; startDate={}; endDate={}; base={}; total={}", startDate, endDate, base, historicalExchangeRates.size());
-        return historicalExchangeRates;
+        logger.info("getCurrencyRates; startDate={}; endDate={}; base={}; total={}", startDate, endDate, base, rates.size());
+        return rates;
     }
 
     @Override
