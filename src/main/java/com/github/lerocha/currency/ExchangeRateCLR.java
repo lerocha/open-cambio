@@ -1,6 +1,6 @@
 package com.github.lerocha.currency;
 
-import com.github.lerocha.currency.service.ExchangeRateService;
+import com.github.lerocha.currency.service.CurrencyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -11,15 +11,15 @@ import org.springframework.stereotype.Component;
 @Component
 public class ExchangeRateCLR implements CommandLineRunner {
 
-    private final ExchangeRateService exchangeRateService;
+    private final CurrencyService currencyService;
 
     @Autowired
-    public ExchangeRateCLR(ExchangeRateService exchangeRateService) {
-        this.exchangeRateService = exchangeRateService;
+    public ExchangeRateCLR(CurrencyService currencyService) {
+        this.currencyService = currencyService;
     }
 
     @Override
     public void run(String... strings) throws Exception {
-        exchangeRateService.refreshExchangeRates();
+        currencyService.refreshExchangeRates();
     }
 }

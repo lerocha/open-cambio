@@ -27,9 +27,9 @@ import java.util.stream.Collectors;
  * Created by lerocha on 2/1/17.
  */
 @Service
-public class ExchangeRateServiceImpl implements ExchangeRateService {
+public class CurrencyServiceImpl implements CurrencyService {
 
-    private static final Logger logger = LoggerFactory.getLogger(ExchangeRateService.class);
+    private static final Logger logger = LoggerFactory.getLogger(CurrencyService.class);
     private static final Currency BASE_CURRENCY = new Currency("EUR", null, LocalDate.parse("1999-01-04"), LocalDate.now());
 
     private final CurrencyRepository currencyRepository;
@@ -37,9 +37,9 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
     private final EcbClient ecbClient;
 
     @Autowired
-    public ExchangeRateServiceImpl(ExchangeRateRepository exchangeRateRepository,
-                                   CurrencyRepository currencyRepository,
-                                   EcbClient ecbClient) {
+    public CurrencyServiceImpl(ExchangeRateRepository exchangeRateRepository,
+                               CurrencyRepository currencyRepository,
+                               EcbClient ecbClient) {
         this.exchangeRateRepository = exchangeRateRepository;
         this.currencyRepository = currencyRepository;
         this.ecbClient = ecbClient;
@@ -115,7 +115,6 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
         if (date == null) {
             return null;
         }
-
         return getCurrencyRatesByDate(date, base);
     }
 

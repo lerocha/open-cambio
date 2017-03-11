@@ -2,7 +2,7 @@ package com.github.lerocha.currency.controller;
 
 import com.github.lerocha.currency.domain.Currency;
 import com.github.lerocha.currency.dto.Rate;
-import com.github.lerocha.currency.service.ExchangeRateService;
+import com.github.lerocha.currency.service.CurrencyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.Resources;
@@ -26,23 +26,23 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 @RequestMapping(path = "v1/currencies")
 public class CurrencyController {
 
-    private final ExchangeRateService exchangeRateService;
+    private final CurrencyService currencyService;
 
     @Autowired
-    public CurrencyController(ExchangeRateService exchangeRateService) {
-        this.exchangeRateService = exchangeRateService;
+    public CurrencyController(CurrencyService currencyService) {
+        this.currencyService = currencyService;
     }
 
     @GetMapping
     public ResponseEntity<Resources<Currency>> getAvailableCurrencies(@RequestParam(name = "locale", required = false) Locale locale) {
-        List<Currency> currencies = exchangeRateService.getCurrencies(locale);
+        List<Currency> currencies = currencyService.getCurrencies(locale);
         return ResponseEntity.ok(new Resources<>(currencies, linkTo(methodOn(CurrencyController.class).getAvailableCurrencies(locale)).withSelfRel()));
     }
 
     @GetMapping(path = "{code}")
     public ResponseEntity<Resource<Currency>> getCurrency(@PathVariable(name = "code") String code,
                                                           @RequestParam(name = "locale", required = false) Locale locale) {
-        Currency currency = exchangeRateService.getCurrency(code, locale);
+        Currency currency = currencyService.getCurrency(code, locale);
         if (currency == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -59,7 +59,7 @@ public class CurrencyController {
                                                             @RequestParam(name = "endDate", required = false) String endDate) {
         LocalDate localDateStart = safeParse(startDate);
         LocalDate localDateEnd = safeParse(endDate);
-        List<Rate> rates = exchangeRateService.getCurrencyRates(localDateStart, localDateEnd, code);
+        List<Rate> rates = currencyService.getCurrencyRates(localDateStart, localDateEnd, code);
         ControllerLinkBuilder builder = linkTo(methodOn(CurrencyController.class).getCurrencyRates(startDate, endDate, code));
         Resources<Rate> resources = new Resources<>(rates, builder.withSelfRel());
         return ResponseEntity.ok(resources);
@@ -72,7 +72,7 @@ public class CurrencyController {
         if (localDate == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        Rate rate = exchangeRateService.getCurrencyRatesByDate(localDate, code);
+        Rate rate = currencyService.getCurrencyRatesByDate(localDate, code);
         ControllerLinkBuilder builder = linkTo(methodOn(CurrencyController.class).getCurrencyRatesByDate(date, code));
         HttpHeaders headers = new HttpHeaders();
         headers.setLocation(builder.toUri());
@@ -82,7 +82,7 @@ public class CurrencyController {
 
     @GetMapping(path = "{code}/rates/latest")
     public ResponseEntity<Resource<Rate>> getCurrencyLatestRates(@PathVariable(name = "code") String code) {
-        Rate rate = exchangeRateService.getLatestCurrencyRates(code);
+        Rate rate = currencyService.getLatestCurrencyRates(code);
         ControllerLinkBuilder builder = linkTo(methodOn(CurrencyController.class).getCurrencyLatestRates(code));
         HttpHeaders headers = new HttpHeaders();
         headers.setLocation(builder.toUri());

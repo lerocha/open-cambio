@@ -1,6 +1,6 @@
 package com.github.lerocha.currency.scheduled;
 
-import com.github.lerocha.currency.service.ExchangeRateService;
+import com.github.lerocha.currency.service.CurrencyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,11 +15,11 @@ public class ScheduledTasks {
 
     private static final Logger log = LoggerFactory.getLogger(ScheduledTasks.class);
 
-    private final ExchangeRateService exchangeRateService;
+    private final CurrencyService currencyService;
 
     @Autowired
-    public ScheduledTasks(ExchangeRateService exchangeRateService) {
-        this.exchangeRateService = exchangeRateService;
+    public ScheduledTasks(CurrencyService currencyService) {
+        this.currencyService = currencyService;
     }
 
     /**
@@ -30,7 +30,7 @@ public class ScheduledTasks {
     @Scheduled(cron = "0 30 16 * * *")
     public void refreshExchangeRatesTask() {
         try {
-            exchangeRateService.refreshExchangeRates();
+            currencyService.refreshExchangeRates();
             log.info("refreshExchangeRatesTask; status=completed");
         } catch (Exception e) {
             log.error("refreshExchangeRatesTask; status=failed", e);

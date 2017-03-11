@@ -1,6 +1,6 @@
 package com.github.lerocha.currency;
 
-import com.github.lerocha.currency.service.ExchangeRateService;
+import com.github.lerocha.currency.service.CurrencyService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,10 +14,10 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SpringBootTest
 public class ExchangeRateServiceTests {
     @Autowired
-    private ExchangeRateService exchangeRateService;
+    private CurrencyService currencyService;
 
     @Test
     public void refreshExchangeRates() {
-        exchangeRateService.refreshExchangeRates();
+        currencyService.refreshExchangeRates();
     }
 }

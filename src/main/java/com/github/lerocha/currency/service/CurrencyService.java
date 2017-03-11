@@ -11,7 +11,7 @@ import java.util.Locale;
 /**
  * Created by lerocha on 2/1/17.
  */
-public interface ExchangeRateService {
+public interface CurrencyService {
     List<Currency> getCurrencies(Locale locale);
 
     Currency getCurrency(String code, Locale locale);
