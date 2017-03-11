@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Locale;
@@ -34,19 +35,21 @@ public class CurrencyController {
     }
 
     @GetMapping
-    public ResponseEntity<Resources<Currency>> getAvailableCurrencies(@RequestParam(name = "locale", required = false) Locale locale) {
+    public ResponseEntity<Resources<Currency>> getCurrencies(HttpServletRequest request) {
+        Locale locale = getLocaleFromRequest(request);
         List<Currency> currencies = currencyService.getCurrencies(locale);
-        return ResponseEntity.ok(new Resources<>(currencies, linkTo(methodOn(CurrencyController.class).getAvailableCurrencies(locale)).withSelfRel()));
+        return ResponseEntity.ok(new Resources<>(currencies, linkTo(methodOn(CurrencyController.class).getCurrencies(request)).withSelfRel()));
     }
 
     @GetMapping(path = "{code}")
-    public ResponseEntity<Resource<Currency>> getCurrency(@PathVariable(name = "code") String code,
-                                                          @RequestParam(name = "locale", required = false) Locale locale) {
+    public ResponseEntity<Resource<Currency>> getCurrency(HttpServletRequest request,
+                                                          @PathVariable(name = "code") String code) {
+        Locale locale = getLocaleFromRequest(request);
         Currency currency = currencyService.getCurrency(code, locale);
         if (currency == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        ControllerLinkBuilder builder = linkTo(methodOn(CurrencyController.class).getCurrency(code, locale));
+        ControllerLinkBuilder builder = linkTo(methodOn(CurrencyController.class).getCurrency(request, code));
         HttpHeaders headers = new HttpHeaders();
         headers.setLocation(builder.toUri());
         Resource<Currency> resource = new Resource<>(currency, builder.withSelfRel());
@@ -88,6 +91,14 @@ public class CurrencyController {
         headers.setLocation(builder.toUri());
         Resource<Rate> resource = new Resource(rate, builder.withSelfRel());
         return new ResponseEntity<>(resource, headers, HttpStatus.OK);
+    }
+
+    private static Locale getLocaleFromRequest(HttpServletRequest request) {
+        String acceptLanguage = request.getHeader("Accept-Language");
+        if (acceptLanguage != null) {
+            return Locale.forLanguageTag(acceptLanguage);
+        }
+        return null;
     }
 
     private static LocalDate safeParse(String date) {
