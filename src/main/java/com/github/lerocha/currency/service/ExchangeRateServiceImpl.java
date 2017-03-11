@@ -114,21 +114,19 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
     }
 
     @Override
-    public List<Currency> getAvailableCurrencies(Locale locale) {
-        Assert.notNull(locale);
-
+    public List<Currency> getCurrencies(Locale locale) {
         List<Currency> currencies = new ArrayList<>();
         List<Object[]> results = exchangeRateRepository.findAvailableCurrencies();
         for (Object[] result : results) {
             String currencyCode = (String) result[0];
-            Currency currency = new Currency(currencyCode, java.util.Currency.getInstance(currencyCode).getDisplayName(locale));
+            Currency currency = new Currency(currencyCode, java.util.Currency.getInstance(currencyCode).getDisplayName(locale != null ? locale : Locale.US));
             Date startDate = (Date) result[1];
             currency.setStartDate(startDate.toLocalDate());
             Date endDate = (Date) result[2];
             currency.setEndDate(endDate.toLocalDate());
             currencies.add(currency);
         }
-        logger.info("getAvailableCurrencies; locale={}; total={}", locale, currencies.size());
+        logger.info("getCurrencies; locale={}; total={}", locale, currencies.size());
         return currencies.stream().sorted(Comparator.comparing(Currency::getCode)).collect(Collectors.toList());
     }
 

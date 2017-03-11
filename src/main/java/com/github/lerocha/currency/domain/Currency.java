@@ -33,6 +33,10 @@ public class Currency extends AbstractEntity implements Serializable {
         this.endDate = endDate;
     }
 
+    public String getCurrencyCode() {
+        return code;
+    }
+
     public String getCode() {
         return code;
     }

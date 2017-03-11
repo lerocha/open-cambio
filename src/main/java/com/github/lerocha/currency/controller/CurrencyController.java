@@ -34,14 +34,14 @@ public class CurrencyController {
     }
 
     @GetMapping
-    public ResponseEntity<Resources<Currency>> getAvailableCurrencies(@RequestParam(name = "locale", required = false, defaultValue = "en_US") Locale locale) {
-        List<Currency> currencies = exchangeRateService.getAvailableCurrencies(locale);
+    public ResponseEntity<Resources<Currency>> getAvailableCurrencies(@RequestParam(name = "locale", required = false) Locale locale) {
+        List<Currency> currencies = exchangeRateService.getCurrencies(locale);
         return ResponseEntity.ok(new Resources<>(currencies, linkTo(methodOn(CurrencyController.class).getAvailableCurrencies(locale)).withSelfRel()));
     }
 
     @GetMapping(path = "{code}")
     public ResponseEntity<Resource<Currency>> getCurrency(@PathVariable(name = "code") String code,
-                                                          @RequestParam(name = "locale", required = false, defaultValue = "en_US") Locale locale) {
+                                                          @RequestParam(name = "locale", required = false) Locale locale) {
         Currency currency = exchangeRateService.getCurrency(code, locale);
         if (currency == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -60,8 +60,9 @@ public class CurrencyController {
         LocalDate localDateStart = safeParse(startDate);
         LocalDate localDateEnd = safeParse(endDate);
         List<HistoricalExchangeRate> historicalExchangeRates = exchangeRateService.getHistoricalExchangeRates(localDateStart, localDateEnd, code);
-        return ResponseEntity.ok(new Resources<>(historicalExchangeRates,
-                linkTo(methodOn(CurrencyController.class).getCurrencyRates(startDate, endDate, code)).withSelfRel()));
+        ControllerLinkBuilder builder = linkTo(methodOn(CurrencyController.class).getCurrencyRates(startDate, endDate, code));
+        Resources<HistoricalExchangeRate> resources = new Resources<>(historicalExchangeRates, builder.withSelfRel());
+        return ResponseEntity.ok(resources);
     }
 
     @GetMapping(path = "{code}/rates/{date}")

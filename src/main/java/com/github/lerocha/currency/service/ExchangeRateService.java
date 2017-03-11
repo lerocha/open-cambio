@@ -18,7 +18,7 @@ public interface ExchangeRateService {
 
     List<HistoricalExchangeRate> getHistoricalExchangeRates(LocalDate startDate, LocalDate endDate, String base);
 
-    List<Currency> getAvailableCurrencies(Locale locale);
+    List<Currency> getCurrencies(Locale locale);
 
     Currency getCurrency(String code, Locale locale);
 
