@@ -10,8 +10,10 @@ import org.springframework.data.rest.core.annotation.RestResource;
 /**
  * Created by lerocha on 2/25/17.
  */
-@RepositoryRestResource
+@RepositoryRestResource(exported = false)
 public interface CurrencyRepository extends JpaRepository<Currency, String> {
+    Currency findByCode(String code);
+
     @RestResource(exported = false)
     @Modifying
     @Query(nativeQuery = true, value = "UPDATE currency c CROSS JOIN " +

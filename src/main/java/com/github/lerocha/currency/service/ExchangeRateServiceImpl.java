@@ -133,6 +133,15 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
     }
 
     @Override
+    public Currency getCurrency(String code, Locale locale) {
+        Currency currency = currencyRepository.findByCode(code);
+        if (currency != null) {
+            currency.setDisplayName(java.util.Currency.getInstance(code).getDisplayName(locale != null ? locale : Locale.US));
+        }
+        return currency;
+    }
+
+    @Override
     @Transactional
     public List<ExchangeRate> refreshExchangeRates() {
         LocalDate lastRefresh = exchangeRateRepository.findMaxExchangeDate();

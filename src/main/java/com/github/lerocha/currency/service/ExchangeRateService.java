@@ -20,5 +20,7 @@ public interface ExchangeRateService {
 
     List<Currency> getAvailableCurrencies(Locale locale);
 
+    Currency getCurrency(String code, Locale locale);
+
     List<ExchangeRate> refreshExchangeRates();
 }
