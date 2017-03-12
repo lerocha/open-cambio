@@ -18,14 +18,17 @@ GET /v1/currencies/{code}
 ```
 * Currency code is in the [ISO 4217 format.](https://www.iso.org/iso-4217-currency-codes.html)
 
-Sample Response:
+Example:
+```
+curl http://txcamb.io/v1/currencies/USD
+```
 ```
 {
-  "displayName": "US Dollar",
-  "startDate": "1999-01-04",
-  "endDate": "2017-03-10",
-  "currencyCode": "USD",
-  "_links": {
+  "displayName" : "US Dollar",
+  "startDate" : null,
+  "endDate" : null,
+  "currencyCode" : "USD",
+  "_links" : {
     "self": {
       "href": "http://txcamb.io/v1/currencies/USD"
     }
@@ -46,7 +49,10 @@ GET /v1/currencies/{code}/rates/{date}
 ```
 * Exchange rates are based on the currency specified by `code`.
 
-Sample Response:
+Example:
+```
+curl http://txcamb.io/v1/currencies/USD/2017-03-10
+```
 ```
 {
     "date": "2017-03-10",
@@ -87,7 +93,7 @@ Sample Response:
     },
     "_links": {
         "self": {
-            "href": "http://txcamb.io/v1/currencies/USD/rates/latest"
+            "href": "http://txcamb.io/v1/currencies/USD/rates/2017-03-10"
         }
     }
 }
