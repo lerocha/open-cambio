@@ -20,7 +20,7 @@ GET /v1/currencies/{code}
 
 Example:
 ```
-curl http://txcamb.io/v1/currencies/USD
+curl http://api.txcamb.io/v1/currencies/USD
 ```
 ```
 {
@@ -30,7 +30,7 @@ curl http://txcamb.io/v1/currencies/USD
   "currencyCode" : "USD",
   "_links" : {
     "self": {
-      "href": "http://txcamb.io/v1/currencies/USD"
+      "href": "http://api.txcamb.io/v1/currencies/USD"
     }
   }
 }
@@ -51,7 +51,7 @@ GET /v1/currencies/{code}/rates/{date}
 
 Example:
 ```
-curl http://txcamb.io/v1/currencies/USD/2017-03-10
+curl http://api.txcamb.io/v1/currencies/USD/2017-03-10
 ```
 ```
 {
@@ -93,7 +93,7 @@ curl http://txcamb.io/v1/currencies/USD/2017-03-10
     },
     "_links": {
         "self": {
-            "href": "http://txcamb.io/v1/currencies/USD/rates/2017-03-10"
+            "href": "http://api.txcamb.io/v1/currencies/USD/rates/2017-03-10"
         }
     }
 }
