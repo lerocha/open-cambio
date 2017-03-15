@@ -20,17 +20,17 @@ GET /v1/currencies/{code}
 
 Example:
 ```
-curl http://api.txcamb.io/v1/currencies/USD
+curl http://api.txcamb.io/v1/currencies/CAD
 ```
 ```
 {
-  "displayName" : "US Dollar",
-  "startDate" : null,
-  "endDate" : null,
-  "currencyCode" : "USD",
-  "_links" : {
+  "displayName": "Canadian Dollar",
+  "startDate": "1999-01-04",
+  "endDate": "2017-03-14",
+  "currencyCode": "CAD",
+  "_links": {
     "self": {
-      "href": "http://api.txcamb.io/v1/currencies/USD"
+      "href": "http://api.txcamb.io/v1/currencies/CAD"
     }
   }
 }
