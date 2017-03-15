@@ -61,15 +61,16 @@ public class CurrencyController {
     }
 
     @GetMapping(path = "{code}/rates")
-    public ResponseEntity<Resources<Rate>> getCurrencyRates(@PathVariable(name = "code") String code,
-                                                            @RequestParam(name = "startDate", required = false) String startDate,
-                                                            @RequestParam(name = "endDate", required = false) String endDate) {
+    public ResponseEntity<Resources<Resource<Rate>>> getCurrencyRates(@PathVariable(name = "code") String code,
+                                                                      @RequestParam(name = "startDate", required = false) String startDate,
+                                                                      @RequestParam(name = "endDate", required = false) String endDate) {
         LocalDate localDateStart = safeParse(startDate);
         LocalDate localDateEnd = safeParse(endDate);
-        List<Rate> rates = currencyService.getCurrencyRates(code, localDateStart, localDateEnd);
-        ControllerLinkBuilder builder = linkTo(methodOn(CurrencyController.class).getCurrencyRates(startDate, endDate, code));
-        Resources<Rate> resources = new Resources<>(rates, builder.withSelfRel());
-        return ResponseEntity.ok(resources);
+        List<Resource<Rate>> rates = currencyService.getCurrencyRates(code, localDateStart, localDateEnd)
+                .stream()
+                .map(rate -> new Resource<>(rate, linkTo(methodOn(CurrencyController.class).getCurrencyRatesByDate(code, rate.getDate().toString())).withSelfRel()))
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(new Resources<>(rates, linkTo(methodOn(CurrencyController.class).getCurrencyRates(code, startDate, endDate)).withSelfRel()));
     }
 
     @GetMapping(path = "{code}/rates/{date}")
