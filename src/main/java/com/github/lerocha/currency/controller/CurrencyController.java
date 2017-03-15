@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
@@ -35,9 +36,12 @@ public class CurrencyController {
     }
 
     @GetMapping
-    public ResponseEntity<Resources<Currency>> getCurrencies(HttpServletRequest request) {
+    public ResponseEntity<Resources<Resource<Currency>>> getCurrencies(HttpServletRequest request) {
         Locale locale = getLocaleFromRequest(request);
-        List<Currency> currencies = currencyService.getCurrencies(locale);
+        List<Resource<Currency>> currencies = currencyService.getCurrencies(locale)
+                .stream()
+                .map(currency -> new Resource<>(currency, linkTo(methodOn(CurrencyController.class).getCurrency(request, currency.getCode())).withSelfRel()))
+                .collect(Collectors.toList());
         return ResponseEntity.ok(new Resources<>(currencies, linkTo(methodOn(CurrencyController.class).getCurrencies(request)).withSelfRel()));
     }
 
