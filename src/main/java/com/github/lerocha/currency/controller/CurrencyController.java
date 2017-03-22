@@ -104,14 +104,14 @@ public class CurrencyController {
 
         // Create HATEOS links
         List<Link> links = new ArrayList<>();
-        links.add(linkTo(methodOn(CurrencyController.class).getCurrencyRates(code, startDate, endDate, page)).withSelfRel());
-        links.add(linkTo(methodOn(CurrencyController.class).getCurrencyRates(code, startDate, endDate, 0)).withRel("first"));
-        links.add(linkTo(methodOn(CurrencyController.class).getCurrencyRates(code, startDate, endDate, months)).withRel("last"));
+        links.add(linkTo(methodOn(CurrencyController.class).getCurrencyRates(code, localDateStart.toString(), localDateEnd.toString(), page)).withSelfRel());
+        links.add(linkTo(methodOn(CurrencyController.class).getCurrencyRates(code, localDateStart.toString(), localDateEnd.toString(), 0)).withRel("first"));
+        links.add(linkTo(methodOn(CurrencyController.class).getCurrencyRates(code, localDateStart.toString(), localDateEnd.toString(), months)).withRel("last"));
         if (page > 0) {
-            links.add(linkTo(methodOn(CurrencyController.class).getCurrencyRates(code, startDate, endDate, page - 1)).withRel("prev"));
+            links.add(linkTo(methodOn(CurrencyController.class).getCurrencyRates(code, localDateStart.toString(), localDateEnd.toString(), page - 1)).withRel("prev"));
         }
         if (page < months) {
-            links.add(linkTo(methodOn(CurrencyController.class).getCurrencyRates(code, startDate, endDate, page + 1)).withRel("next"));
+            links.add(linkTo(methodOn(CurrencyController.class).getCurrencyRates(code, localDateStart.toString(), localDateEnd.toString(), page + 1)).withRel("next"));
         }
 
         return ResponseEntity.ok(new Resources<>(rates, links));
