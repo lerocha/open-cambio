@@ -19,9 +19,11 @@ package com.github.lerocha.currency.repository;
 import com.github.lerocha.currency.domain.ExchangeRate;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -34,6 +36,9 @@ public interface ExchangeRateRepository extends CrudRepository<ExchangeRate, Lon
 
     @Query(nativeQuery = true, value = "SELECT max(exchange_date) FROM exchange_rate")
     LocalDate findMaxExchangeDate();
+
+    @Query(nativeQuery = true, value = "SELECT max(exchange_date) FROM exchange_rate WHERE exchange_date <= :date")
+    LocalDate findPreviousDate(@Param("date") Date date);
 
     List<ExchangeRate> findByExchangeDateOrderByCurrencyCode(LocalDate exchangeDate);
 

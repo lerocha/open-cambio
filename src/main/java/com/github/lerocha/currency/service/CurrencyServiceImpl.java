@@ -120,8 +120,15 @@ public class CurrencyServiceImpl implements CurrencyService {
     @Override
     public Rate getCurrencyRatesByDate(String code, LocalDate date) {
         Assert.notNull(date);
+        LocalDate availableDate = date;
         List<ExchangeRate> exchangeRates = exchangeRateRepository.findByExchangeDateOrderByCurrencyCode(date);
-        logger.info("getCurrencyRatesByDate; code={}; date={}", code, date);
+        if (exchangeRates.size() == 0) {
+            availableDate = exchangeRateRepository.findPreviousDate(Date.valueOf(date));
+            if (availableDate != null) {
+                exchangeRates = exchangeRateRepository.findByExchangeDateOrderByCurrencyCode(availableDate);
+            }
+        }
+        logger.info("getCurrencyRatesByDate; code={}; requestedDate={}; availableDate={}", code, date, availableDate);
         return getCurrencyRatesByDate(code, date, exchangeRates);
     }
 
