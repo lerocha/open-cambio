@@ -120,12 +120,20 @@ public class CurrencyServiceImpl implements CurrencyService {
     @Override
     public Rate getCurrencyRatesByDate(String code, LocalDate date) {
         Assert.notNull(date);
+        // Get the last 7 days in case requested date falls in a non business day.
+        List<ExchangeRate> allExchangeRates = exchangeRateRepository.findByExchangeDateBetweenOrderByExchangeDate(date.minusDays(7), date);
+        List<ExchangeRate> exchangeRates = new ArrayList<>();
         LocalDate availableDate = date;
-        List<ExchangeRate> exchangeRates = exchangeRateRepository.findByExchangeDateOrderByCurrencyCode(date);
-        if (exchangeRates.size() == 0) {
-            availableDate = exchangeRateRepository.findPreviousDate(Date.valueOf(date));
-            if (availableDate != null) {
-                exchangeRates = exchangeRateRepository.findByExchangeDateOrderByCurrencyCode(availableDate);
+        if (allExchangeRates.size() > 0) {
+            // Get the lastest date, which is the date of the last element of the ordered list.
+            availableDate = allExchangeRates.get(allExchangeRates.size() - 1).getExchangeDate();
+            // Loop through the ordered list on the reverse order to get the last records.
+            for (int i = allExchangeRates.size() - 1; i >=0; i--) {
+                ExchangeRate exchangeRate = allExchangeRates.get(i);
+                if (!exchangeRate.getExchangeDate().equals(availableDate)) {
+                    break;
+                }
+                exchangeRates.add(exchangeRate);
             }
         }
         logger.info("getCurrencyRatesByDate; code={}; requestedDate={}; availableDate={}", code, date, availableDate);
