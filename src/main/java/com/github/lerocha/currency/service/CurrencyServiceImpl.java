@@ -129,7 +129,7 @@ public class CurrencyServiceImpl implements CurrencyService {
             }
         }
         logger.info("getCurrencyRatesByDate; code={}; requestedDate={}; availableDate={}", code, date, availableDate);
-        return getCurrencyRatesByDate(code, date, exchangeRates);
+        return getCurrencyRatesByDate(code, availableDate, exchangeRates);
     }
 
     @Override
