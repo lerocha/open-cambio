@@ -4,11 +4,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.github.lerocha</groupId>
-    <artifactId>currency-exchange-rate</artifactId>
+    <artifactId>txcamb.io</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>currency-exchange-rate</name>
+    <name>txcamb.io</name>
     <description>Currency Exchange Rates</description>
 
     <parent>
