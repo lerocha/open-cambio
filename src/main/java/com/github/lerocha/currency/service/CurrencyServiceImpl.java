@@ -128,7 +128,7 @@ public class CurrencyServiceImpl implements CurrencyService {
             // Get the lastest date, which is the date of the last element of the ordered list.
             availableDate = allExchangeRates.get(allExchangeRates.size() - 1).getExchangeDate();
             // Loop through the ordered list on the reverse order to get the last records.
-            for (int i = allExchangeRates.size() - 1; i >=0; i--) {
+            for (int i = allExchangeRates.size() - 1; i >= 0; i--) {
                 ExchangeRate exchangeRate = allExchangeRates.get(i);
                 if (!exchangeRate.getExchangeDate().equals(availableDate)) {
                     break;

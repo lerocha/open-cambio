@@ -18,24 +18,25 @@ package com.github.lerocha.currency;
 
 import com.github.lerocha.currency.service.CurrencyService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
 /**
  * Created by lerocha on 2/20/17.
  */
 @Component
-public class ExchangeRateCLR implements CommandLineRunner {
+public class CurrencyRunner implements ApplicationRunner {
 
     private final CurrencyService currencyService;
 
     @Autowired
-    public ExchangeRateCLR(CurrencyService currencyService) {
+    public CurrencyRunner(CurrencyService currencyService) {
         this.currencyService = currencyService;
     }
 
     @Override
-    public void run(String... strings) throws Exception {
+    public void run(ApplicationArguments applicationArguments) throws Exception {
         currencyService.refreshExchangeRates();
     }
 }

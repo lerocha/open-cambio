@@ -22,9 +22,9 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
 @EnableScheduling
-public class ExchangeRateApplication {
+public class CurrencyApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(ExchangeRateApplication.class, args);
+        SpringApplication.run(CurrencyApplication.class, args);
     }
 }
