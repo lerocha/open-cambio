@@ -81,8 +81,8 @@ public class CurrencyController {
 
     @GetMapping(path = "{code}/rates")
     public ResponseEntity<Resources<Resource<Rate>>> getCurrencyRates(@PathVariable(name = "code") String code,
-                                                                      @RequestParam(name = "startDate", required = false) String startDate,
-                                                                      @RequestParam(name = "endDate", required = false) String endDate,
+                                                                      @RequestParam(name = "start", required = false) String startDate,
+                                                                      @RequestParam(name = "end", required = false) String endDate,
                                                                       @RequestParam(name = "page", defaultValue = "0", required = false) int page) {
         LocalDate localDateStart = safeParse(startDate, LocalDate.of(1999, 1, 1));
         LocalDate localDateEnd = safeParse(endDate, LocalDate.now());
