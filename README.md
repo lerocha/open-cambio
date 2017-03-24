@@ -47,7 +47,7 @@ curl http://api.txcamb.io/v1/currencies/CAD
 GET /v1/currencies/{code}/rates?start={start}&end={end}
 ```
 * Exchange rates are based on the currency specified by `code`.
-* Exchange rates are available for business days.
+* Exchange rates are available for business days only.
 * The response is paginated and each page will contain exchange rates for the same month.
 
 Example:
@@ -97,7 +97,7 @@ curl http://api.txcamb.io//v1/currencies/USD/rates?start=2016-01-01&end=2016-12-
         },
         "_links": {
           "self": {
-            "href": "http://localhost:5000/v1/currencies/USD/rates/2016-01-04"
+            "href": "http://api.txcamb.io/v1/currencies/USD/rates/2016-01-04"
           }
         }
       },
@@ -145,7 +145,7 @@ curl http://api.txcamb.io//v1/currencies/USD/rates?start=2016-01-01&end=2016-12-
         },
         "_links": {
           "self": {
-            "href": "http://localhost:5000/v1/currencies/USD/rates/2016-01-29"
+            "href": "http://api.txcamb.io/v1/currencies/USD/rates/2016-01-29"
           }
         }
       }
@@ -153,16 +153,16 @@ curl http://api.txcamb.io//v1/currencies/USD/rates?start=2016-01-01&end=2016-12-
   },
   "_links": {
     "self": {
-      "href": "http://localhost:5000/v1/currencies/USD/rates?start=2016-01-01&end=2016-12-31&page=0"
+      "href": "http://api.txcamb.io/v1/currencies/USD/rates?start=2016-01-01&end=2016-12-31&page=0"
     },
     "first": {
-      "href": "http://localhost:5000/v1/currencies/USD/rates?start=2016-01-01&end=2016-12-31&page=0"
+      "href": "http://api.txcamb.io/v1/currencies/USD/rates?start=2016-01-01&end=2016-12-31&page=0"
     },
     "last": {
-      "href": "http://localhost:5000/v1/currencies/USD/rates?start=2016-01-01&end=2016-12-31&page=11"
+      "href": "http://api.txcamb.io/v1/currencies/USD/rates?start=2016-01-01&end=2016-12-31&page=11"
     },
     "next": {
-      "href": "http://localhost:5000/v1/currencies/USD/rates?start=2016-01-01&end=2016-12-31&page=1"
+      "href": "http://api.txcamb.io/v1/currencies/USD/rates?start=2016-01-01&end=2016-12-31&page=1"
     }
   }
 }
