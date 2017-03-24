@@ -12,6 +12,11 @@ GET /v1/currencies
 ```
 * The currency display name is in the language specified by the `Accept-Language` request header. If no language is specified, then the default is `en-US`.
 
+Example:
+```
+curl http://api.txcamb.io/v1/currencies
+```
+
 #### 2. Get currency
 ```
 GET /v1/currencies/{code}
@@ -172,7 +177,7 @@ GET /v1/currencies/{code}/rates/{date}
 
 Example:
 ```
-curl http://api.txcamb.io/v1/currencies/USD/2017-03-10
+curl http://api.txcamb.io/v1/currencies/USD/rates/2017-03-10
 ```
 ```
 {
@@ -225,3 +230,8 @@ curl http://api.txcamb.io/v1/currencies/USD/2017-03-10
 GET /v1/currencies/{code}/rates/latest
 ```
 * Exchange rates are based on the currency specified by `code`.
+
+Example:
+```
+curl http://api.txcamb.io/v1/currencies/USD/rates/latest
+```
