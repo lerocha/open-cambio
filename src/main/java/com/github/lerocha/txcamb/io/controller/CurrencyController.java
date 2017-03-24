@@ -81,11 +81,11 @@ public class CurrencyController {
 
     @GetMapping(path = "{code}/rates")
     public ResponseEntity<Resources<Resource<Rate>>> getCurrencyRates(@PathVariable(name = "code") String code,
-                                                                      @RequestParam(name = "start", required = false) String startDate,
-                                                                      @RequestParam(name = "end", required = false) String endDate,
+                                                                      @RequestParam(name = "start", required = false) String start,
+                                                                      @RequestParam(name = "end", required = false) String end,
                                                                       @RequestParam(name = "page", defaultValue = "0", required = false) int page) {
-        LocalDate localDateStart = safeParse(startDate, LocalDate.of(1999, 1, 1));
-        LocalDate localDateEnd = safeParse(endDate, LocalDate.now());
+        LocalDate localDateStart = safeParse(start, LocalDate.of(1999, 1, 1));
+        LocalDate localDateEnd = safeParse(end, LocalDate.now());
         if (localDateStart.isAfter(localDateEnd)) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -93,11 +93,11 @@ public class CurrencyController {
         // Calculate month pagination.
         int months = (int) MONTHS.between(localDateStart, localDateEnd);
         // if not the first page, then adjust start as the first day of the month of this page.
-        LocalDate start = (page > 0) ? localDateStart.plusMonths(page).withDayOfMonth(1) : localDateStart;
+        LocalDate pageStart = (page > 0) ? localDateStart.plusMonths(page).withDayOfMonth(1) : localDateStart;
         // if not the last page, then adjust end as the last day of the month of this page.
-        LocalDate end = (page < months) ? start.plusMonths(1).withDayOfMonth(1).minusDays(1) : localDateEnd;
+        LocalDate pageEnd = (page < months) ? pageStart.plusMonths(1).withDayOfMonth(1).minusDays(1) : localDateEnd;
 
-        List<Resource<Rate>> rates = currencyService.getCurrencyRates(code, start, end)
+        List<Resource<Rate>> rates = currencyService.getCurrencyRates(code, pageStart, pageEnd)
                 .stream()
                 .map(rate -> new Resource<>(rate, linkTo(methodOn(CurrencyController.class).getCurrencyRatesByDate(code, rate.getDate().toString())).withSelfRel()))
                 .collect(Collectors.toList());

@@ -39,7 +39,7 @@ curl http://api.txcamb.io/v1/currencies/CAD
 
 #### 3. Get currency exchange rates between dates
 ```
-GET /v1/currencies/{code}/rates?startDate={start}&endDate={end}
+GET /v1/currencies/{code}/rates?start={start}&end={end}
 ```
 * Exchange rates are based on the currency specified by `code`.
 * Exchange rates are available for business days.
@@ -47,7 +47,7 @@ GET /v1/currencies/{code}/rates?startDate={start}&endDate={end}
 
 Example:
 ```
-curl http://api.txcamb.io//v1/currencies/USD/rates?startDate=2016-01-01&endDate=2016-12-31
+curl http://api.txcamb.io//v1/currencies/USD/rates?start=2016-01-01&end=2016-12-31
 ```
 ```
 {
@@ -148,16 +148,16 @@ curl http://api.txcamb.io//v1/currencies/USD/rates?startDate=2016-01-01&endDate=
   },
   "_links": {
     "self": {
-      "href": "http://localhost:5000/v1/currencies/USD/rates?startDate=2016-01-01&endDate=2016-12-31&page=0"
+      "href": "http://localhost:5000/v1/currencies/USD/rates?start=2016-01-01&end=2016-12-31&page=0"
     },
     "first": {
-      "href": "http://localhost:5000/v1/currencies/USD/rates?startDate=2016-01-01&endDate=2016-12-31&page=0"
+      "href": "http://localhost:5000/v1/currencies/USD/rates?start=2016-01-01&end=2016-12-31&page=0"
     },
     "last": {
-      "href": "http://localhost:5000/v1/currencies/USD/rates?startDate=2016-01-01&endDate=2016-12-31&page=11"
+      "href": "http://localhost:5000/v1/currencies/USD/rates?start=2016-01-01&end=2016-12-31&page=11"
     },
     "next": {
-      "href": "http://localhost:5000/v1/currencies/USD/rates?startDate=2016-01-01&endDate=2016-12-31&page=1"
+      "href": "http://localhost:5000/v1/currencies/USD/rates?start=2016-01-01&end=2016-12-31&page=1"
     }
   }
 }
