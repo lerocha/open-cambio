@@ -28,6 +28,8 @@ import com.github.lerocha.txcamb.io.repository.ExchangeRateRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -62,6 +64,7 @@ public class CurrencyServiceImpl implements CurrencyService {
     }
 
     @Override
+    @Cacheable(cacheNames="currencies")
     public List<Currency> getCurrencies(Locale locale) {
         List<Currency> currencies = new ArrayList<>();
         List<Object[]> results = exchangeRateRepository.findAvailableCurrencies();
@@ -79,15 +82,18 @@ public class CurrencyServiceImpl implements CurrencyService {
     }
 
     @Override
+    @Cacheable(cacheNames="currencies")
     public Currency getCurrency(String code, Locale locale) {
         Currency currency = currencyRepository.findByCode(code);
         if (currency != null) {
             currency.setDisplayName(java.util.Currency.getInstance(code).getDisplayName(locale != null ? locale : Locale.US));
         }
+        logger.info("getCurrency; locale={}", locale);
         return currency;
     }
 
     @Override
+    @Cacheable(cacheNames="rates")
     public List<Rate> getCurrencyRates(String code, LocalDate startDate, LocalDate endDate) {
         List<Rate> rates = new ArrayList<>();
         if (startDate == null) {
@@ -118,6 +124,7 @@ public class CurrencyServiceImpl implements CurrencyService {
     }
 
     @Override
+    @Cacheable(cacheNames="rates")
     public Rate getCurrencyRatesByDate(String code, LocalDate date) {
         Assert.notNull(date);
         // Get the last 7 days in case requested date falls in a non business day.
@@ -141,6 +148,7 @@ public class CurrencyServiceImpl implements CurrencyService {
     }
 
     @Override
+    @Cacheable(cacheNames="rates")
     public Rate getLatestCurrencyRates(String code) {
         LocalDate date = exchangeRateRepository.findMaxExchangeDate();
         if (date == null) {
@@ -171,6 +179,7 @@ public class CurrencyServiceImpl implements CurrencyService {
 
     @Override
     @Transactional
+    @CacheEvict(cacheNames="rates", allEntries=true)
     public List<ExchangeRate> refreshExchangeRates() {
         LocalDate lastRefresh = exchangeRateRepository.findMaxExchangeDate();
         logger.info("refreshExchangeRates; status=starting; lastRefresh={}", lastRefresh);
