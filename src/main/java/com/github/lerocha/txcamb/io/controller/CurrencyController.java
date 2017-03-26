@@ -125,7 +125,7 @@ public class CurrencyController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         Rate rate = currencyService.getCurrencyRatesByDate(code, localDate);
-        ControllerLinkBuilder builder = linkTo(methodOn(CurrencyController.class).getCurrencyRatesByDate(date, code));
+        ControllerLinkBuilder builder = linkTo(methodOn(CurrencyController.class).getCurrencyRatesByDate(code, date));
         HttpHeaders headers = new HttpHeaders();
         headers.setLocation(builder.toUri());
         Resource<Rate> resource = new Resource(rate, builder.withSelfRel());
