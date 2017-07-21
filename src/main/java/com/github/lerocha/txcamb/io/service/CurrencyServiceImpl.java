@@ -49,7 +49,7 @@ import java.util.stream.Collectors;
 public class CurrencyServiceImpl implements CurrencyService {
 
     private static final Logger logger = LoggerFactory.getLogger(CurrencyService.class);
-    private static final Currency BASE_CURRENCY = new Currency("EUR", null, LocalDate.parse("1999-01-04"), LocalDate.now());
+    private static final Currency BASE_CURRENCY = new Currency("EUR", java.util.Currency.getInstance("EUR").getDisplayName(), LocalDate.parse("1999-01-04"), LocalDate.now());
 
     private final CurrencyRepository currencyRepository;
     private final ExchangeRateRepository exchangeRateRepository;
@@ -152,7 +152,9 @@ public class CurrencyServiceImpl implements CurrencyService {
     private Rate getCurrencyRatesByDate(String code, LocalDate date, List<ExchangeRate> rates) {
         Assert.notNull(date);
         Assert.notNull(rates);
-        Rate rate = new Rate(date, code != null ? code : BASE_CURRENCY.getCode());
+        Rate rate = new Rate();
+        rate.setDate(date);
+        rate.setBase(code != null ? code : BASE_CURRENCY.getCode());
         BigDecimal baseRate = null;
         for (ExchangeRate exchangeRate : rates.stream().sorted(Comparator.comparing(o -> o.getCurrency().getCode())).collect(Collectors.toList())) {
             rate.getRates().put(exchangeRate.getCurrency().getCode(), exchangeRate.getExchangeRate());
@@ -221,7 +223,7 @@ public class CurrencyServiceImpl implements CurrencyService {
             currencyExchangeRates.add(new CurrencyExchangeRate(BASE_CURRENCY.getCode(), BigDecimal.ONE.setScale(6, BigDecimal.ROUND_HALF_UP)));
             exchangeRates.addAll(currencyExchangeRates.stream()
                     .sorted(Comparator.comparing(CurrencyExchangeRate::getCurrency))
-                    .map(o -> new ExchangeRate(dailyExchangeRate.getDate(), currencyMap.get(o.getCurrency()), o.getRate()))
+                    .map(o -> new ExchangeRate(null, currencyMap.get(o.getCurrency()), dailyExchangeRate.getDate(), o.getRate()))
                     .collect(Collectors.toList()));
         }
 
