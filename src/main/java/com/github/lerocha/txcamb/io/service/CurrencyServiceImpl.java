@@ -16,18 +16,17 @@
 
 package com.github.lerocha.txcamb.io.service;
 
+import com.github.lerocha.txcamb.io.domain.Currency;
+import com.github.lerocha.txcamb.io.domain.ExchangeRate;
+import com.github.lerocha.txcamb.io.dto.Rate;
 import com.github.lerocha.txcamb.io.ecb.EcbClient;
 import com.github.lerocha.txcamb.io.ecb.dto.CurrencyExchangeRate;
 import com.github.lerocha.txcamb.io.ecb.dto.DailyExchangeRate;
 import com.github.lerocha.txcamb.io.ecb.dto.ExchangeRatesResponse;
-import com.github.lerocha.txcamb.io.domain.Currency;
-import com.github.lerocha.txcamb.io.domain.ExchangeRate;
-import com.github.lerocha.txcamb.io.dto.Rate;
 import com.github.lerocha.txcamb.io.repository.CurrencyRepository;
 import com.github.lerocha.txcamb.io.repository.ExchangeRateRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
@@ -54,7 +53,6 @@ public class CurrencyServiceImpl implements CurrencyService {
     private final ExchangeRateRepository exchangeRateRepository;
     private final EcbClient ecbClient;
 
-    @Autowired
     public CurrencyServiceImpl(ExchangeRateRepository exchangeRateRepository,
                                CurrencyRepository currencyRepository,
                                EcbClient ecbClient) {
