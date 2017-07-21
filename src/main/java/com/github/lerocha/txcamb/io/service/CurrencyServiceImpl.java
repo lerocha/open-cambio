@@ -25,6 +25,7 @@ import com.github.lerocha.txcamb.io.ecb.dto.DailyExchangeRate;
 import com.github.lerocha.txcamb.io.ecb.dto.ExchangeRatesResponse;
 import com.github.lerocha.txcamb.io.repository.CurrencyRepository;
 import com.github.lerocha.txcamb.io.repository.ExchangeRateRepository;
+import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CacheEvict;
@@ -44,6 +45,7 @@ import java.util.stream.Collectors;
  * Created by lerocha on 2/1/17.
  */
 @Service
+@AllArgsConstructor
 public class CurrencyServiceImpl implements CurrencyService {
 
     private static final Logger logger = LoggerFactory.getLogger(CurrencyService.class);
@@ -53,16 +55,8 @@ public class CurrencyServiceImpl implements CurrencyService {
     private final ExchangeRateRepository exchangeRateRepository;
     private final EcbClient ecbClient;
 
-    public CurrencyServiceImpl(ExchangeRateRepository exchangeRateRepository,
-                               CurrencyRepository currencyRepository,
-                               EcbClient ecbClient) {
-        this.exchangeRateRepository = exchangeRateRepository;
-        this.currencyRepository = currencyRepository;
-        this.ecbClient = ecbClient;
-    }
-
     @Override
-    @Cacheable(cacheNames="currencies")
+    @Cacheable(cacheNames = "currencies")
     public List<Currency> getCurrencies(Locale locale) {
         List<Currency> currencies = new ArrayList<>();
         List<Object[]> results = exchangeRateRepository.findAvailableCurrencies();
@@ -80,7 +74,7 @@ public class CurrencyServiceImpl implements CurrencyService {
     }
 
     @Override
-    @Cacheable(cacheNames="currencies")
+    @Cacheable(cacheNames = "currencies")
     public Currency getCurrency(String code, Locale locale) {
         Currency currency = currencyRepository.findByCode(code);
         if (currency != null) {
@@ -91,7 +85,7 @@ public class CurrencyServiceImpl implements CurrencyService {
     }
 
     @Override
-    @Cacheable(cacheNames="rates")
+    @Cacheable(cacheNames = "rates")
     public List<Rate> getCurrencyRates(String code, LocalDate startDate, LocalDate endDate) {
         List<Rate> rates = new ArrayList<>();
         if (startDate == null) {
@@ -122,7 +116,7 @@ public class CurrencyServiceImpl implements CurrencyService {
     }
 
     @Override
-    @Cacheable(cacheNames="rates")
+    @Cacheable(cacheNames = "rates")
     public Rate getCurrencyRatesByDate(String code, LocalDate date) {
         Assert.notNull(date);
         // Get the last 7 days in case requested date falls in a non business day.
@@ -146,7 +140,7 @@ public class CurrencyServiceImpl implements CurrencyService {
     }
 
     @Override
-    @Cacheable(cacheNames="rates")
+    @Cacheable(cacheNames = "rates")
     public Rate getLatestCurrencyRates(String code) {
         LocalDate date = exchangeRateRepository.findMaxExchangeDate();
         if (date == null) {
@@ -177,7 +171,7 @@ public class CurrencyServiceImpl implements CurrencyService {
 
     @Override
     @Transactional
-    @CacheEvict(cacheNames="rates", allEntries=true)
+    @CacheEvict(cacheNames = "rates", allEntries = true)
     public List<ExchangeRate> refreshExchangeRates() {
         LocalDate lastRefresh = exchangeRateRepository.findMaxExchangeDate();
         logger.info("refreshExchangeRates; status=starting; lastRefresh={}", lastRefresh);
