@@ -17,6 +17,7 @@
 package com.github.lerocha.txcamb.io.ecb;
 
 import com.github.lerocha.txcamb.io.ecb.dto.ExchangeRatesResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +27,7 @@ import org.springframework.web.client.RestTemplate;
 /**
  * Created by lerocha on 2/20/17.
  */
+@Slf4j
 @Component
 public class EcbClientImpl implements EcbClient {
     private RestTemplate restTemplate;
@@ -37,19 +39,40 @@ public class EcbClientImpl implements EcbClient {
 
     @Override
     public ResponseEntity<ExchangeRatesResponse> getCurrentExchangeRates() {
-        final String url = "http://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml";
-        return restTemplate.exchange(url, HttpMethod.GET, null, ExchangeRatesResponse.class);
+        try {
+            final String url = "http://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml";
+            ResponseEntity<ExchangeRatesResponse> response = restTemplate.exchange(url, HttpMethod.GET, null, ExchangeRatesResponse.class);
+            log.info("getCurrentExchangeRates; status={}", response.getStatusCode());
+            return response;
+        } catch (Exception e) {
+            log.error("getCurrentExchangeRates; status=exception", e);
+            throw e;
+        }
     }
 
     @Override
     public ResponseEntity<ExchangeRatesResponse> getLast90DaysExchangeRates() {
-        final String url = "http://www.ecb.europa.eu/stats/eurofxref/eurofxref-hist-90d.xml";
-        return restTemplate.exchange(url, HttpMethod.GET, null, ExchangeRatesResponse.class);
+        try {
+            final String url = "http://www.ecb.europa.eu/stats/eurofxref/eurofxref-hist-90d.xml";
+            ResponseEntity<ExchangeRatesResponse> response = restTemplate.exchange(url, HttpMethod.GET, null, ExchangeRatesResponse.class);
+            log.info("getLast90DaysExchangeRates; status={}", response.getStatusCode());
+            return response;
+        } catch (Exception e) {
+            log.error("getLast90DaysExchangeRates; status=exception", e);
+            throw e;
+        }
     }
 
     @Override
     public ResponseEntity<ExchangeRatesResponse> getAllExchangeRates() {
-        final String url = "http://www.ecb.europa.eu/stats/eurofxref/eurofxref-hist.xml";
-        return restTemplate.exchange(url, HttpMethod.GET, null, ExchangeRatesResponse.class);
+        try {
+            final String url = "http://www.ecb.europa.eu/stats/eurofxref/eurofxref-hist.xml";
+            ResponseEntity<ExchangeRatesResponse> response = restTemplate.exchange(url, HttpMethod.GET, null, ExchangeRatesResponse.class);
+            log.info("getAllExchangeRates; status={}", response.getStatusCode());
+            return response;
+        } catch (Exception e) {
+            log.error("getAllExchangeRates; status=exception", e);
+            throw e;
+        }
     }
 }

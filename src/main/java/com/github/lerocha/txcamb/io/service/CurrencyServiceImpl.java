@@ -26,8 +26,7 @@ import com.github.lerocha.txcamb.io.ecb.dto.ExchangeRatesResponse;
 import com.github.lerocha.txcamb.io.repository.CurrencyRepository;
 import com.github.lerocha.txcamb.io.repository.ExchangeRateRepository;
 import lombok.AllArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
@@ -44,11 +43,11 @@ import java.util.stream.Collectors;
 /**
  * Created by lerocha on 2/1/17.
  */
+@Slf4j
 @Service
 @AllArgsConstructor
 public class CurrencyServiceImpl implements CurrencyService {
 
-    private static final Logger logger = LoggerFactory.getLogger(CurrencyService.class);
     private static final Currency BASE_CURRENCY = new Currency("EUR", java.util.Currency.getInstance("EUR").getDisplayName(), LocalDate.parse("1999-01-04"), LocalDate.now());
 
     private final CurrencyRepository currencyRepository;
@@ -60,7 +59,7 @@ public class CurrencyServiceImpl implements CurrencyService {
     public List<Currency> getCurrencies(Locale locale) {
         List<Currency> currencies = new ArrayList<>();
         List<Object[]> results = exchangeRateRepository.findAvailableCurrencies();
-        for (Object[] result : results) {
+        for (Object[] result: results) {
             String currencyCode = (String) result[0];
             Currency currency = new Currency(currencyCode, java.util.Currency.getInstance(currencyCode).getDisplayName(locale != null ? locale : Locale.US));
             Date startDate = (Date) result[1];
@@ -69,7 +68,7 @@ public class CurrencyServiceImpl implements CurrencyService {
             currency.setEndDate(endDate.toLocalDate());
             currencies.add(currency);
         }
-        logger.info("getCurrencies; locale={}; total={}", locale, currencies.size());
+        log.info("getCurrencies; locale={}; total={}", locale, currencies.size());
         return currencies.stream().sorted(Comparator.comparing(Currency::getCode)).collect(Collectors.toList());
     }
 
@@ -80,7 +79,7 @@ public class CurrencyServiceImpl implements CurrencyService {
         if (currency != null) {
             currency.setDisplayName(java.util.Currency.getInstance(code).getDisplayName(locale != null ? locale : Locale.US));
         }
-        logger.info("getCurrency; locale={}", locale);
+        log.info("getCurrency; locale={}", locale);
         return currency;
     }
 
@@ -97,7 +96,7 @@ public class CurrencyServiceImpl implements CurrencyService {
         List<ExchangeRate> allExchangeRates = exchangeRateRepository.findByExchangeDateBetweenOrderByExchangeDate(startDate, endDate);
         List<ExchangeRate> exchangeRates = new ArrayList<>();
         LocalDate date = null;
-        for (ExchangeRate exchangeRate : allExchangeRates) {
+        for (ExchangeRate exchangeRate: allExchangeRates) {
             if (date == null) {
                 date = exchangeRate.getExchangeDate();
             } else if (!date.equals(exchangeRate.getExchangeDate())) {
@@ -111,7 +110,7 @@ public class CurrencyServiceImpl implements CurrencyService {
             rates.add(getCurrencyRatesByDate(code, date, exchangeRates));
         }
 
-        logger.info("getCurrencyRates; code={}; startDate={}; endDate={}; total={}", code, startDate, endDate, rates.size());
+        log.info("getCurrencyRates; code={}; startDate={}; endDate={}; total={}", code, startDate, endDate, rates.size());
         return rates;
     }
 
@@ -135,7 +134,7 @@ public class CurrencyServiceImpl implements CurrencyService {
                 exchangeRates.add(exchangeRate);
             }
         }
-        logger.info("getCurrencyRatesByDate; code={}; requestedDate={}; availableDate={}", code, date, availableDate);
+        log.info("getCurrencyRatesByDate; code={}; requestedDate={}; availableDate={}", code, date, availableDate);
         return getCurrencyRatesByDate(code, availableDate, exchangeRates);
     }
 
@@ -156,7 +155,7 @@ public class CurrencyServiceImpl implements CurrencyService {
         rate.setDate(date);
         rate.setBase(code != null ? code : BASE_CURRENCY.getCode());
         BigDecimal baseRate = null;
-        for (ExchangeRate exchangeRate : rates.stream().sorted(Comparator.comparing(o -> o.getCurrency().getCode())).collect(Collectors.toList())) {
+        for (ExchangeRate exchangeRate: rates.stream().sorted(Comparator.comparing(o -> o.getCurrency().getCode())).collect(Collectors.toList())) {
             rate.getRates().put(exchangeRate.getCurrency().getCode(), exchangeRate.getExchangeRate());
             if (exchangeRate.getCurrency().getCode().equalsIgnoreCase(code)) {
                 baseRate = exchangeRate.getExchangeRate();
@@ -164,7 +163,7 @@ public class CurrencyServiceImpl implements CurrencyService {
         }
 
         if (baseRate != null) {
-            for (Map.Entry<String, BigDecimal> entry : rate.getRates().entrySet()) {
+            for (Map.Entry<String, BigDecimal> entry: rate.getRates().entrySet()) {
                 entry.setValue(entry.getValue().divide(baseRate, baseRate.scale(), BigDecimal.ROUND_CEILING));
             }
         }
@@ -176,7 +175,7 @@ public class CurrencyServiceImpl implements CurrencyService {
     @CacheEvict(cacheNames = "rates", allEntries = true)
     public List<ExchangeRate> refreshExchangeRates() {
         LocalDate lastRefresh = exchangeRateRepository.findMaxExchangeDate();
-        logger.info("refreshExchangeRates; status=starting; lastRefresh={}", lastRefresh);
+        log.info("refreshExchangeRates; status=starting; lastRefresh={}", lastRefresh);
 
         // Initialize currency table.
         List<Currency> currencies = currencyRepository.findAll();
@@ -205,7 +204,7 @@ public class CurrencyServiceImpl implements CurrencyService {
         if (!response.getStatusCode().is2xxSuccessful() ||
                 response.getBody() == null ||
                 response.getBody().getDailyExchangeRates() == null) {
-            logger.error("refreshExchangeRates; status={}; body={}", response.getStatusCode(), response.getBody());
+            log.error("refreshExchangeRates; status={}; body={}", response.getStatusCode(), response.getBody());
             return null;
         }
 
@@ -217,7 +216,7 @@ public class CurrencyServiceImpl implements CurrencyService {
 
         // Convert into entity objects.
         List<ExchangeRate> exchangeRates = new ArrayList<>();
-        for (DailyExchangeRate dailyExchangeRate : dailyExchangeRates) {
+        for (DailyExchangeRate dailyExchangeRate: dailyExchangeRates) {
             List<CurrencyExchangeRate> currencyExchangeRates = dailyExchangeRate.getCurrencyExchangeRates();
             // Add the base currency with exchange rate = 1.0 since it is not part of the response.
             currencyExchangeRates.add(new CurrencyExchangeRate(BASE_CURRENCY.getCode(), BigDecimal.ONE.setScale(6, BigDecimal.ROUND_HALF_UP)));
@@ -230,7 +229,7 @@ public class CurrencyServiceImpl implements CurrencyService {
         // Bulk save exchange rates.
         exchangeRates = (List<ExchangeRate>) exchangeRateRepository.save(exchangeRates);
         int totalCurrencies = currencyRepository.updateCurrencyStartAndEndDates();
-        logger.info("refreshExchangeRates; status=ok; startDate={}; endDate={}; totalRates={}; totalCurrencies={}",
+        log.info("refreshExchangeRates; status=ok; startDate={}; endDate={}; totalRates={}; totalCurrencies={}",
                 exchangeRates.size() > 0 ? exchangeRates.get(0).getExchangeDate() : null,
                 exchangeRates.size() > 0 ? exchangeRates.get(exchangeRates.size() - 1).getExchangeDate() : null,
                 exchangeRates.size(),
