@@ -18,40 +18,24 @@ package com.github.lerocha.txcamb.io.ecb.dto;
 
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
 
 /**
  * Created by lerocha on 2/20/17.
  */
-public class DailyExchangeRate {
+@Data
+@NoArgsConstructor
+public class DailyExchangeRate implements Serializable {
+    private static final long serialVersionUID = -4443258322149873354L;
+
     @JacksonXmlProperty(localName = "time")
     private LocalDate date;
     @JacksonXmlProperty(localName = "Cube")
     @JacksonXmlElementWrapper(useWrapping = false)
     private List<CurrencyExchangeRate> currencyExchangeRates;
-
-    public LocalDate getDate() {
-        return date;
-    }
-
-    public void setDate(LocalDate time) {
-        this.date = time;
-    }
-
-    public List<CurrencyExchangeRate> getCurrencyExchangeRates() {
-        return currencyExchangeRates;
-    }
-
-    public void setCurrencyExchangeRates(List<CurrencyExchangeRate> currencyExchangeRates) {
-        this.currencyExchangeRates = currencyExchangeRates;
-    }
-
-    @Override
-    public String toString() {
-        return new StringBuilder()
-                .append(date)
-                .toString();
-    }
 }

@@ -17,24 +17,19 @@
 package com.github.lerocha.txcamb.io.ecb.dto;
 
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.io.Serializable;
 
 /**
  * Created by lerocha on 2/20/17.
  */
-public class Sender {
+@Data
+@NoArgsConstructor
+public class Sender implements Serializable {
+    private static final long serialVersionUID = 7821136635418567999L;
+
     @JacksonXmlProperty(namespace = "gesmes")
     private String name;
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    @Override
-    public String toString() {
-        return name;
-    }
 }

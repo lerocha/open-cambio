@@ -19,6 +19,7 @@ package com.github.lerocha.txcamb.io.dto;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.LinkedHashMap;
@@ -29,7 +30,9 @@ import java.util.Map;
  */
 @Data
 @NoArgsConstructor
-public class Rate {
+public class Rate implements Serializable {
+    private static final long serialVersionUID = 4435519690243319887L;
+
     private LocalDate date;
     private String base;
     private Map<String, BigDecimal> rates = new LinkedHashMap<>();

@@ -36,6 +36,8 @@ import java.time.LocalDate;
 @EqualsAndHashCode(callSuper = true)
 @Entity
 public class Currency extends AbstractEntity implements Serializable {
+    private static final long serialVersionUID = 8958081401925723947L;
+
     @Id
     @Column(length = 3)
     private String code;
