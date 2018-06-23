@@ -128,7 +128,7 @@ public class CurrencyController {
         ControllerLinkBuilder builder = linkTo(methodOn(CurrencyController.class).getCurrencyRatesByDate(code, date));
         HttpHeaders headers = new HttpHeaders();
         headers.setLocation(builder.toUri());
-        Resource<Rate> resource = new Resource(rate, builder.withSelfRel());
+        Resource<Rate> resource = new Resource<>(rate, builder.withSelfRel());
         return new ResponseEntity<>(resource, headers, HttpStatus.OK);
     }
 
@@ -138,7 +138,7 @@ public class CurrencyController {
         ControllerLinkBuilder builder = linkTo(methodOn(CurrencyController.class).getCurrencyLatestRates(code));
         HttpHeaders headers = new HttpHeaders();
         headers.setLocation(builder.toUri());
-        Resource<Rate> resource = new Resource(rate, builder.withSelfRel());
+        Resource<Rate> resource = new Resource<>(rate, builder.withSelfRel());
         return new ResponseEntity<>(resource, headers, HttpStatus.OK);
     }
 

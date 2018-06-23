@@ -36,7 +36,7 @@ public class TxCambioRunner implements ApplicationRunner {
     }
 
     @Override
-    public void run(ApplicationArguments applicationArguments) throws Exception {
+    public void run(ApplicationArguments applicationArguments) {
         currencyService.refreshExchangeRates();
     }
 }

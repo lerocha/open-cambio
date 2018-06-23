@@ -18,6 +18,7 @@ package com.github.lerocha.txcamb.io.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
@@ -31,6 +32,7 @@ import java.time.LocalDate;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(uniqueConstraints = {
         @UniqueConstraint(name = "UK_ExchangeRate_currency_id_exchange_date", columnNames = {"currency_code", "exchangeDate"})

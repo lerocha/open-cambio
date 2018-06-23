@@ -118,13 +118,13 @@ public class CurrencyServiceImpl implements CurrencyService {
     @Override
     @Cacheable(cacheNames = "rates")
     public Rate getCurrencyRatesByDate(String code, LocalDate date) {
-        Assert.notNull(date);
+        Assert.notNull(date, "date is required");
         // Get the last 7 days in case requested date falls in a non business day.
         List<ExchangeRate> allExchangeRates = exchangeRateRepository.findByExchangeDateBetweenOrderByExchangeDate(date.minusDays(7), date);
         List<ExchangeRate> exchangeRates = new ArrayList<>();
         LocalDate availableDate = date;
         if (allExchangeRates.size() > 0) {
-            // Get the lastest date, which is the date of the last element of the ordered list.
+            // Get the latest date, which is the date of the last element of the ordered list.
             availableDate = allExchangeRates.get(allExchangeRates.size() - 1).getExchangeDate();
             // Loop through the ordered list on the reverse order to get the last records.
             for (int i = allExchangeRates.size() - 1; i >= 0; i--) {
@@ -150,8 +150,8 @@ public class CurrencyServiceImpl implements CurrencyService {
     }
 
     private Rate getCurrencyRatesByDate(String code, LocalDate date, List<ExchangeRate> rates) {
-        Assert.notNull(date);
-        Assert.notNull(rates);
+        Assert.notNull(date, "date is required");
+        Assert.notNull(rates, "list of exchange rates is required");
         Rate rate = new Rate();
         rate.setDate(date);
         rate.setBase(code != null ? code : BASE_CURRENCY.getCode());
@@ -189,7 +189,7 @@ public class CurrencyServiceImpl implements CurrencyService {
         }
 
         Map<String, Currency> currencyMap = currencies.stream()
-                .collect(Collectors.toMap(o -> o.getCode(), o -> o));
+                .collect(Collectors.toMap(Currency::getCode, o -> o));
 
         ResponseEntity<ExchangeRatesResponse> response;
         if (lastRefresh == null || lastRefresh.isBefore(LocalDate.now().minusDays(90))) {
