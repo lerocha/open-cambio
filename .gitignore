@@ -26,6 +26,7 @@ build
 lib/
 target
 .springBeans
+out
 dependency-reduced-pom.xml
 build.log
 _site/
