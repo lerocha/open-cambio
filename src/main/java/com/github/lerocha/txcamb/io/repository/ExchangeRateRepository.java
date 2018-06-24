@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Luis Rocha
+ * Copyright 2017-2018 Luis Rocha
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 package com.github.lerocha.txcamb.io.repository;
 
-import com.github.lerocha.txcamb.io.domain.ExchangeRate;
+import com.github.lerocha.txcamb.io.entity.ExchangeRate;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
