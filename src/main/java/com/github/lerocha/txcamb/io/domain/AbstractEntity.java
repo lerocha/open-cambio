@@ -23,6 +23,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import javax.persistence.Column;
 import javax.persistence.EntityListeners;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.PreUpdate;
 import java.io.Serializable;
 import java.time.Clock;
 import java.time.LocalDateTime;
@@ -41,6 +42,11 @@ public abstract class AbstractEntity implements Serializable {
     private LocalDateTime createdDate = LocalDateTime.now(Clock.systemUTC());
 
     @JsonIgnore
-    @Column(columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP", nullable = false)
+    @Column(columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP", nullable = false)
     private LocalDateTime lastModifiedDate = LocalDateTime.now(Clock.systemUTC());
+
+    @PreUpdate
+    private void preUpdate() {
+        this.lastModifiedDate = LocalDateTime.now(Clock.systemUTC());
+    }
 }

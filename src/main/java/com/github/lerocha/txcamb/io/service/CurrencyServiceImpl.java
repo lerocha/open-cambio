@@ -75,7 +75,7 @@ public class CurrencyServiceImpl implements CurrencyService {
     @Override
     @Cacheable(cacheNames = "currencies")
     public Currency getCurrency(String code, Locale locale) {
-        Currency currency = currencyRepository.findByCode(code);
+        Currency currency = currencyRepository.findOne(code);
         if (currency != null) {
             currency.setDisplayName(java.util.Currency.getInstance(code).getDisplayName(locale != null ? locale : Locale.US));
         }
@@ -228,12 +228,24 @@ public class CurrencyServiceImpl implements CurrencyService {
 
         // Bulk save exchange rates.
         exchangeRates = (List<ExchangeRate>) exchangeRateRepository.save(exchangeRates);
-        int totalCurrencies = currencyRepository.updateCurrencyStartAndEndDates();
+
+        // Update currencies start and end date based on exchange rates.
+        exchangeRates.forEach(exchangeRate -> {
+            Currency currency = currencyMap.get(exchangeRate.getCurrency().getCode());
+            if (currency.getStartDate() == null || currency.getStartDate().isAfter(exchangeRate.getExchangeDate())) {
+                currency.setStartDate(exchangeRate.getExchangeDate());
+            }
+            if (currency.getEndDate() == null || currency.getEndDate().isBefore(exchangeRate.getExchangeDate())) {
+                currency.setEndDate(exchangeRate.getExchangeDate());
+            }
+        });
+        currencies = currencyRepository.save(currencies);
+
         log.info("refreshExchangeRates; status=ok; startDate={}; endDate={}; totalRates={}; totalCurrencies={}",
                 exchangeRates.size() > 0 ? exchangeRates.get(0).getExchangeDate() : null,
                 exchangeRates.size() > 0 ? exchangeRates.get(exchangeRates.size() - 1).getExchangeDate() : null,
                 exchangeRates.size(),
-                totalCurrencies);
+                currencies.size());
         return exchangeRates;
     }
 }

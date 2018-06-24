@@ -35,8 +35,6 @@ public interface ExchangeRateRepository extends CrudRepository<ExchangeRate, Lon
     @Query(nativeQuery = true, value = "SELECT max(exchange_date) FROM exchange_rate")
     LocalDate findMaxExchangeDate();
 
-    List<ExchangeRate> findByExchangeDateOrderByCurrencyCode(LocalDate exchangeDate);
-
     List<ExchangeRate> findByExchangeDateBetweenOrderByExchangeDate(LocalDate startDate, LocalDate endDate);
 
     @Query(nativeQuery = true, value = "SELECT currency_code, min(exchange_date) AS start_date, max(exchange_date) AS end_date FROM exchange_rate GROUP BY currency_code")
