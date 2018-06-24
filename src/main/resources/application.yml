@@ -21,7 +21,7 @@ spring.datasource:
     test-on-borrow: true
 
 spring.h2.console:
-  enabled: true
+  enabled: false
   path: /h2
 
 spring.jpa:
