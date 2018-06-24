@@ -16,13 +16,13 @@
 
 package com.github.lerocha.txcamb.io.service;
 
-import com.github.lerocha.txcamb.io.entity.Currency;
-import com.github.lerocha.txcamb.io.entity.ExchangeRate;
 import com.github.lerocha.txcamb.io.dto.Rate;
 import com.github.lerocha.txcamb.io.ecb.EcbClient;
 import com.github.lerocha.txcamb.io.ecb.dto.CurrencyExchangeRate;
 import com.github.lerocha.txcamb.io.ecb.dto.DailyExchangeRate;
 import com.github.lerocha.txcamb.io.ecb.dto.ExchangeRatesResponse;
+import com.github.lerocha.txcamb.io.entity.Currency;
+import com.github.lerocha.txcamb.io.entity.ExchangeRate;
 import com.github.lerocha.txcamb.io.repository.CurrencyRepository;
 import com.github.lerocha.txcamb.io.repository.ExchangeRateRepository;
 import lombok.AllArgsConstructor;
@@ -75,7 +75,7 @@ public class CurrencyServiceImpl implements CurrencyService {
     @Override
     @Cacheable(cacheNames = "currencies")
     public Currency getCurrency(String code, Locale locale) {
-        Currency currency = currencyRepository.findOne(code);
+        Currency currency = currencyRepository.findById(code).orElse(null);
         if (currency != null) {
             currency.setDisplayName(java.util.Currency.getInstance(code).getDisplayName(locale != null ? locale : Locale.US));
         }
@@ -184,7 +184,7 @@ public class CurrencyServiceImpl implements CurrencyService {
                     .sorted(Comparator.comparing(java.util.Currency::getCurrencyCode))
                     .map(o -> new Currency(o.getCurrencyCode(), o.getDisplayName()))
                     .collect(Collectors.toList());
-            currencies = currencyRepository.save(currencies);
+            currencies = currencyRepository.saveAll(currencies);
         }
 
         Map<String, Currency> currencyMap = currencies.stream()
@@ -227,7 +227,7 @@ public class CurrencyServiceImpl implements CurrencyService {
         }
 
         // Bulk save exchange rates.
-        exchangeRates = (List<ExchangeRate>) exchangeRateRepository.save(exchangeRates);
+        exchangeRates = (List<ExchangeRate>) exchangeRateRepository.saveAll(exchangeRates);
 
         // Update currencies start and end date based on exchange rates.
         exchangeRates.forEach(exchangeRate -> {
@@ -239,7 +239,7 @@ public class CurrencyServiceImpl implements CurrencyService {
                 currency.setEndDate(exchangeRate.getExchangeDate());
             }
         });
-        currencies = currencyRepository.save(currencies);
+        currencies = currencyRepository.saveAll(currencies);
 
         log.info("refreshExchangeRates; status=ok; startDate={}; endDate={}; totalRates={}; totalCurrencies={}",
                 exchangeRates.size() > 0 ? exchangeRates.get(0).getExchangeDate() : null,

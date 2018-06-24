@@ -35,7 +35,7 @@ import java.time.LocalDateTime;
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
 public abstract class AbstractEntity implements Serializable {
-    private static final long serialVersionUID = 6639875532910837803L;
+    private static final long serialVersionUID = 6206203839304786420L;
 
     @JsonIgnore
     @Column(columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP", nullable = false)

@@ -19,7 +19,6 @@ package com.github.lerocha.txcamb.io.entity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -32,11 +31,10 @@ import java.time.LocalDate;
  */
 @Data
 @AllArgsConstructor
-@NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @Entity
 public class Currency extends AbstractEntity implements Serializable {
-    private static final long serialVersionUID = 8958081401925723947L;
+    private static final long serialVersionUID = -8276563849125849862L;
 
     @Id
     @Column(length = 3)
