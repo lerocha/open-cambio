@@ -17,8 +17,8 @@
 package com.github.lerocha.txcamb.io.ecb;
 
 import com.github.lerocha.txcamb.io.ecb.dto.ExchangeRatesResponse;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -29,13 +29,9 @@ import org.springframework.web.client.RestTemplate;
  */
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class EcbClientImpl implements EcbClient {
-    private RestTemplate restTemplate;
-
-    @Autowired
-    public EcbClientImpl(RestTemplate restTemplate) {
-        this.restTemplate = restTemplate;
-    }
+    private final RestTemplate restTemplate;
 
     @Override
     public ResponseEntity<ExchangeRatesResponse> getCurrentExchangeRates() {

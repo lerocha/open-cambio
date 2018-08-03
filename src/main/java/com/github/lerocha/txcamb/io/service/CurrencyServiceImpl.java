@@ -25,7 +25,7 @@ import com.github.lerocha.txcamb.io.entity.Currency;
 import com.github.lerocha.txcamb.io.entity.ExchangeRate;
 import com.github.lerocha.txcamb.io.repository.CurrencyRepository;
 import com.github.lerocha.txcamb.io.repository.ExchangeRateRepository;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -37,7 +37,11 @@ import org.springframework.util.Assert;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -45,7 +49,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class CurrencyServiceImpl implements CurrencyService {
 
     private static final Currency BASE_CURRENCY = new Currency("EUR", java.util.Currency.getInstance("EUR").getDisplayName(), LocalDate.parse("1999-01-04"), LocalDate.now());
@@ -59,7 +63,7 @@ public class CurrencyServiceImpl implements CurrencyService {
     public List<Currency> getCurrencies(Locale locale) {
         List<Currency> currencies = new ArrayList<>();
         List<Object[]> results = exchangeRateRepository.findAvailableCurrencies();
-        for (Object[] result: results) {
+        for (Object[] result : results) {
             String currencyCode = (String) result[0];
             Currency currency = new Currency(currencyCode, java.util.Currency.getInstance(currencyCode).getDisplayName(locale != null ? locale : Locale.US));
             Date startDate = (Date) result[1];
@@ -96,7 +100,7 @@ public class CurrencyServiceImpl implements CurrencyService {
         List<ExchangeRate> allExchangeRates = exchangeRateRepository.findByExchangeDateBetweenOrderByExchangeDate(startDate, endDate);
         List<ExchangeRate> exchangeRates = new ArrayList<>();
         LocalDate date = null;
-        for (ExchangeRate exchangeRate: allExchangeRates) {
+        for (ExchangeRate exchangeRate : allExchangeRates) {
             if (date == null) {
                 date = exchangeRate.getExchangeDate();
             } else if (!date.equals(exchangeRate.getExchangeDate())) {
@@ -155,7 +159,7 @@ public class CurrencyServiceImpl implements CurrencyService {
         rate.setDate(date);
         rate.setBase(code != null ? code : BASE_CURRENCY.getCode());
         BigDecimal baseRate = null;
-        for (ExchangeRate exchangeRate: rates.stream().sorted(Comparator.comparing(o -> o.getCurrency().getCode())).collect(Collectors.toList())) {
+        for (ExchangeRate exchangeRate : rates.stream().sorted(Comparator.comparing(o -> o.getCurrency().getCode())).collect(Collectors.toList())) {
             rate.getRates().put(exchangeRate.getCurrency().getCode(), exchangeRate.getExchangeRate());
             if (exchangeRate.getCurrency().getCode().equalsIgnoreCase(code)) {
                 baseRate = exchangeRate.getExchangeRate();
@@ -163,7 +167,7 @@ public class CurrencyServiceImpl implements CurrencyService {
         }
 
         if (baseRate != null) {
-            for (Map.Entry<String, BigDecimal> entry: rate.getRates().entrySet()) {
+            for (Map.Entry<String, BigDecimal> entry : rate.getRates().entrySet()) {
                 entry.setValue(entry.getValue().divide(baseRate, baseRate.scale(), BigDecimal.ROUND_CEILING));
             }
         }
@@ -216,7 +220,7 @@ public class CurrencyServiceImpl implements CurrencyService {
 
         // Convert into entity objects.
         List<ExchangeRate> exchangeRates = new ArrayList<>();
-        for (DailyExchangeRate dailyExchangeRate: dailyExchangeRates) {
+        for (DailyExchangeRate dailyExchangeRate : dailyExchangeRates) {
             List<CurrencyExchangeRate> currencyExchangeRates = dailyExchangeRate.getCurrencyExchangeRates();
             // Add the base currency with exchange rate = 1.0 since it is not part of the response.
             currencyExchangeRates.add(new CurrencyExchangeRate(BASE_CURRENCY.getCode(), BigDecimal.ONE.setScale(6, BigDecimal.ROUND_HALF_UP)));
