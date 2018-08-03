@@ -91,6 +91,7 @@ public class CurrencyServiceImpl implements CurrencyService {
     @Cacheable(cacheNames = "rates")
     public List<Rate> getCurrencyRates(String code, LocalDate startDate, LocalDate endDate) {
         List<Rate> rates = new ArrayList<>();
+        String currencyCode = code != null ? code : BASE_CURRENCY.getCode();
         if (startDate == null) {
             startDate = exchangeRateRepository.findMinExchangeDate();
         }
@@ -104,17 +105,17 @@ public class CurrencyServiceImpl implements CurrencyService {
             if (date == null) {
                 date = exchangeRate.getExchangeDate();
             } else if (!date.equals(exchangeRate.getExchangeDate())) {
-                rates.add(getCurrencyRatesByDate(code, date, exchangeRates));
+                rates.add(new Rate(currencyCode, date, exchangeRates));
                 exchangeRates.clear();
                 date = exchangeRate.getExchangeDate();
             }
             exchangeRates.add(exchangeRate);
         }
         if (exchangeRates.size() > 0) {
-            rates.add(getCurrencyRatesByDate(code, date, exchangeRates));
+            rates.add(new Rate(currencyCode, date, exchangeRates));
         }
 
-        log.info("getCurrencyRates; code={}; startDate={}; endDate={}; total={}", code, startDate, endDate, rates.size());
+        log.info("getCurrencyRates; code={}; startDate={}; endDate={}; total={}", currencyCode, startDate, endDate, rates.size());
         return rates;
     }
 
@@ -138,8 +139,9 @@ public class CurrencyServiceImpl implements CurrencyService {
                 exchangeRates.add(exchangeRate);
             }
         }
-        log.info("getCurrencyRatesByDate; code={}; requestedDate={}; availableDate={}", code, date, availableDate);
-        return getCurrencyRatesByDate(code, availableDate, exchangeRates);
+        String currencyCode = code != null ? code : BASE_CURRENCY.getCode();
+        log.info("getCurrencyRatesByDate; code={}; requestedDate={}; availableDate={}", currencyCode, date, availableDate);
+        return new Rate(currencyCode, availableDate, exchangeRates);
     }
 
     @Override
@@ -150,28 +152,6 @@ public class CurrencyServiceImpl implements CurrencyService {
             return null;
         }
         return getCurrencyRatesByDate(code, date);
-    }
-
-    private Rate getCurrencyRatesByDate(String code, LocalDate date, List<ExchangeRate> rates) {
-        Assert.notNull(date, "date is required");
-        Assert.notNull(rates, "list of exchange rates is required");
-        Rate rate = new Rate();
-        rate.setDate(date);
-        rate.setBase(code != null ? code : BASE_CURRENCY.getCode());
-        BigDecimal baseRate = null;
-        for (ExchangeRate exchangeRate : rates.stream().sorted(Comparator.comparing(o -> o.getCurrency().getCode())).collect(Collectors.toList())) {
-            rate.getRates().put(exchangeRate.getCurrency().getCode(), exchangeRate.getExchangeRate());
-            if (exchangeRate.getCurrency().getCode().equalsIgnoreCase(code)) {
-                baseRate = exchangeRate.getExchangeRate();
-            }
-        }
-
-        if (baseRate != null) {
-            for (Map.Entry<String, BigDecimal> entry : rate.getRates().entrySet()) {
-                entry.setValue(entry.getValue().divide(baseRate, baseRate.scale(), BigDecimal.ROUND_CEILING));
-            }
-        }
-        return rate;
     }
 
     @Override

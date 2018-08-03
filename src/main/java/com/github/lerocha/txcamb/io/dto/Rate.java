@@ -16,24 +16,51 @@
 
 package com.github.lerocha.txcamb.io.dto;
 
+import com.github.lerocha.txcamb.io.entity.ExchangeRate;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Created by lerocha on 2/14/17.
  */
 @Data
-@NoArgsConstructor
 public class Rate implements Serializable {
-    private static final long serialVersionUID = 4435519690243319887L;
+    private static final long serialVersionUID = -6309472981222351233L;
 
     private LocalDate date;
     private String base;
     private Map<String, BigDecimal> rates = new LinkedHashMap<>();
+
+    public Rate(String code, LocalDate date, List<ExchangeRate> rates) {
+        this.setDate(date);
+        this.setBase(code);
+
+        if (rates != null) {
+            List<ExchangeRate> sortedRates = rates.stream()
+                    .sorted(Comparator.comparing(o -> o.getCurrency().getCode()))
+                    .collect(Collectors.toList());
+
+            BigDecimal baseRate = null;
+            for (ExchangeRate exchangeRate : sortedRates) {
+                this.getRates().put(exchangeRate.getCurrency().getCode(), exchangeRate.getExchangeRate());
+                if (exchangeRate.getCurrency().getCode().equalsIgnoreCase(code)) {
+                    baseRate = exchangeRate.getExchangeRate();
+                }
+            }
+
+            if (baseRate != null) {
+                for (Map.Entry<String, BigDecimal> entry : this.getRates().entrySet()) {
+                    entry.setValue(entry.getValue().divide(baseRate, baseRate.scale(), BigDecimal.ROUND_CEILING));
+                }
+            }
+        }
+    }
 }
