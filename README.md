@@ -14,7 +14,7 @@ GET /v1/currencies
 
 Example:
 ```
-curl http://api.txcamb.io/v1/currencies
+curl http://api.opencambio.org/v1/currencies
 ```
 
 #### 2. Get currency
@@ -25,7 +25,7 @@ GET /v1/currencies/{code}
 
 Example:
 ```
-curl http://api.txcamb.io/v1/currencies/CAD
+curl http://api.opencambio.org/v1/currencies/CAD
 ```
 ```
 {
@@ -35,7 +35,7 @@ curl http://api.txcamb.io/v1/currencies/CAD
   "currencyCode": "CAD",
   "_links": {
     "self": {
-      "href": "http://api.txcamb.io/v1/currencies/CAD"
+      "href": "http://api.opencambio.org/v1/currencies/CAD"
     }
   }
 }
@@ -52,7 +52,7 @@ GET /v1/currencies/{code}/rates?start={start}&end={end}
 
 Example:
 ```
-curl http://api.txcamb.io//v1/currencies/USD/rates?start=2016-01-01&end=2016-12-31
+curl http://api.opencambio.org//v1/currencies/USD/rates?start=2016-01-01&end=2016-12-31
 ```
 ```
 {
@@ -97,7 +97,7 @@ curl http://api.txcamb.io//v1/currencies/USD/rates?start=2016-01-01&end=2016-12-
         },
         "_links": {
           "self": {
-            "href": "http://api.txcamb.io/v1/currencies/USD/rates/2016-01-04"
+            "href": "http://api.opencambio.org/v1/currencies/USD/rates/2016-01-04"
           }
         }
       },
@@ -145,7 +145,7 @@ curl http://api.txcamb.io//v1/currencies/USD/rates?start=2016-01-01&end=2016-12-
         },
         "_links": {
           "self": {
-            "href": "http://api.txcamb.io/v1/currencies/USD/rates/2016-01-29"
+            "href": "http://api.opencambio.org/v1/currencies/USD/rates/2016-01-29"
           }
         }
       }
@@ -153,16 +153,16 @@ curl http://api.txcamb.io//v1/currencies/USD/rates?start=2016-01-01&end=2016-12-
   },
   "_links": {
     "self": {
-      "href": "http://api.txcamb.io/v1/currencies/USD/rates?start=2016-01-01&end=2016-12-31&page=0"
+      "href": "http://api.opencambio.org/v1/currencies/USD/rates?start=2016-01-01&end=2016-12-31&page=0"
     },
     "first": {
-      "href": "http://api.txcamb.io/v1/currencies/USD/rates?start=2016-01-01&end=2016-12-31&page=0"
+      "href": "http://api.opencambio.org/v1/currencies/USD/rates?start=2016-01-01&end=2016-12-31&page=0"
     },
     "last": {
-      "href": "http://api.txcamb.io/v1/currencies/USD/rates?start=2016-01-01&end=2016-12-31&page=11"
+      "href": "http://api.opencambio.org/v1/currencies/USD/rates?start=2016-01-01&end=2016-12-31&page=11"
     },
     "next": {
-      "href": "http://api.txcamb.io/v1/currencies/USD/rates?start=2016-01-01&end=2016-12-31&page=1"
+      "href": "http://api.opencambio.org/v1/currencies/USD/rates?start=2016-01-01&end=2016-12-31&page=1"
     }
   }
 }
@@ -177,7 +177,7 @@ GET /v1/currencies/{code}/rates/{date}
 
 Example:
 ```
-curl http://api.txcamb.io/v1/currencies/USD/rates/2017-03-10
+curl http://api.opencambio.org/v1/currencies/USD/rates/2017-03-10
 ```
 ```
 {
@@ -219,7 +219,7 @@ curl http://api.txcamb.io/v1/currencies/USD/rates/2017-03-10
     },
     "_links": {
         "self": {
-            "href": "http://api.txcamb.io/v1/currencies/USD/rates/2017-03-10"
+            "href": "http://api.opencambio.org/v1/currencies/USD/rates/2017-03-10"
         }
     }
 }
@@ -233,5 +233,5 @@ GET /v1/currencies/{code}/rates/latest
 
 Example:
 ```
-curl http://api.txcamb.io/v1/currencies/USD/rates/latest
+curl http://api.opencambio.org/v1/currencies/USD/rates/latest
 ```
