@@ -21,6 +21,7 @@ import com.github.lerocha.txcamb.io.entity.Currency;
 import com.github.lerocha.txcamb.io.service.CurrencyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.Resources;
@@ -41,7 +42,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
-import static java.time.temporal.ChronoUnit.MONTHS;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
@@ -85,21 +85,27 @@ public class CurrencyController {
     }
 
     @GetMapping(path = "{code}/rates")
-    public ResponseEntity<Resources<Resource<Rate>>> getCurrencyRates(@PathVariable(name = "code") String code,
-                                                                      @RequestParam(name = "start", required = false) LocalDate startDate,
-                                                                      @RequestParam(name = "end", required = false) LocalDate endDate,
-                                                                      @RequestParam(name = "page", required = false) Integer offset) {
+    public ResponseEntity<Resources<Resource<Rate>>> getCurrencyRates(@PathVariable(name = "code")
+                                                                              String code,
+                                                                      @RequestParam(name = "start", required = false)
+                                                                      @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+                                                                              LocalDate startDate,
+                                                                      @RequestParam(name = "end", required = false)
+                                                                      @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+                                                                              LocalDate endDate,
+                                                                      @RequestParam(name = "page", required = false)
+                                                                              Integer offset) {
         Page<Rate> page = currencyService.getCurrencyRates(code, startDate, endDate, offset);
         List<Resource<Rate>> rates = page.getContent()
                 .stream()
-                .map(rate -> new Resource<>(rate, linkTo(methodOn(CurrencyController.class).getCurrencyRatesByDate(code, rate.getDate().toString())).withSelfRel()))
+                .map(rate -> new Resource<>(rate, linkTo(methodOn(CurrencyController.class).getCurrencyRatesByDate(code, rate.getDate())).withSelfRel()))
                 .collect(Collectors.toList());
 
         // Create HATEOS links
         List<Link> links = new ArrayList<>();
         links.add(linkTo(methodOn(CurrencyController.class).getCurrencyRates(code, startDate, endDate, offset)).withSelfRel());
         links.add(linkTo(methodOn(CurrencyController.class).getCurrencyRates(code, startDate, endDate, 0)).withRel(Link.REL_FIRST));
-        links.add(linkTo(methodOn(CurrencyController.class).getCurrencyRates(code, startDate, endDate, page.getTotalPages())).withRel(Link.REL_LAST));
+        links.add(linkTo(methodOn(CurrencyController.class).getCurrencyRates(code, startDate, endDate, page.getTotalPages() - 1)).withRel(Link.REL_LAST));
         if (page.hasPrevious()) {
             links.add(linkTo(methodOn(CurrencyController.class).getCurrencyRates(code, startDate, endDate, page.getNumber() - 1)).withRel(Link.REL_PREVIOUS));
         }
@@ -111,13 +117,12 @@ public class CurrencyController {
     }
 
     @GetMapping(path = "{code}/rates/{date}")
-    public ResponseEntity<Resource<Rate>> getCurrencyRatesByDate(@PathVariable(name = "code") String code,
-                                                                 @PathVariable(name = "date") String date) {
-        LocalDate localDate = safeParse(date);
-        if (localDate == null) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-        Rate rate = currencyService.getCurrencyRatesByDate(code, localDate);
+    public ResponseEntity<Resource<Rate>> getCurrencyRatesByDate(@PathVariable(name = "code")
+                                                                         String code,
+                                                                 @PathVariable(name = "date")
+                                                                 @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+                                                                         LocalDate date) {
+        Rate rate = currencyService.getCurrencyRatesByDate(code, date);
         ControllerLinkBuilder builder = linkTo(methodOn(CurrencyController.class).getCurrencyRatesByDate(code, date));
         HttpHeaders headers = new HttpHeaders();
         headers.setLocation(builder.toUri());
@@ -141,13 +146,5 @@ public class CurrencyController {
             return Locale.forLanguageTag(acceptLanguage);
         }
         return null;
-    }
-
-    private static LocalDate safeParse(String date) {
-        try {
-            return date != null ? LocalDate.parse(date) : null;
-        } catch (Exception e) {
-            return null;
-        }
     }
 }

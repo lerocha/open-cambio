@@ -113,7 +113,7 @@ public class CurrencyServiceImpl implements CurrencyService {
         }
 
         // if not the first page, then adjust start as the first day of the month of this page.
-        LocalDate pageStart = (offset > 0) ? startDate.plusMonths(offset + 1).withDayOfMonth(1) : startDate;
+        LocalDate pageStart = (offset > 0) ? startDate.plusMonths(offset).withDayOfMonth(1) : startDate;
 
         // if not the last page, then adjust end as the last day of the month of this page.
         LocalDate pageEnd = (offset < months - 1) ? pageStart.plusMonths(1).withDayOfMonth(1).minusDays(1) : endDate;
@@ -139,7 +139,7 @@ public class CurrencyServiceImpl implements CurrencyService {
             rates.add(new Rate(code, date, dailyExchangeRates));
         }
 
-        Pageable pageable = PageRequest.of(offset + 1, rates.size());
+        Pageable pageable = PageRequest.of(offset, rates.size());
         Page<Rate> page = new PageImpl<>(rates, pageable, months * rates.size());
         log.info("getCurrencyRates; code={}; startDate={}; endDate={}; total={}; offset={}; totalPages={}",
                 code, startDate, endDate, rates.size(), offset, page.getTotalPages());
