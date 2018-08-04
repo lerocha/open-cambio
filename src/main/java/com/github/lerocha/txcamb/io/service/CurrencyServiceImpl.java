@@ -29,6 +29,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,6 +47,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import static java.time.temporal.ChronoUnit.MONTHS;
 
 /**
  * Created by lerocha on 2/1/17.
@@ -89,39 +95,61 @@ public class CurrencyServiceImpl implements CurrencyService {
 
     @Override
     @Cacheable(cacheNames = "rates")
-    public List<Rate> getCurrencyRates(String code, LocalDate startDate, LocalDate endDate) {
-        List<Rate> rates = new ArrayList<>();
-        String currencyCode = code != null ? code : BASE_CURRENCY.getCode();
+    public Page<Rate> getCurrencyRates(String code, LocalDate startDate, LocalDate endDate, Integer offset) {
+        Assert.notNull(code, "currency code is required");
+
         if (startDate == null) {
             startDate = exchangeRateRepository.findMinExchangeDate();
         }
         if (endDate == null) {
             endDate = exchangeRateRepository.findMaxExchangeDate();
         }
-        List<ExchangeRate> allExchangeRates = exchangeRateRepository.findByExchangeDateBetweenOrderByExchangeDate(startDate, endDate);
-        List<ExchangeRate> exchangeRates = new ArrayList<>();
+
+        // Calculate month pagination.
+        int months = (int) MONTHS.between(startDate, endDate);
+
+        if (offset == null || offset > months) {
+            offset = months;
+        }
+
+        // if not the first page, then adjust start as the first day of the month of this page.
+        LocalDate pageStart = (offset > 0) ? startDate.plusMonths(offset).withDayOfMonth(1) : startDate;
+
+        // if not the last page, then adjust end as the last day of the month of this page.
+        LocalDate pageEnd = (offset < months) ? pageStart.plusMonths(1).withDayOfMonth(1).minusDays(1) : endDate;
+
+        // Get exchange rates from the database.
+        List<ExchangeRate> allExchangeRates = exchangeRateRepository.findByExchangeDateBetweenOrderByExchangeDate(pageStart, pageEnd);
+
+        // Group them by day and transform into a List of Rate objects.
+        List<ExchangeRate> dailyExchangeRates = new ArrayList<>();
+        List<Rate> rates = new ArrayList<>();
         LocalDate date = null;
         for (ExchangeRate exchangeRate : allExchangeRates) {
             if (date == null) {
                 date = exchangeRate.getExchangeDate();
             } else if (!date.equals(exchangeRate.getExchangeDate())) {
-                rates.add(new Rate(currencyCode, date, exchangeRates));
-                exchangeRates.clear();
+                rates.add(new Rate(code, date, dailyExchangeRates));
+                dailyExchangeRates.clear();
                 date = exchangeRate.getExchangeDate();
             }
-            exchangeRates.add(exchangeRate);
+            dailyExchangeRates.add(exchangeRate);
         }
-        if (exchangeRates.size() > 0) {
-            rates.add(new Rate(currencyCode, date, exchangeRates));
+        if (dailyExchangeRates.size() > 0) {
+            rates.add(new Rate(code, date, dailyExchangeRates));
         }
 
-        log.info("getCurrencyRates; code={}; startDate={}; endDate={}; total={}", currencyCode, startDate, endDate, rates.size());
-        return rates;
+        Pageable pageable = PageRequest.of(offset, rates.size());
+        Page<Rate> page = new PageImpl<>(rates, pageable, months * rates.size());
+        log.info("getCurrencyRates; code={}; startDate={}; endDate={}; total={}; offset={}; totalPages={}",
+                code, startDate, endDate, rates.size(), offset, page.getTotalPages());
+        return page;
     }
 
     @Override
     @Cacheable(cacheNames = "rates")
     public Rate getCurrencyRatesByDate(String code, LocalDate date) {
+        Assert.notNull(code, "currency code is required");
         Assert.notNull(date, "date is required");
         // Get the last 7 days in case requested date falls in a non business day.
         List<ExchangeRate> allExchangeRates = exchangeRateRepository.findByExchangeDateBetweenOrderByExchangeDate(date.minusDays(7), date);
@@ -139,9 +167,8 @@ public class CurrencyServiceImpl implements CurrencyService {
                 exchangeRates.add(exchangeRate);
             }
         }
-        String currencyCode = code != null ? code : BASE_CURRENCY.getCode();
-        log.info("getCurrencyRatesByDate; code={}; requestedDate={}; availableDate={}", currencyCode, date, availableDate);
-        return new Rate(currencyCode, availableDate, exchangeRates);
+        log.info("getCurrencyRatesByDate; code={}; requestedDate={}; availableDate={}", code, date, availableDate);
+        return new Rate(code, availableDate, exchangeRates);
     }
 
     @Override

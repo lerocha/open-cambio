@@ -19,6 +19,7 @@ package com.github.lerocha.txcamb.io.service;
 import com.github.lerocha.txcamb.io.entity.Currency;
 import com.github.lerocha.txcamb.io.entity.ExchangeRate;
 import com.github.lerocha.txcamb.io.dto.Rate;
+import org.springframework.data.domain.Page;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -32,7 +33,7 @@ public interface CurrencyService {
 
     Currency getCurrency(String code, Locale locale);
 
-    List<Rate> getCurrencyRates(String code, LocalDate startDate, LocalDate endDate);
+    Page<Rate> getCurrencyRates(String code, LocalDate startDate, LocalDate endDate, Integer offset);
 
     Rate getCurrencyRatesByDate(String code, LocalDate date);
 
