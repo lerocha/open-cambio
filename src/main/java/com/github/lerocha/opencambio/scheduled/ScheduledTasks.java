@@ -17,26 +17,20 @@
 package com.github.lerocha.opencambio.scheduled;
 
 import com.github.lerocha.opencambio.service.CurrencyService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 /**
  * Created by lerocha on 3/7/17.
  */
+@Slf4j
 @Component
+@RequiredArgsConstructor
 public class ScheduledTasks {
 
-    private static final Logger log = LoggerFactory.getLogger(ScheduledTasks.class);
-
     private final CurrencyService currencyService;
-
-    @Autowired
-    public ScheduledTasks(CurrencyService currencyService) {
-        this.currencyService = currencyService;
-    }
 
     /**
      * Scheduled task to refresh exchange rates.

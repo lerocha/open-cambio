@@ -19,7 +19,7 @@ package com.github.lerocha.opencambio.controller;
 import com.github.lerocha.opencambio.dto.Rate;
 import com.github.lerocha.opencambio.entity.Currency;
 import com.github.lerocha.opencambio.service.CurrencyService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.hateoas.Link;
@@ -49,15 +49,11 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
  * Created by lerocha on 2/24/17.
  */
 @RestController
+@RequiredArgsConstructor
 @RequestMapping(path = "v1/currencies")
 public class CurrencyController {
 
     private final CurrencyService currencyService;
-
-    @Autowired
-    public CurrencyController(CurrencyService currencyService) {
-        this.currencyService = currencyService;
-    }
 
     @GetMapping
     public ResponseEntity<Resources<Resource<Currency>>> getCurrencies(HttpServletRequest request) {

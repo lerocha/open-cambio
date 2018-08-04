@@ -17,7 +17,7 @@
 package com.github.lerocha.opencambio;
 
 import com.github.lerocha.opencambio.service.CurrencyService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
@@ -26,14 +26,10 @@ import org.springframework.stereotype.Component;
  * Created by lerocha on 2/20/17.
  */
 @Component
+@RequiredArgsConstructor
 public class OpenCambioRunner implements ApplicationRunner {
 
     private final CurrencyService currencyService;
-
-    @Autowired
-    public OpenCambioRunner(CurrencyService currencyService) {
-        this.currencyService = currencyService;
-    }
 
     @Override
     public void run(ApplicationArguments applicationArguments) {
