@@ -1,6 +1,6 @@
-# txcamb.io
+# Open Cambio
 
-txcamb.io is a REST API for currency exchange rates from the [European Central Bank](http://www.ecb.europa.eu/stats/policy_and_exchange_rates/euro_reference_exchange_rates/html/index.en.html).
+Open Cambio is a REST API for currency exchange rates from the [European Central Bank](http://www.ecb.europa.eu/stats/policy_and_exchange_rates/euro_reference_exchange_rates/html/index.en.html).
 
 Exchange rates are usually updated around 16:00 CET on business days.
 
