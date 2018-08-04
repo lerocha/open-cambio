@@ -100,10 +100,10 @@ public class CurrencyController {
         links.add(linkTo(methodOn(CurrencyController.class).getCurrencyRates(code, startDate, endDate, offset)).withSelfRel());
         links.add(linkTo(methodOn(CurrencyController.class).getCurrencyRates(code, startDate, endDate, 0)).withRel(Link.REL_FIRST));
         links.add(linkTo(methodOn(CurrencyController.class).getCurrencyRates(code, startDate, endDate, page.getTotalPages())).withRel(Link.REL_LAST));
-        if (page.getNumber() > 0) {
+        if (page.hasPrevious()) {
             links.add(linkTo(methodOn(CurrencyController.class).getCurrencyRates(code, startDate, endDate, page.getNumber() - 1)).withRel(Link.REL_PREVIOUS));
         }
-        if (page.getNumber() < page.getTotalPages()) {
+        if (page.hasNext()) {
             links.add(linkTo(methodOn(CurrencyController.class).getCurrencyRates(code, startDate, endDate, page.getNumber() + 1)).withRel(Link.REL_NEXT));
         }
 
