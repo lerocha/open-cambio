@@ -38,7 +38,7 @@ import java.time.LocalDate;
         @UniqueConstraint(name = "UK_ExchangeRate_currency_id_exchange_date", columnNames = {"currency_code", "exchangeDate"})
 })
 public class ExchangeRate extends AbstractEntity implements Serializable {
-    private static final long serialVersionUID = -4250802022666206771L;
+    private static final long serialVersionUID = -2062380028467585072L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

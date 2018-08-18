@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
  */
 @Data
 public class Rate implements Serializable {
-    private static final long serialVersionUID = -6309472981222351233L;
+    private static final long serialVersionUID = -6599093669389481952L;
 
     private LocalDate date;
     private String base;

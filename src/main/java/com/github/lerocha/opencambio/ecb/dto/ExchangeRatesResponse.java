@@ -32,7 +32,7 @@ import java.util.List;
 @NoArgsConstructor
 @JacksonXmlRootElement(namespace = "gesmes")
 public class ExchangeRatesResponse implements Serializable {
-    private static final long serialVersionUID = 7280839885499065762L;
+    private static final long serialVersionUID = 6066345143583997388L;
 
     @JacksonXmlProperty(namespace = "gesmes")
     private String subject;

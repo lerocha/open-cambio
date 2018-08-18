@@ -28,7 +28,7 @@ import java.io.Serializable;
 @Data
 @NoArgsConstructor
 public class Sender implements Serializable {
-    private static final long serialVersionUID = 7821136635418567999L;
+    private static final long serialVersionUID = 2502148634103528670L;
 
     @JacksonXmlProperty(namespace = "gesmes")
     private String name;

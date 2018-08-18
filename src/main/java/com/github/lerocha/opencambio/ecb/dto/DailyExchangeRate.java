@@ -31,7 +31,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 public class DailyExchangeRate implements Serializable {
-    private static final long serialVersionUID = -4443258322149873354L;
+    private static final long serialVersionUID = 5686666708552271375L;
 
     @JacksonXmlProperty(localName = "time")
     private LocalDate date;

@@ -34,7 +34,7 @@ import java.time.LocalDate;
 @EqualsAndHashCode(callSuper = true)
 @Entity
 public class Currency extends AbstractEntity implements Serializable {
-    private static final long serialVersionUID = -8276563849125849862L;
+    private static final long serialVersionUID = 4806101247745848945L;
 
     @Id
     @Column(length = 3)

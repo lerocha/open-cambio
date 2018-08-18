@@ -31,7 +31,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CurrencyExchangeRate implements Serializable {
-    private static final long serialVersionUID = 9185304186371168428L;
+    private static final long serialVersionUID = 1419528449668688522L;
 
     @JacksonXmlProperty
     private String currency;
