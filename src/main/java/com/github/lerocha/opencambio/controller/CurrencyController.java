@@ -31,11 +31,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -52,28 +52,29 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 @RequiredArgsConstructor
 @RequestMapping(path = "v1/currencies")
 public class CurrencyController {
+    private static final String DEFAULT_LANGUAGE = "en-US";
 
     private final CurrencyService currencyService;
 
     @GetMapping
-    public ResponseEntity<Resources<Resource<Currency>>> getCurrencies(HttpServletRequest request) {
-        Locale locale = getLocaleFromRequest(request);
+    public ResponseEntity<Resources<Resource<Currency>>> getCurrencies(@RequestHeader(value = HttpHeaders.ACCEPT_LANGUAGE, defaultValue = DEFAULT_LANGUAGE) String language) {
+        Locale locale = Locale.forLanguageTag(language);
         List<Resource<Currency>> currencies = currencyService.getCurrencies(locale)
                 .stream()
-                .map(currency -> new Resource<>(currency, linkTo(methodOn(CurrencyController.class).getCurrency(request, currency.getCode())).withSelfRel()))
+                .map(currency -> new Resource<>(currency, linkTo(methodOn(CurrencyController.class).getCurrency(language, currency.getCode())).withSelfRel()))
                 .collect(Collectors.toList());
-        return ResponseEntity.ok(new Resources<>(currencies, linkTo(methodOn(CurrencyController.class).getCurrencies(request)).withSelfRel()));
+        return ResponseEntity.ok(new Resources<>(currencies, linkTo(methodOn(CurrencyController.class).getCurrencies(language)).withSelfRel()));
     }
 
     @GetMapping(path = "{code}")
-    public ResponseEntity<Resource<Currency>> getCurrency(HttpServletRequest request,
+    public ResponseEntity<Resource<Currency>> getCurrency(@RequestHeader(value = HttpHeaders.ACCEPT_LANGUAGE, defaultValue = DEFAULT_LANGUAGE) String language,
                                                           @PathVariable(name = "code") String code) {
-        Locale locale = getLocaleFromRequest(request);
+        Locale locale = Locale.forLanguageTag(language);
         Currency currency = currencyService.getCurrency(code, locale);
         if (currency == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        ControllerLinkBuilder builder = linkTo(methodOn(CurrencyController.class).getCurrency(request, code));
+        ControllerLinkBuilder builder = linkTo(methodOn(CurrencyController.class).getCurrency(language, code));
         HttpHeaders headers = new HttpHeaders();
         headers.setLocation(builder.toUri());
         Resource<Currency> resource = new Resource<>(currency, builder.withSelfRel());
@@ -134,13 +135,5 @@ public class CurrencyController {
         headers.setLocation(builder.toUri());
         Resource<Rate> resource = new Resource<>(rate, builder.withSelfRel());
         return new ResponseEntity<>(resource, headers, HttpStatus.OK);
-    }
-
-    private static Locale getLocaleFromRequest(HttpServletRequest request) {
-        String acceptLanguage = request.getHeader("Accept-Language");
-        if (acceptLanguage != null) {
-            return Locale.forLanguageTag(acceptLanguage);
-        }
-        return null;
     }
 }
