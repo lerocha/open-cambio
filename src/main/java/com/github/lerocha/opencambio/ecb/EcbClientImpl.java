@@ -36,7 +36,7 @@ public class EcbClientImpl implements EcbClient {
     @Override
     public ResponseEntity<ExchangeRatesResponse> getCurrentExchangeRates() {
         try {
-            final String url = "http://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml";
+            final String url = "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml";
             ResponseEntity<ExchangeRatesResponse> response = restTemplate.exchange(url, HttpMethod.GET, null, ExchangeRatesResponse.class);
             log.info("getCurrentExchangeRates; status={}", response.getStatusCode());
             return response;
@@ -49,7 +49,7 @@ public class EcbClientImpl implements EcbClient {
     @Override
     public ResponseEntity<ExchangeRatesResponse> getLast90DaysExchangeRates() {
         try {
-            final String url = "http://www.ecb.europa.eu/stats/eurofxref/eurofxref-hist-90d.xml";
+            final String url = "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-hist-90d.xml";
             ResponseEntity<ExchangeRatesResponse> response = restTemplate.exchange(url, HttpMethod.GET, null, ExchangeRatesResponse.class);
             log.info("getLast90DaysExchangeRates; status={}", response.getStatusCode());
             return response;
@@ -62,7 +62,7 @@ public class EcbClientImpl implements EcbClient {
     @Override
     public ResponseEntity<ExchangeRatesResponse> getAllExchangeRates() {
         try {
-            final String url = "http://www.ecb.europa.eu/stats/eurofxref/eurofxref-hist.xml";
+            final String url = "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-hist.xml";
             ResponseEntity<ExchangeRatesResponse> response = restTemplate.exchange(url, HttpMethod.GET, null, ExchangeRatesResponse.class);
             log.info("getAllExchangeRates; status={}", response.getStatusCode());
             return response;
