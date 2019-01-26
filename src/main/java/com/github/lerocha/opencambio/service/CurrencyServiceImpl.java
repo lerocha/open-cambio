@@ -65,7 +65,7 @@ public class CurrencyServiceImpl implements CurrencyService {
     private final EcbClient ecbClient;
 
     @Override
-    @Cacheable(cacheNames = "currencies")
+    @Cacheable(cacheNames = "currencies", unless = "#result.size()==0")
     public List<Currency> getCurrencies(Locale locale) {
         List<Currency> currencies = new ArrayList<>();
         List<Object[]> results = exchangeRateRepository.findAvailableCurrencies();
@@ -94,7 +94,7 @@ public class CurrencyServiceImpl implements CurrencyService {
     }
 
     @Override
-    @Cacheable(cacheNames = "rates")
+    @Cacheable(cacheNames = "rates", unless = "#result.getTotalElements()==0")
     public Page<Rate> getCurrencyRates(String code, LocalDate startDate, LocalDate endDate, Integer offset) {
         Assert.notNull(code, "currency code is required");
 
@@ -183,7 +183,7 @@ public class CurrencyServiceImpl implements CurrencyService {
 
     @Override
     @Transactional
-    @CacheEvict(cacheNames = "rates", allEntries = true)
+    @CacheEvict(cacheNames = {"rates", "currencies"}, allEntries = true)
     public List<ExchangeRate> refreshExchangeRates() {
         LocalDate lastRefresh = exchangeRateRepository.findMaxExchangeDate();
         log.info("refreshExchangeRates; status=starting; lastRefresh={}", lastRefresh);
