@@ -50,7 +50,7 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
  */
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(path = "v1/currencies")
+@RequestMapping(path = "v1/currencies", produces = "application/json")
 public class CurrencyController {
     private static final String DEFAULT_LANGUAGE = "en-US";
 
