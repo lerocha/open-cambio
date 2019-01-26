@@ -39,4 +39,15 @@ dependencies {
 	compileOnly('org.projectlombok:lombok')
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 	testCompile('org.junit.jupiter:junit-jupiter-engine')
+	testCompile 'com.intuit.karate:karate-junit5:0.9.1'
+	testCompile 'com.intuit.karate:karate-apache:0.9.1'
+}
+
+sourceSets {
+	test {
+		resources {
+			srcDir file('src/test/java/karate')
+			exclude '**/*.java'
+		}
+	}
 }
