@@ -39,6 +39,7 @@ overridedb.*
 *.iml
 .idea
 .DS_STORE
+.java-version
 
 # Elastic Beanstalk Files
 .elasticbeanstalk/*
