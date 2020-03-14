@@ -16,10 +16,16 @@
 
 package com.github.lerocha.opencambio.configuration;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.web.client.RestTemplate;
+
+import java.text.SimpleDateFormat;
 
 /**
  * Created by lerocha on 2/1/17.
@@ -28,9 +34,20 @@ import org.springframework.web.client.RestTemplate;
 @EnableJpaAuditing
 public class CurrencyConfiguration {
 
+    private static final String ISO_8601_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
+
     @Bean
     public RestTemplate restTemplate() {
         return new RestTemplate();
+    }
+
+    @Bean
+    public ObjectMapper objectMapper() {
+        return new ObjectMapper()
+                .registerModule(new ParameterNamesModule())
+                .registerModule(new Jdk8Module())
+                .registerModule(new JavaTimeModule())
+                .setDateFormat(new SimpleDateFormat(ISO_8601_DATE_FORMAT));
     }
 
 }
