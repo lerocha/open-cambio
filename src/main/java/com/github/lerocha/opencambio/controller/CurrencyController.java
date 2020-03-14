@@ -22,10 +22,11 @@ import com.github.lerocha.opencambio.service.CurrencyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.hateoas.Link;
-import org.springframework.hateoas.Resource;
-import org.springframework.hateoas.Resources;
-import org.springframework.hateoas.mvc.ControllerLinkBuilder;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,8 +43,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 /**
  * Created by lerocha on 2/24/17.
@@ -57,83 +58,83 @@ public class CurrencyController {
     private final CurrencyService currencyService;
 
     @GetMapping
-    public ResponseEntity<Resources<Resource<Currency>>> getCurrencies(@RequestHeader(value = HttpHeaders.ACCEPT_LANGUAGE, defaultValue = DEFAULT_LANGUAGE) String language) {
+    public ResponseEntity<CollectionModel<EntityModel<Currency>>> getCurrencies(@RequestHeader(value = HttpHeaders.ACCEPT_LANGUAGE, defaultValue = DEFAULT_LANGUAGE) String language) {
         Locale locale = Locale.forLanguageTag(language);
-        List<Resource<Currency>> currencies = currencyService.getCurrencies(locale)
+        List<EntityModel<Currency>> currencies = currencyService.getCurrencies(locale)
                 .stream()
-                .map(currency -> new Resource<>(currency, linkTo(methodOn(CurrencyController.class).getCurrency(language, currency.getCode())).withSelfRel()))
+                .map(currency -> new EntityModel<>(currency, linkTo(methodOn(CurrencyController.class).getCurrency(language, currency.getCode())).withSelfRel()))
                 .collect(Collectors.toList());
-        return ResponseEntity.ok(new Resources<>(currencies, linkTo(methodOn(CurrencyController.class).getCurrencies(language)).withSelfRel()));
+        return ResponseEntity.ok(new CollectionModel<>(currencies, linkTo(methodOn(CurrencyController.class).getCurrencies(language)).withSelfRel()));
     }
 
     @GetMapping(path = "{code}")
-    public ResponseEntity<Resource<Currency>> getCurrency(@RequestHeader(value = HttpHeaders.ACCEPT_LANGUAGE, defaultValue = DEFAULT_LANGUAGE) String language,
-                                                          @PathVariable(name = "code") String code) {
+    public ResponseEntity<EntityModel<Currency>> getCurrency(@RequestHeader(value = HttpHeaders.ACCEPT_LANGUAGE, defaultValue = DEFAULT_LANGUAGE) String language,
+                                                             @PathVariable(name = "code") String code) {
         Locale locale = Locale.forLanguageTag(language);
         Currency currency = currencyService.getCurrency(code, locale);
         if (currency == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        ControllerLinkBuilder builder = linkTo(methodOn(CurrencyController.class).getCurrency(language, code));
+        WebMvcLinkBuilder builder = linkTo(methodOn(CurrencyController.class).getCurrency(language, code));
         HttpHeaders headers = new HttpHeaders();
         headers.setLocation(builder.toUri());
-        Resource<Currency> resource = new Resource<>(currency, builder.withSelfRel());
+        EntityModel<Currency> resource = new EntityModel<>(currency, builder.withSelfRel());
         return new ResponseEntity<>(resource, headers, HttpStatus.OK);
     }
 
     @GetMapping(path = "{code}/rates")
-    public ResponseEntity<Resources<Resource<Rate>>> getCurrencyRates(@PathVariable(name = "code")
-                                                                              String code,
-                                                                      @RequestParam(name = "start", required = false)
-                                                                      @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-                                                                              LocalDate startDate,
-                                                                      @RequestParam(name = "end", required = false)
-                                                                      @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-                                                                              LocalDate endDate,
-                                                                      @RequestParam(name = "page", required = false)
-                                                                              Integer offset) {
+    public ResponseEntity<CollectionModel<EntityModel<Rate>>> getCurrencyRates(@PathVariable(name = "code")
+                                                                                       String code,
+                                                                               @RequestParam(name = "start", required = false)
+                                                                               @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+                                                                                       LocalDate startDate,
+                                                                               @RequestParam(name = "end", required = false)
+                                                                               @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+                                                                                       LocalDate endDate,
+                                                                               @RequestParam(name = "page", required = false)
+                                                                                       Integer offset) {
         Page<Rate> page = currencyService.getCurrencyRates(code, startDate, endDate, offset);
-        List<Resource<Rate>> rates = page.getContent()
+        List<EntityModel<Rate>> rates = page.getContent()
                 .stream()
-                .map(rate -> new Resource<>(rate, linkTo(methodOn(CurrencyController.class).getCurrencyRatesByDate(code, rate.getDate())).withSelfRel()))
+                .map(rate -> new EntityModel<>(rate, linkTo(methodOn(CurrencyController.class).getCurrencyRatesByDate(code, rate.getDate())).withSelfRel()))
                 .collect(Collectors.toList());
 
         // Create HATEOS links
         List<Link> links = new ArrayList<>();
         links.add(linkTo(methodOn(CurrencyController.class).getCurrencyRates(code, startDate, endDate, offset)).withSelfRel());
-        links.add(linkTo(methodOn(CurrencyController.class).getCurrencyRates(code, startDate, endDate, 0)).withRel(Link.REL_FIRST));
-        links.add(linkTo(methodOn(CurrencyController.class).getCurrencyRates(code, startDate, endDate, page.getTotalPages() - 1)).withRel(Link.REL_LAST));
+        links.add(linkTo(methodOn(CurrencyController.class).getCurrencyRates(code, startDate, endDate, 0)).withRel(IanaLinkRelations.FIRST));
+        links.add(linkTo(methodOn(CurrencyController.class).getCurrencyRates(code, startDate, endDate, page.getTotalPages() - 1)).withRel(IanaLinkRelations.LAST));
         if (page.hasPrevious()) {
-            links.add(linkTo(methodOn(CurrencyController.class).getCurrencyRates(code, startDate, endDate, page.getNumber() - 1)).withRel(Link.REL_PREVIOUS));
+            links.add(linkTo(methodOn(CurrencyController.class).getCurrencyRates(code, startDate, endDate, page.getNumber() - 1)).withRel(IanaLinkRelations.PREV));
         }
         if (page.hasNext()) {
-            links.add(linkTo(methodOn(CurrencyController.class).getCurrencyRates(code, startDate, endDate, page.getNumber() + 1)).withRel(Link.REL_NEXT));
+            links.add(linkTo(methodOn(CurrencyController.class).getCurrencyRates(code, startDate, endDate, page.getNumber() + 1)).withRel(IanaLinkRelations.NEXT));
         }
 
-        return ResponseEntity.ok(new Resources<>(rates, links));
+        return ResponseEntity.ok(new CollectionModel<>(rates, links));
     }
 
     @GetMapping(path = "{code}/rates/{date}")
-    public ResponseEntity<Resource<Rate>> getCurrencyRatesByDate(@PathVariable(name = "code")
-                                                                         String code,
-                                                                 @PathVariable(name = "date")
-                                                                 @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-                                                                         LocalDate date) {
+    public ResponseEntity<EntityModel<Rate>> getCurrencyRatesByDate(@PathVariable(name = "code")
+                                                                            String code,
+                                                                    @PathVariable(name = "date")
+                                                                    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+                                                                            LocalDate date) {
         Rate rate = currencyService.getCurrencyRatesByDate(code, date);
-        ControllerLinkBuilder builder = linkTo(methodOn(CurrencyController.class).getCurrencyRatesByDate(code, date));
+        WebMvcLinkBuilder builder = linkTo(methodOn(CurrencyController.class).getCurrencyRatesByDate(code, date));
         HttpHeaders headers = new HttpHeaders();
         headers.setLocation(builder.toUri());
-        Resource<Rate> resource = new Resource<>(rate, builder.withSelfRel());
+        EntityModel<Rate> resource = new EntityModel<>(rate, builder.withSelfRel());
         return new ResponseEntity<>(resource, headers, HttpStatus.OK);
     }
 
     @GetMapping(path = "{code}/rates/latest")
-    public ResponseEntity<Resource<Rate>> getCurrencyLatestRates(@PathVariable(name = "code") String code) {
+    public ResponseEntity<EntityModel<Rate>> getCurrencyLatestRates(@PathVariable(name = "code") String code) {
         Rate rate = currencyService.getLatestCurrencyRates(code);
-        ControllerLinkBuilder builder = linkTo(methodOn(CurrencyController.class).getCurrencyLatestRates(code));
+        WebMvcLinkBuilder builder = linkTo(methodOn(CurrencyController.class).getCurrencyLatestRates(code));
         HttpHeaders headers = new HttpHeaders();
         headers.setLocation(builder.toUri());
-        Resource<Rate> resource = new Resource<>(rate, builder.withSelfRel());
+        EntityModel<Rate> resource = new EntityModel<>(rate, builder.withSelfRel());
         return new ResponseEntity<>(resource, headers, HttpStatus.OK);
     }
 }
