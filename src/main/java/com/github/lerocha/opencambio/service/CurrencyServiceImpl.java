@@ -43,6 +43,7 @@ import java.sql.Date;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -129,14 +130,14 @@ public class CurrencyServiceImpl implements CurrencyService {
             if (date == null) {
                 date = exchangeRate.getExchangeDate();
             } else if (!date.equals(exchangeRate.getExchangeDate())) {
-                rates.add(new Rate(code, date, dailyExchangeRates));
+                rates.add(createRate(code, date, dailyExchangeRates));
                 dailyExchangeRates.clear();
                 date = exchangeRate.getExchangeDate();
             }
             dailyExchangeRates.add(exchangeRate);
         }
         if (dailyExchangeRates.size() > 0) {
-            rates.add(new Rate(code, date, dailyExchangeRates));
+            rates.add(createRate(code, date, dailyExchangeRates));
         }
 
         Pageable pageable = PageRequest.of(offset, rates.size());
@@ -144,6 +145,30 @@ public class CurrencyServiceImpl implements CurrencyService {
         log.info("getCurrencyRates; code={}; startDate={}; endDate={}; total={}; offset={}; totalPages={}",
                 code, startDate, endDate, rates.size(), offset, page.getTotalPages());
         return page;
+    }
+
+    private Rate createRate(String code, LocalDate date, List<ExchangeRate> exchangeRates) {
+        Map<String, BigDecimal> ratesByCurrency = new LinkedHashMap<>();
+        if (exchangeRates != null) {
+            List<ExchangeRate> sortedRates = exchangeRates.stream()
+                    .sorted(Comparator.comparing(o -> o.getCurrency().getCode()))
+                    .collect(Collectors.toList());
+
+            BigDecimal baseRate = null;
+            for (ExchangeRate exchangeRate : sortedRates) {
+                ratesByCurrency.put(exchangeRate.getCurrency().getCode(), exchangeRate.getExchangeRate());
+                if (exchangeRate.getCurrency().getCode().equalsIgnoreCase(code)) {
+                    baseRate = exchangeRate.getExchangeRate();
+                }
+            }
+
+            if (baseRate != null) {
+                for (Map.Entry<String, BigDecimal> entry : ratesByCurrency.entrySet()) {
+                    entry.setValue(entry.getValue().divide(baseRate, baseRate.scale(), BigDecimal.ROUND_CEILING));
+                }
+            }
+        }
+        return new Rate(date, code, ratesByCurrency);
     }
 
     @Override
@@ -168,7 +193,7 @@ public class CurrencyServiceImpl implements CurrencyService {
             }
         }
         log.info("getCurrencyRatesByDate; code={}; requestedDate={}; availableDate={}", code, date, availableDate);
-        return new Rate(code, availableDate, exchangeRates);
+        return createRate(code, availableDate, exchangeRates);
     }
 
     @Override
