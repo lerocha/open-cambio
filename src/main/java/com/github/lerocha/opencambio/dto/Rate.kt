@@ -16,27 +16,12 @@
 
 package com.github.lerocha.opencambio.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import java.math.BigDecimal
+import java.time.LocalDate
+import java.util.*
 
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
-/**
- * Created by lerocha on 2/14/17.
- */
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class Rate implements Serializable {
-    private static final long serialVersionUID = -6599093669389481952L;
-
-    private LocalDate date;
-    private String base;
-    private Map<String, BigDecimal> rates = new LinkedHashMap<>();
-
-}
+data class Rate(
+        val date: LocalDate? = null,
+        val base: String? = null,
+        val rates: Map<String, BigDecimal> = LinkedHashMap()
+)

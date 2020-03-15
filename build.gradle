@@ -2,6 +2,7 @@ plugins {
 	id 'org.springframework.boot' version '2.2.5.RELEASE'
 	id 'io.spring.dependency-management' version '1.0.9.RELEASE'
 	id 'java'
+	id 'org.jetbrains.kotlin.jvm' version '1.3.70'
 }
 
 group = 'com.github.lerocha'
@@ -35,8 +36,19 @@ dependencies {
 	}
 	testImplementation 'com.intuit.karate:karate-junit5:0.9.1'
 	testImplementation 'com.intuit.karate:karate-apache:0.9.1'
+	implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
 }
 
 test {
 	useJUnitPlatform()
+}
+compileKotlin {
+	kotlinOptions {
+		jvmTarget = "1.8"
+	}
+}
+compileTestKotlin {
+	kotlinOptions {
+		jvmTarget = "1.8"
+	}
 }
