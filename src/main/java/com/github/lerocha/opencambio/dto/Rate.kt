@@ -18,10 +18,10 @@ package com.github.lerocha.opencambio.dto;
 
 import java.math.BigDecimal
 import java.time.LocalDate
-import java.util.*
+import java.util.LinkedHashMap
 
 data class Rate(
-        val date: LocalDate? = null,
-        val base: String? = null,
-        val rates: Map<String, BigDecimal> = LinkedHashMap()
+    val date: LocalDate? = null,
+    val base: String? = null,
+    val rates: Map<String, BigDecimal> = LinkedHashMap()
 )
