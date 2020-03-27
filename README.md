@@ -31,7 +31,7 @@ curl http://api.opencambio.org/v1/currencies/CAD
 {
   "displayName": "Canadian Dollar",
   "startDate": "1999-01-04",
-  "endDate": "2017-03-14",
+  "endDate": "2020-03-14",
   "currencyCode": "CAD",
   "_links": {
     "self": {
@@ -52,14 +52,14 @@ GET /v1/currencies/{code}/rates?start={start}&end={end}
 
 Example:
 ```
-curl http://api.opencambio.org//v1/currencies/USD/rates?start=2016-01-01&end=2016-12-31
+curl http://api.opencambio.org//v1/currencies/USD/rates?start=2019-01-01&end=2019-12-31
 ```
 ```
 {
   "_embedded": {
     "rates": [
       {
-        "date": "2016-01-04",
+        "date": "2019-01-04",
         "base": "USD",
         "rates": {
           "AUD": 1.390439,
@@ -97,7 +97,7 @@ curl http://api.opencambio.org//v1/currencies/USD/rates?start=2016-01-01&end=201
         },
         "_links": {
           "self": {
-            "href": "http://api.opencambio.org/v1/currencies/USD/rates/2016-01-04"
+            "href": "http://api.opencambio.org/v1/currencies/USD/rates/2019-01-04"
           }
         }
       },
@@ -107,7 +107,7 @@ curl http://api.opencambio.org//v1/currencies/USD/rates?start=2016-01-01&end=201
       .
       
       {
-        "date": "2016-01-29",
+        "date": "2019-01-29",
         "base": "USD",
         "rates": {
           "AUD": 1.409158,
@@ -145,7 +145,7 @@ curl http://api.opencambio.org//v1/currencies/USD/rates?start=2016-01-01&end=201
         },
         "_links": {
           "self": {
-            "href": "http://api.opencambio.org/v1/currencies/USD/rates/2016-01-29"
+            "href": "http://api.opencambio.org/v1/currencies/USD/rates/2019-01-29"
           }
         }
       }
@@ -153,16 +153,16 @@ curl http://api.opencambio.org//v1/currencies/USD/rates?start=2016-01-01&end=201
   },
   "_links": {
     "self": {
-      "href": "http://api.opencambio.org/v1/currencies/USD/rates?start=2016-01-01&end=2016-12-31&page=0"
+      "href": "http://api.opencambio.org/v1/currencies/USD/rates?start=2019-01-01&end=2019-12-31&page=0"
     },
     "first": {
-      "href": "http://api.opencambio.org/v1/currencies/USD/rates?start=2016-01-01&end=2016-12-31&page=0"
+      "href": "http://api.opencambio.org/v1/currencies/USD/rates?start=2019-01-01&end=2019-12-31&page=0"
     },
     "last": {
-      "href": "http://api.opencambio.org/v1/currencies/USD/rates?start=2016-01-01&end=2016-12-31&page=11"
+      "href": "http://api.opencambio.org/v1/currencies/USD/rates?start=2019-01-01&end=2019-12-31&page=11"
     },
     "next": {
-      "href": "http://api.opencambio.org/v1/currencies/USD/rates?start=2016-01-01&end=2016-12-31&page=1"
+      "href": "http://api.opencambio.org/v1/currencies/USD/rates?start=2019-01-01&end=2019-12-31&page=1"
     }
   }
 }
@@ -177,11 +177,11 @@ GET /v1/currencies/{code}/rates/{date}
 
 Example:
 ```
-curl http://api.opencambio.org/v1/currencies/USD/rates/2017-03-10
+curl http://api.opencambio.org/v1/currencies/USD/rates/2020-03-10
 ```
 ```
 {
-    "date": "2017-03-10",
+    "date": "2020-03-10",
     "base": "USD",
     "rates": {
         "AUD": 1.328965,
@@ -219,7 +219,7 @@ curl http://api.opencambio.org/v1/currencies/USD/rates/2017-03-10
     },
     "_links": {
         "self": {
-            "href": "http://api.opencambio.org/v1/currencies/USD/rates/2017-03-10"
+            "href": "http://api.opencambio.org/v1/currencies/USD/rates/2020-03-10"
         }
     }
 }
