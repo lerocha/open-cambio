@@ -235,3 +235,33 @@ Example:
 ```
 curl http://api.opencambio.org/v1/currencies/USD/rates/latest
 ```
+
+## Build and Run
+
+```
+./gradlew build
+```
+
+### Running locally
+
+```
+java -jar build/libs/open-cambio-0.0.2-SNAPSHOT.jar
+```
+
+### Running with Docker
+
+Create the docker image:
+```
+docker build -t open-cambio .
+````
+
+Run docker container:
+```
+docker run --name open-cambio -dp 5000:5000 open-cambio
+```
+
+### Testing
+
+```
+curl http://localhost:5000/v1/currencies/CAD
+```
