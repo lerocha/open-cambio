@@ -254,18 +254,23 @@ public class CurrencyServiceImpl implements CurrencyService {
 
         // Convert into entity objects.
         List<ExchangeRate> exchangeRates = new ArrayList<>();
+        log.info("refreshExchangeRates; saving to database; total={}", exchangeRates.size());
         for (DailyExchangeRate dailyExchangeRate : dailyExchangeRates) {
             List<CurrencyExchangeRate> currencyExchangeRates = dailyExchangeRate.getCurrencyExchangeRates();
+
             // Add the base currency with exchange rate = 1.0 since it is not part of the response.
             currencyExchangeRates.add(new CurrencyExchangeRate(BASE_CURRENCY.getCode(), BigDecimal.ONE.setScale(6, BigDecimal.ROUND_HALF_UP)));
-            exchangeRates.addAll(currencyExchangeRates.stream()
+
+            List<ExchangeRate> exchangeRatesPerDay = currencyExchangeRates.stream()
                     .sorted(Comparator.comparing(CurrencyExchangeRate::getCurrency))
                     .map(o -> new ExchangeRate(null, currencyMap.get(o.getCurrency()), dailyExchangeRate.getDate(), o.getRate()))
-                    .collect(Collectors.toList()));
-        }
+                    .collect(Collectors.toList());
+            exchangeRatesPerDay = (List<ExchangeRate>) exchangeRateRepository.saveAll(exchangeRatesPerDay);
 
-        // Bulk save exchange rates.
-        exchangeRates = (List<ExchangeRate>) exchangeRateRepository.saveAll(exchangeRates);
+            // Bulk save exchange rates.
+            exchangeRates.addAll(exchangeRatesPerDay);
+            log.info("refreshExchangeRates; saved; date={}; total={}", dailyExchangeRate.getDate(), currencyExchangeRates.size());
+        }
 
         // Update currencies start and end date based on exchange rates.
         exchangeRates.forEach(exchangeRate -> {
