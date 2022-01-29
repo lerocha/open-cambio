@@ -109,7 +109,9 @@ public class CurrencyServiceImpl implements CurrencyService {
         // Calculate month pagination.
         int months = (int) MONTHS.between(startDate, endDate) + 1;
 
-        if (offset == null || offset > months) {
+        if (offset == null || offset < 0) {
+            offset = 0;
+        } else if (offset >= months) {
             offset = months  - 1;
         }
 
