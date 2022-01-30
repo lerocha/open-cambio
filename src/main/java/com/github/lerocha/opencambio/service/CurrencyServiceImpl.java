@@ -209,7 +209,6 @@ public class CurrencyServiceImpl implements CurrencyService {
     }
 
     @Override
-    @Transactional
     @CacheEvict(cacheNames = {"rates", "currencies"}, allEntries = true)
     public List<ExchangeRate> refreshExchangeRates() {
         LocalDate lastRefresh = exchangeRateRepository.findMaxExchangeDate();
@@ -265,11 +264,11 @@ public class CurrencyServiceImpl implements CurrencyService {
                     .sorted(Comparator.comparing(CurrencyExchangeRate::getCurrency))
                     .map(o -> new ExchangeRate(null, currencyMap.get(o.getCurrency()), dailyExchangeRate.getDate(), o.getRate()))
                     .collect(Collectors.toList());
-            exchangeRatesPerDay = (List<ExchangeRate>) exchangeRateRepository.saveAll(exchangeRatesPerDay);
 
             // Bulk save exchange rates.
+            exchangeRatesPerDay = (List<ExchangeRate>) exchangeRateRepository.saveAll(exchangeRatesPerDay);
             exchangeRates.addAll(exchangeRatesPerDay);
-            log.info("refreshExchangeRates; saved; date={}; total={}", dailyExchangeRate.getDate(), currencyExchangeRates.size());
+            log.info("refreshExchangeRates; date={}; total={}", dailyExchangeRate.getDate(), currencyExchangeRates.size());
         }
 
         // Update currencies start and end date based on exchange rates.
