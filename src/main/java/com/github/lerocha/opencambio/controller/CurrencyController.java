@@ -17,6 +17,7 @@
 package com.github.lerocha.opencambio.controller;
 
 import com.github.lerocha.opencambio.dto.Currency;
+import com.github.lerocha.opencambio.dto.Pagination;
 import com.github.lerocha.opencambio.dto.Rate;
 import com.github.lerocha.opencambio.dto.RatesResponse;
 import com.github.lerocha.opencambio.service.CurrencyService;
@@ -79,7 +80,7 @@ public class CurrencyController {
                                                           @RequestParam(name = "end", required = false)
                                                           @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
                                                                   LocalDate endDate,
-                                                          @RequestParam(name = "page", required = false)
+                                                          @RequestParam(required = false)
                                                                   Integer offset) {
         Page<Rate> page = currencyService.getCurrencyRates(code, startDate, endDate, offset);
         List<Rate> rates = page.getContent();
@@ -96,7 +97,7 @@ public class CurrencyController {
             links.add(linkTo(methodOn(CurrencyController.class).getCurrencyRates(code, startDate, endDate, page.getNumber() + 1)).withRel(IanaLinkRelations.NEXT));
         }
 
-        return ResponseEntity.ok(new RatesResponse(rates, links));
+        return ResponseEntity.ok(new RatesResponse(rates, new Pagination(page.getNumber(), page.getTotalPages()), links));
     }
 
     @GetMapping(path = "{code}/rates/{date}")

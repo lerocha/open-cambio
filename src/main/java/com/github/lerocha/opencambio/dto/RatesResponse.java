@@ -32,9 +32,11 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 public class RatesResponse extends RepresentationModel<RatesResponse> {
     private List<Rate> rates = new ArrayList<>();
+    private Pagination pagination;
 
-    public RatesResponse(List<Rate> rates, Iterable<Link> initialLinks) {
+    public RatesResponse(List<Rate> rates, Pagination pagination, Iterable<Link> initialLinks) {
         super(initialLinks);
+        this.pagination = pagination;
         this.rates = rates;
     }
 }

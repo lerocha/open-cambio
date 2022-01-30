@@ -136,19 +136,23 @@ curl http://api.opencambio.org/v1/currencies/USD/rates?start=2022-01-01&end=2022
             }
         }
     ],
+    "pagination": {
+        "offset": 0,
+        "total": 12
+    },
     "_links": {
         "self": {
-            "href": "http://localhost:5000/v1/currencies/USD/rates?start=2021-01-01&end=2021-12-31{&page}",
+            "href": "http://localhost:5000/v1/currencies/USD/rates?start=2021-01-01&end=2021-12-31{&offset}",
             "templated": true
         },
         "first": {
-            "href": "http://localhost:5000/v1/currencies/USD/rates?start=2021-01-01&end=2021-12-31&page=0"
+            "href": "http://localhost:5000/v1/currencies/USD/rates?start=2021-01-01&end=2021-12-31&offset=0"
         },
         "last": {
-            "href": "http://localhost:5000/v1/currencies/USD/rates?start=2021-01-01&end=2021-12-31&page=11"
+            "href": "http://localhost:5000/v1/currencies/USD/rates?start=2021-01-01&end=2021-12-31&offset=11"
         },
         "next": {
-            "href": "http://localhost:5000/v1/currencies/USD/rates?start=2021-01-01&end=2021-12-31&page=1"
+            "href": "http://localhost:5000/v1/currencies/USD/rates?start=2021-01-01&end=2021-12-31&offset=1"
         }
     }
 }
