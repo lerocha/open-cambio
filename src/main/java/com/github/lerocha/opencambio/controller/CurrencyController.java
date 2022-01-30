@@ -62,9 +62,9 @@ public class CurrencyController {
         Locale locale = Locale.forLanguageTag(language);
         List<EntityModel<Currency>> currencies = currencyService.getCurrencies(locale)
                 .stream()
-                .map(currency -> new EntityModel<>(currency, linkTo(methodOn(CurrencyController.class).getCurrency(language, currency.getCode())).withSelfRel()))
+                .map(currency -> EntityModel.of(currency, linkTo(methodOn(CurrencyController.class).getCurrency(language, currency.getCode())).withSelfRel()))
                 .collect(Collectors.toList());
-        return ResponseEntity.ok(new CollectionModel<>(currencies, linkTo(methodOn(CurrencyController.class).getCurrencies(language)).withSelfRel()));
+        return ResponseEntity.ok(CollectionModel.of(currencies, linkTo(methodOn(CurrencyController.class).getCurrencies(language)).withSelfRel()));
     }
 
     @GetMapping(path = "{code}")
@@ -78,7 +78,7 @@ public class CurrencyController {
         WebMvcLinkBuilder builder = linkTo(methodOn(CurrencyController.class).getCurrency(language, code));
         HttpHeaders headers = new HttpHeaders();
         headers.setLocation(builder.toUri());
-        EntityModel<Currency> resource = new EntityModel<>(currency, builder.withSelfRel());
+        EntityModel<Currency> resource = EntityModel.of(currency, builder.withSelfRel());
         return new ResponseEntity<>(resource, headers, HttpStatus.OK);
     }
 
@@ -96,7 +96,7 @@ public class CurrencyController {
         Page<Rate> page = currencyService.getCurrencyRates(code, startDate, endDate, offset);
         List<EntityModel<Rate>> rates = page.getContent()
                 .stream()
-                .map(rate -> new EntityModel<>(rate, linkTo(methodOn(CurrencyController.class).getCurrencyRatesByDate(code, rate.getDate())).withSelfRel()))
+                .map(rate -> EntityModel.of(rate, linkTo(methodOn(CurrencyController.class).getCurrencyRatesByDate(code, rate.getDate())).withSelfRel()))
                 .collect(Collectors.toList());
 
         // Create HATEOS links
@@ -111,7 +111,7 @@ public class CurrencyController {
             links.add(linkTo(methodOn(CurrencyController.class).getCurrencyRates(code, startDate, endDate, page.getNumber() + 1)).withRel(IanaLinkRelations.NEXT));
         }
 
-        return ResponseEntity.ok(new CollectionModel<>(rates, links));
+        return ResponseEntity.ok(CollectionModel.of(rates, links));
     }
 
     @GetMapping(path = "{code}/rates/{date}")
@@ -124,7 +124,7 @@ public class CurrencyController {
         WebMvcLinkBuilder builder = linkTo(methodOn(CurrencyController.class).getCurrencyRatesByDate(code, date));
         HttpHeaders headers = new HttpHeaders();
         headers.setLocation(builder.toUri());
-        EntityModel<Rate> resource = new EntityModel<>(rate, builder.withSelfRel());
+        EntityModel<Rate> resource = EntityModel.of(rate, builder.withSelfRel());
         return new ResponseEntity<>(resource, headers, HttpStatus.OK);
     }
 
@@ -134,7 +134,7 @@ public class CurrencyController {
         WebMvcLinkBuilder builder = linkTo(methodOn(CurrencyController.class).getCurrencyLatestRates(code));
         HttpHeaders headers = new HttpHeaders();
         headers.setLocation(builder.toUri());
-        EntityModel<Rate> resource = new EntityModel<>(rate, builder.withSelfRel());
+        EntityModel<Rate> resource = EntityModel.of(rate, builder.withSelfRel());
         return new ResponseEntity<>(resource, headers, HttpStatus.OK);
     }
 }
