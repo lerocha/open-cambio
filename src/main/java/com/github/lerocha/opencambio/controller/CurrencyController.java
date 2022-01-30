@@ -16,8 +16,8 @@
 
 package com.github.lerocha.opencambio.controller;
 
+import com.github.lerocha.opencambio.dto.Currency;
 import com.github.lerocha.opencambio.dto.Rate;
-import com.github.lerocha.opencambio.entity.Currency;
 import com.github.lerocha.opencambio.service.CurrencyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -58,28 +58,29 @@ public class CurrencyController {
     private final CurrencyService currencyService;
 
     @GetMapping
-    public ResponseEntity<CollectionModel<EntityModel<Currency>>> getCurrencies(@RequestHeader(value = HttpHeaders.ACCEPT_LANGUAGE, defaultValue = DEFAULT_LANGUAGE) String language) {
+    public ResponseEntity<CollectionModel<Currency>> getCurrencies(@RequestHeader(value = HttpHeaders.ACCEPT_LANGUAGE, defaultValue = DEFAULT_LANGUAGE) String language) {
         Locale locale = Locale.forLanguageTag(language);
-        List<EntityModel<Currency>> currencies = currencyService.getCurrencies(locale)
+        List<Currency> currencies = currencyService.getCurrencies(locale)
                 .stream()
-                .map(currency -> EntityModel.of(currency, linkTo(methodOn(CurrencyController.class).getCurrency(language, currency.getCode())).withSelfRel()))
+                .map(currency -> new Currency(currency, linkTo(methodOn(CurrencyController.class).getCurrency(language, currency.getCode())).withSelfRel()))
                 .collect(Collectors.toList());
+
         return ResponseEntity.ok(CollectionModel.of(currencies, linkTo(methodOn(CurrencyController.class).getCurrencies(language)).withSelfRel()));
     }
 
     @GetMapping(path = "{code}")
-    public ResponseEntity<EntityModel<Currency>> getCurrency(@RequestHeader(value = HttpHeaders.ACCEPT_LANGUAGE, defaultValue = DEFAULT_LANGUAGE) String language,
-                                                             @PathVariable(name = "code") String code) {
+    public ResponseEntity<Currency> getCurrency(@RequestHeader(value = HttpHeaders.ACCEPT_LANGUAGE, defaultValue = DEFAULT_LANGUAGE) String language,
+                                                @PathVariable(name = "code") String code) {
         Locale locale = Locale.forLanguageTag(language);
-        Currency currency = currencyService.getCurrency(code, locale);
+        com.github.lerocha.opencambio.entity.Currency currency = currencyService.getCurrency(code, locale);
         if (currency == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         WebMvcLinkBuilder builder = linkTo(methodOn(CurrencyController.class).getCurrency(language, code));
         HttpHeaders headers = new HttpHeaders();
         headers.setLocation(builder.toUri());
-        EntityModel<Currency> resource = EntityModel.of(currency, builder.withSelfRel());
-        return new ResponseEntity<>(resource, headers, HttpStatus.OK);
+        Currency model = new Currency(currency, builder.withSelfRel());
+        return new ResponseEntity<>(model, headers, HttpStatus.OK);
     }
 
     @GetMapping(path = "{code}/rates")
