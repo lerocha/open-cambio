@@ -18,20 +18,23 @@ package com.github.lerocha.opencambio.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.RepresentationModel;
 
-import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-public class Currency {
-    private String code;
-    private String displayName;
-    private LocalDate startDate;
-    private LocalDate endDate;
+@AllArgsConstructor
+@EqualsAndHashCode(callSuper = true)
+public class RatesResponse extends RepresentationModel<RatesResponse> {
+    private List<Rate> rates = new ArrayList<>();
 
-    public Currency(com.github.lerocha.opencambio.entity.Currency currency) {
-        this(currency.getCode(), currency.getDisplayName(), currency.getStartDate(), currency.getEndDate());
+    public RatesResponse(List<Rate> rates, Iterable<Link> initialLinks) {
+        super(initialLinks);
+        this.rates = rates;
     }
 }
