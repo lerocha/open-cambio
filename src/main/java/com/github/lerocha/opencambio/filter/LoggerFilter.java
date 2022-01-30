@@ -18,6 +18,7 @@ package com.github.lerocha.opencambio.filter;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.catalina.connector.RequestFacade;
+import org.apache.catalina.connector.ResponseFacade;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.*;
@@ -39,7 +40,8 @@ public class LoggerFilter implements Filter {
         chain.doFilter(request, response);
 
         Instant stop = Instant.now();
-        log.info("response; {}; time={}", requestDetails, Duration.between(start, stop).toMillis());
+        String responseDetails = getResponseDetails(response);
+        log.info("response; {}; {}; time={}", requestDetails, responseDetails, Duration.between(start, stop).toMillis());
     }
 
     private String getRequestDetails(ServletRequest request) {
@@ -52,11 +54,25 @@ public class LoggerFilter implements Filter {
             String forwardedFor = requestFacade.getHeader("X-FORWARDED-FOR");
             String ipAddress = forwardedFor != null ? forwardedFor.split(",")[0] : requestFacade.getRemoteAddr();
             map.put("ipAddress", ipAddress);
-
-            return map.entrySet().stream()
-                    .map(x -> String.format("%s=%s", x.getKey(), x.getValue()))
-                    .collect(Collectors.joining("; "));
+            return mapToString(map);
         }
         return "";
+    }
+
+    private String getResponseDetails(ServletResponse response) {
+        if (response instanceof ResponseFacade) {
+            ResponseFacade responseFacade = (ResponseFacade) response;
+            Map<String, String> map = new LinkedHashMap<>();
+            map.put("status", String.valueOf(responseFacade.getStatus()));
+            map.put("content-type", responseFacade.getContentType());
+            return mapToString(map);
+        }
+        return "";
+    }
+
+    private String mapToString(Map<String, String> map) {
+        return map.entrySet().stream()
+                .map(x -> String.format("%s=%s", x.getKey(), x.getValue()))
+                .collect(Collectors.joining("; "));
     }
 }
