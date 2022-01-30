@@ -2,23 +2,23 @@ spring:
   profiles.active: default
 
 ---
-spring:
-    profiles: default
+spring.config:
+  activate.on-profile: default
 
 server:
-    port: 5000
+  port: 5000
 
 spring.datasource:
-    driverClassName: org.h2.Driver
-    url: jdbc:h2:mem:exchange_rates;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;MODE=MySQL
-    username: sa
-    password:
-#    driverClassName: com.mysql.jdbc.Driver
-#    url: jdbc:mysql://localhost:3306/exchange_rates?autoReconnect=true
-#    username: root
-#    password: purpose
-    validation-query: SELECT 1
-    test-on-borrow: true
+  driverClassName: org.h2.Driver
+  url: jdbc:h2:mem:exchange_rates;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;MODE=MySQL
+  username: sa
+  password:
+  #    driverClassName: com.mysql.jdbc.Driver
+  #    url: jdbc:mysql://localhost:3306/exchange_rates?autoReconnect=true
+  #    username: root
+  #    password: purpose
+  validation-query: SELECT 1
+  test-on-borrow: true
 
 spring.h2.console:
   enabled: false
@@ -31,7 +31,7 @@ spring.jpa:
     show-sql: true
     format_sql: true
   database-platform: org.hibernate.dialect.H2Dialect
-#  database-platform: org.hibernate.dialect.MySQL5Dialect
+  #  database-platform: org.hibernate.dialect.MySQL5Dialect
   show-sql: false
 #  properties:
 #    jadira:
@@ -50,8 +50,8 @@ spring.jackson.serialization:
   INDENT_OUTPUT: true
 
 ---
-spring:
-    profiles: production
+spring.config:
+  activate.on-profile: production
 
 spring.h2.console:
   enabled: false
