@@ -35,10 +35,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -112,7 +112,7 @@ public class CurrencyServiceImpl implements CurrencyService {
         if (offset == null || offset < 0) {
             offset = 0;
         } else if (offset >= months) {
-            offset = months  - 1;
+            offset = months - 1;
         }
 
         // if not the first page, then adjust start as the first day of the month of this page.
@@ -143,7 +143,7 @@ public class CurrencyServiceImpl implements CurrencyService {
         }
 
         Pageable pageable = PageRequest.of(offset, rates.size());
-        Page<Rate> page = new PageImpl<>(rates, pageable, months * rates.size());
+        Page<Rate> page = new PageImpl<>(rates, pageable, (long) months * rates.size());
         log.info("getCurrencyRates; code={}; startDate={}; endDate={}; total={}; offset={}; totalPages={}",
                 code, startDate, endDate, rates.size(), offset, page.getTotalPages());
         return page;
@@ -166,7 +166,7 @@ public class CurrencyServiceImpl implements CurrencyService {
 
             if (baseRate != null) {
                 for (Map.Entry<String, BigDecimal> entry : ratesByCurrency.entrySet()) {
-                    entry.setValue(entry.getValue().divide(baseRate, baseRate.scale(), BigDecimal.ROUND_CEILING));
+                    entry.setValue(entry.getValue().divide(baseRate, baseRate.scale(), RoundingMode.CEILING));
                 }
             }
         }
@@ -178,7 +178,7 @@ public class CurrencyServiceImpl implements CurrencyService {
     public Rate getCurrencyRatesByDate(String code, LocalDate date) {
         Assert.notNull(code, "currency code is required");
         Assert.notNull(date, "date is required");
-        // Get the last 7 days in case requested date falls in a non business day.
+        // Get the last 7 days in case requested date falls in a non-business day.
         List<ExchangeRate> allExchangeRates = exchangeRateRepository.findByExchangeDateBetweenOrderByExchangeDate(date.minusDays(7), date);
         List<ExchangeRate> exchangeRates = new ArrayList<>();
         LocalDate availableDate = date;
@@ -258,7 +258,7 @@ public class CurrencyServiceImpl implements CurrencyService {
             List<CurrencyExchangeRate> currencyExchangeRates = dailyExchangeRate.getCurrencyExchangeRates();
 
             // Add the base currency with exchange rate = 1.0 since it is not part of the response.
-            currencyExchangeRates.add(new CurrencyExchangeRate(BASE_CURRENCY.getCode(), BigDecimal.ONE.setScale(6, BigDecimal.ROUND_HALF_UP)));
+            currencyExchangeRates.add(new CurrencyExchangeRate(BASE_CURRENCY.getCode(), BigDecimal.ONE.setScale(6, RoundingMode.HALF_UP)));
 
             List<ExchangeRate> exchangeRatesPerDay = currencyExchangeRates.stream()
                     .sorted(Comparator.comparing(CurrencyExchangeRate::getCurrency))
@@ -266,7 +266,7 @@ public class CurrencyServiceImpl implements CurrencyService {
                     .collect(Collectors.toList());
 
             // Bulk save exchange rates.
-            exchangeRatesPerDay = (List<ExchangeRate>) exchangeRateRepository.saveAll(exchangeRatesPerDay);
+            exchangeRateRepository.saveAll(exchangeRatesPerDay);
             exchangeRates.addAll(exchangeRatesPerDay);
         }
         log.info("refreshExchangeRates; status=saved; total={}", exchangeRates.size());
@@ -281,7 +281,7 @@ public class CurrencyServiceImpl implements CurrencyService {
                 currency.setEndDate(exchangeRate.getExchangeDate());
             }
         });
-        currencies = currencyRepository.saveAll(currencies);
+        currencyRepository.saveAll(currencies);
 
         log.info("refreshExchangeRates; status=ok; startDate={}; endDate={}; totalRates={}; totalCurrencies={}",
                 exchangeRates.size() > 0 ? exchangeRates.get(0).getExchangeDate() : null,

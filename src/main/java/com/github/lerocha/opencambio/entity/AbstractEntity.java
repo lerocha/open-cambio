@@ -33,7 +33,6 @@ import java.time.Instant;
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
 public abstract class AbstractEntity {
-
     @CreatedDate
     @Column(nullable = false)
     private Instant createdDate;
@@ -41,5 +40,4 @@ public abstract class AbstractEntity {
     @LastModifiedDate
     @Column(nullable = false)
     private Instant lastModifiedDate;
-
 }
