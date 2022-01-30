@@ -33,6 +33,9 @@ public class LoggerFilter implements Filter {
             map.put("method", requestFacade.getMethod());
             map.put("uri", requestFacade.getRequestURI());
             requestFacade.getParameterMap().forEach((key, value) -> map.put(key, Arrays.toString(value)));
+            String forwardedFor = requestFacade.getHeader("X-FORWARDED-FOR");
+            String ipAddress = forwardedFor != null ? forwardedFor.split(",")[0] : requestFacade.getRemoteAddr();
+            map.put("ipAddress", ipAddress);
 
             return map.entrySet().stream()
                     .map(x -> String.format("%s=%s", x.getKey(), x.getValue()))
