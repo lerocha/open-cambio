@@ -253,7 +253,7 @@ public class CurrencyServiceImpl implements CurrencyService {
 
         // Convert into entity objects.
         List<ExchangeRate> exchangeRates = new ArrayList<>();
-        log.info("refreshExchangeRates; saving to database; total={}", exchangeRates.size());
+        log.info("refreshExchangeRates; saving to database; days={}", dailyExchangeRates.size());
         for (DailyExchangeRate dailyExchangeRate : dailyExchangeRates) {
             List<CurrencyExchangeRate> currencyExchangeRates = dailyExchangeRate.getCurrencyExchangeRates();
 
