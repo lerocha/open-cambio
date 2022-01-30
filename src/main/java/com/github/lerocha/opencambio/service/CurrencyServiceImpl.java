@@ -253,7 +253,7 @@ public class CurrencyServiceImpl implements CurrencyService {
 
         // Convert into entity objects.
         List<ExchangeRate> exchangeRates = new ArrayList<>();
-        log.info("refreshExchangeRates; saving to database; days={}", dailyExchangeRates.size());
+        log.info("refreshExchangeRates; status=saving; days={}", dailyExchangeRates.size());
         for (DailyExchangeRate dailyExchangeRate : dailyExchangeRates) {
             List<CurrencyExchangeRate> currencyExchangeRates = dailyExchangeRate.getCurrencyExchangeRates();
 
@@ -268,8 +268,8 @@ public class CurrencyServiceImpl implements CurrencyService {
             // Bulk save exchange rates.
             exchangeRatesPerDay = (List<ExchangeRate>) exchangeRateRepository.saveAll(exchangeRatesPerDay);
             exchangeRates.addAll(exchangeRatesPerDay);
-            log.info("refreshExchangeRates; date={}; total={}", dailyExchangeRate.getDate(), currencyExchangeRates.size());
         }
+        log.info("refreshExchangeRates; status=saved; total={}", exchangeRates.size());
 
         // Update currencies start and end date based on exchange rates.
         exchangeRates.forEach(exchangeRate -> {
