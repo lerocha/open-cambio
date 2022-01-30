@@ -1,4 +1,4 @@
-package com.github.lerocha.opencambio.dto;
+package com.github.lerocha.opencambio.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

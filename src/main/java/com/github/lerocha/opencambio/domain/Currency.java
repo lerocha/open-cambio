@@ -14,25 +14,24 @@
  * limitations under the License.
  */
 
-package com.github.lerocha.opencambio.dto;
+package com.github.lerocha.opencambio.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
-/**
- * Created by lerocha on 2/14/17.
- */
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-public class Rate {
-    private LocalDate date;
-    private String base;
-    private Map<String, BigDecimal> rates = new LinkedHashMap<>();
+@NoArgsConstructor
+public class Currency {
+    private String code;
+    private String displayName;
+    private LocalDate startDate;
+    private LocalDate endDate;
+
+    public Currency(com.github.lerocha.opencambio.entity.Currency currency) {
+        this(currency.getCode(), currency.getDisplayName(), currency.getStartDate(), currency.getEndDate());
+    }
 }

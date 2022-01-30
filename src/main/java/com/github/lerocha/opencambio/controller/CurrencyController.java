@@ -16,10 +16,10 @@
 
 package com.github.lerocha.opencambio.controller;
 
-import com.github.lerocha.opencambio.dto.Currency;
-import com.github.lerocha.opencambio.dto.Pagination;
-import com.github.lerocha.opencambio.dto.Rate;
-import com.github.lerocha.opencambio.dto.RatesResponse;
+import com.github.lerocha.opencambio.domain.Currency;
+import com.github.lerocha.opencambio.domain.Pagination;
+import com.github.lerocha.opencambio.domain.Rate;
+import com.github.lerocha.opencambio.domain.RatesResponse;
 import com.github.lerocha.opencambio.service.CurrencyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

@@ -18,7 +18,7 @@ package com.github.lerocha.opencambio.service;
 
 import com.github.lerocha.opencambio.entity.Currency;
 import com.github.lerocha.opencambio.entity.ExchangeRate;
-import com.github.lerocha.opencambio.dto.Rate;
+import com.github.lerocha.opencambio.domain.Rate;
 import org.springframework.data.domain.Page;
 
 import java.time.LocalDate;

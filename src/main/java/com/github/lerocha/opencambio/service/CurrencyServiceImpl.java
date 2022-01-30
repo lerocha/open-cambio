@@ -16,7 +16,7 @@
 
 package com.github.lerocha.opencambio.service;
 
-import com.github.lerocha.opencambio.dto.Rate;
+import com.github.lerocha.opencambio.domain.Rate;
 import com.github.lerocha.opencambio.ecb.EcbClient;
 import com.github.lerocha.opencambio.ecb.dto.CurrencyExchangeRate;
 import com.github.lerocha.opencambio.ecb.dto.DailyExchangeRate;

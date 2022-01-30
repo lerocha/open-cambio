@@ -14,29 +14,25 @@
  * limitations under the License.
  */
 
-package com.github.lerocha.opencambio.dto;
+package com.github.lerocha.opencambio.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.springframework.hateoas.Link;
-import org.springframework.hateoas.RepresentationModel;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
+/**
+ * Created by lerocha on 2/14/17.
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
-public class RatesResponse extends RepresentationModel<RatesResponse> {
-    private List<Rate> rates = new ArrayList<>();
-    private Pagination pagination;
-
-    public RatesResponse(List<Rate> rates, Pagination pagination, Iterable<Link> initialLinks) {
-        super(initialLinks);
-        this.pagination = pagination;
-        this.rates = rates;
-    }
+public class Rate {
+    private LocalDate date;
+    private String base;
+    private Map<String, BigDecimal> rates = new LinkedHashMap<>();
 }
