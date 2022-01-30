@@ -29,15 +29,10 @@ curl http://api.opencambio.org/v1/currencies/CAD
 ```
 ```
 {
-  "displayName": "Canadian Dollar",
-  "startDate": "1999-01-04",
-  "endDate": "2017-03-14",
-  "currencyCode": "CAD",
-  "_links": {
-    "self": {
-      "href": "http://api.opencambio.org/v1/currencies/CAD"
-    }
-  }
+    "code": "CAD",
+    "displayName": "Canadian Dollar",
+    "startDate": "1999-01-04",
+    "endDate": "2022-01-28"
 }
 ```
 * `startDate` and `endDate` indicates the date range of available exchange rates for this currency.
@@ -52,119 +47,110 @@ GET /v1/currencies/{code}/rates?start={start}&end={end}
 
 Example:
 ```
-curl http://api.opencambio.org//v1/currencies/USD/rates?start=2016-01-01&end=2016-12-31
+curl http://api.opencambio.org/v1/currencies/USD/rates?start=2022-01-01&end=2022-12-31
 ```
 ```
 {
-  "_embedded": {
     "rates": [
-      {
-        "date": "2016-01-04",
-        "base": "USD",
-        "rates": {
-          "AUD": 1.390439,
-          "BGN": 1.794642,
-          "BRL": 4.039549,
-          "CAD": 1.392183,
-          "CHF": 0.999358,
-          "CNY": 6.534043,
-          "CZK": 24.796293,
-          "DKK": 6.847128,
-          "EUR": 0.9176,
-          "GBP": 0.677281,
-          "HKD": 7.750413,
-          "HRK": 7.011838,
-          "HUF": 289.401726,
-          "IDR": 13942.585796,
-          "ILS": 3.914388,
-          "INR": 66.633328,
-          "JPY": 119.086071,
-          "KRW": 1190.924941,
-          "MXN": 17.375023,
-          "MYR": 4.346027,
-          "NOK": 8.852542,
-          "NZD": 1.481557,
-          "PHP": 47.158195,
-          "PLN": 3.941549,
-          "RON": 4.144798,
-          "RUB": 73.108644,
-          "SEK": 8.414021,
-          "SGD": 1.425308,
-          "THB": 36.159846,
-          "TRY": 2.954029,
-          "USD": 1,
-          "ZAR": 15.558635
+        {
+            "date": "2021-01-04",
+            "base": "USD",
+            "rates": {
+                "AUD": 1.295381,
+                "BGN": 1.590599,
+                "BRL": 5.143218,
+                "CAD": 1.270414,
+                "CHF": 0.879230,
+                "CNY": 6.464217,
+                "CZK": 21.259760,
+                "DKK": 6.049041,
+                "EUR": 0.813273,
+                "GBP": 0.733247,
+                "HKD": 7.752928,
+                "HRK": 6.145495,
+                "HUF": 293.851660,
+                "IDR": 13876.602148,
+                "ILS": 3.206734,
+                "INR": 73.022935,
+                "ISK": 126.951855,
+                "JPY": 102.976578,
+                "KRW": 1083.303514,
+                "MXN": 19.765046,
+                "MYR": 4.006507,
+                "NOK": 8.493820,
+                "NZD": 1.387850,
+                "PHP": 48.030254,
+                "PLN": 3.698358,
+                "RON": 3.961695,
+                "RUB": 73.472675,
+                "SEK": 8.205514,
+                "SGD": 1.317339,
+                "THB": 29.869877,
+                "TRY": 7.366542,
+                "USD": 1.000000,
+                "ZAR": 14.574984
+            }
         },
-        "_links": {
-          "self": {
-            "href": "http://api.opencambio.org/v1/currencies/USD/rates/2016-01-04"
-          }
+        
+        .
+        .
+        .
+        
+        {
+            "date": "2021-01-29",
+            "base": "USD",
+            "rates": {
+                "AUD": 1.303478,
+                "BGN": 1.611569,
+                "BRL": 5.485169,
+                "CAD": 1.278840,
+                "CHF": 0.889750,
+                "CNY": 6.431032,
+                "CZK": 21.440343,
+                "DKK": 6.128049,
+                "EUR": 0.823995,
+                "GBP": 0.728272,
+                "HKD": 7.753214,
+                "HRK": 6.234180,
+                "HUF": 295.311471,
+                "IDR": 14003.098221,
+                "ILS": 3.280653,
+                "INR": 72.867502,
+                "ISK": 128.625577,
+                "JPY": 104.688530,
+                "KRW": 1116.496375,
+                "MXN": 20.222232,
+                "MYR": 4.042519,
+                "NOK": 8.522578,
+                "NZD": 1.389503,
+                "PHP": 48.066085,
+                "PLN": 3.733026,
+                "RON": 4.016975,
+                "RUB": 75.723385,
+                "SEK": 8.331411,
+                "SGD": 1.328362,
+                "THB": 29.900297,
+                "TRY": 7.314766,
+                "USD": 1.000000,
+                "ZAR": 15.083883
+            }
         }
-      },
-      
-      .
-      .
-      .
-      
-      {
-        "date": "2016-01-29",
-        "base": "USD",
-        "rates": {
-          "AUD": 1.409158,
-          "BGN": 1.791026,
-          "BRL": 4.056228,
-          "CAD": 1.406869,
-          "CHF": 1.020513,
-          "CNY": 6.576008,
-          "CZK": 24.749085,
-          "DKK": 6.834066,
-          "EUR": 0.915751,
-          "GBP": 0.699726,
-          "HKD": 7.793132,
-          "HRK": 7.014653,
-          "HUF": 285.741759,
-          "IDR": 13706.630037,
-          "ILS": 3.945422,
-          "INR": 67.860715,
-          "JPY": 121.108059,
-          "KRW": 1207.509158,
-          "MXN": 18.319964,
-          "MYR": 4.147986,
-          "NOK": 8.68544,
-          "NZD": 1.537363,
-          "PHP": 47.69414,
-          "PLN": 4.065751,
-          "RON": 4.153114,
-          "RUB": 75.8674,
-          "SEK": 8.560715,
-          "SGD": 1.423993,
-          "THB": 35.689561,
-          "TRY": 2.963828,
-          "USD": 1,
-          "ZAR": 16.018957
+    ],
+    "_links": {
+        "self": {
+            "href": "http://localhost:5000/v1/currencies/USD/rates?start=2021-01-01&end=2021-12-31{&page}",
+            "templated": true
         },
-        "_links": {
-          "self": {
-            "href": "http://api.opencambio.org/v1/currencies/USD/rates/2016-01-29"
-          }
+        "first": {
+            "href": "http://localhost:5000/v1/currencies/USD/rates?start=2021-01-01&end=2021-12-31&page=0"
+        },
+        "last": {
+            "href": "http://localhost:5000/v1/currencies/USD/rates?start=2021-01-01&end=2021-12-31&page=11"
+        },
+        "next": {
+            "href": "http://localhost:5000/v1/currencies/USD/rates?start=2021-01-01&end=2021-12-31&page=1"
         }
-      }
-    ]
-  },
-  "_links": {
-    "self": {
-      "href": "http://api.opencambio.org/v1/currencies/USD/rates?start=2016-01-01&end=2016-12-31&page=0"
-    },
-    "first": {
-      "href": "http://api.opencambio.org/v1/currencies/USD/rates?start=2016-01-01&end=2016-12-31&page=0"
-    },
-    "last": {
-      "href": "http://api.opencambio.org/v1/currencies/USD/rates?start=2016-01-01&end=2016-12-31&page=11"
-    },
-    "next": {
-      "href": "http://api.opencambio.org/v1/currencies/USD/rates?start=2016-01-01&end=2016-12-31&page=1"
     }
-  }
 }
 ```
 
@@ -177,50 +163,46 @@ GET /v1/currencies/{code}/rates/{date}
 
 Example:
 ```
-curl http://api.opencambio.org/v1/currencies/USD/rates/2017-03-10
+curl http://api.opencambio.org/v1/currencies/USD/rates/2022-01-28
 ```
 ```
 {
-    "date": "2017-03-10",
+    "date": "2022-01-28",
     "base": "USD",
     "rates": {
-        "AUD": 1.328965,
-        "BGN": 1.844051,
-        "BRL": 3.176882,
-        "CAD": 1.350368,
-        "CHF": 1.012918,
-        "CNY": 6.914577,
-        "CZK": 25.477089,
-        "DKK": 7.008392,
-        "EUR": 0.942863,
-        "GBP": 0.822648,
-        "HKD": 7.766076,
-        "HRK": 6.995098,
-        "HUF": 294.427683,
-        "IDR": 13375.231002,
-        "ILS": 3.685273,
-        "INR": 66.634453,
-        "JPY": 115.425232,
-        "KRW": 1156.213465,
-        "MXN": 19.770036,
-        "MYR": 4.453235,
-        "NOK": 8.618235,
-        "NZD": 1.447106,
-        "PHP": 50.236659,
-        "PLN": 4.07873,
-        "RON": 4.289082,
-        "RUB": 59.114087,
-        "SEK": 9.030549,
-        "SGD": 1.41816,
-        "THB": 35.410146,
-        "TRY": 3.752688,
-        "USD": 1,
-        "ZAR": 13.264285
-    },
-    "_links": {
-        "self": {
-            "href": "http://api.opencambio.org/v1/currencies/USD/rates/2017-03-10"
-        }
+        "AUD": 1.433920,
+        "BGN": 1.755971,
+        "BRL": 5.400162,
+        "CAD": 1.278417,
+        "CHF": 0.931766,
+        "CNY": 6.361735,
+        "CZK": 21.945592,
+        "DKK": 6.682708,
+        "EUR": 0.897828,
+        "GBP": 0.746795,
+        "HKD": 7.794039,
+        "HRK": 6.759742,
+        "HUF": 321.799246,
+        "IDR": 14408.116359,
+        "ILS": 3.204974,
+        "INR": 75.059706,
+        "ISK": 129.287126,
+        "JPY": 115.532412,
+        "KRW": 1211.590950,
+        "MXN": 20.816485,
+        "MYR": 4.189981,
+        "NOK": 9.001617,
+        "NZD": 1.529090,
+        "PHP": 51.201293,
+        "PLN": 4.108009,
+        "RON": 4.440923,
+        "RUB": 77.761986,
+        "SEK": 9.473874,
+        "SGD": 1.356528,
+        "THB": 33.425211,
+        "TRY": 13.595260,
+        "USD": 1.000000,
+        "ZAR": 15.608189
     }
 }
 ```
