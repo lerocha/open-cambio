@@ -24,7 +24,6 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import java.io.Serializable;
 import java.time.LocalDate;
 
 /**
@@ -35,9 +34,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @Entity
-public class Currency extends AbstractEntity implements Serializable {
-    private static final long serialVersionUID = 4806101247745848945L;
-
+public class Currency extends AbstractEntity {
     @Id
     @Column(length = 3)
     private String code;
