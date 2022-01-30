@@ -16,17 +16,15 @@
 
 package com.github.lerocha.opencambio.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.Column;
 import javax.persistence.EntityListeners;
 import javax.persistence.MappedSuperclass;
-import javax.persistence.PreUpdate;
-import java.io.Serializable;
-import java.time.Clock;
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 /**
  * Created by lerocha on 2/18/17.
@@ -34,19 +32,14 @@ import java.time.LocalDateTime;
 @Data
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
-public abstract class AbstractEntity implements Serializable {
-    private static final long serialVersionUID = -2951292494759381140L;
+public abstract class AbstractEntity {
 
-    @JsonIgnore
-    @Column(columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP", nullable = false)
-    private LocalDateTime createdDate = LocalDateTime.now(Clock.systemUTC());
+    @CreatedDate
+    @Column(nullable = false)
+    private Instant createdDate;
 
-    @JsonIgnore
-    @Column(columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP", nullable = false)
-    private LocalDateTime lastModifiedDate = LocalDateTime.now(Clock.systemUTC());
+    @LastModifiedDate
+    @Column(nullable = false)
+    private Instant lastModifiedDate;
 
-    @PreUpdate
-    private void preUpdate() {
-        this.lastModifiedDate = LocalDateTime.now(Clock.systemUTC());
-    }
 }
