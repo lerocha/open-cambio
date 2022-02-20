@@ -99,11 +99,14 @@ public class CurrencyServiceImpl implements CurrencyService {
     public Page<Rate> getCurrencyRates(String code, LocalDate startDate, LocalDate endDate, Integer offset) {
         Assert.notNull(code, "currency code is required");
 
-        if (startDate == null) {
-            startDate = exchangeRateRepository.findMinExchangeDate();
+        LocalDate minDate = exchangeRateRepository.findMinExchangeDate();
+        if (startDate == null || startDate.isBefore(minDate)) {
+            startDate = minDate;
         }
-        if (endDate == null) {
-            endDate = exchangeRateRepository.findMaxExchangeDate();
+
+        LocalDate maxDate = exchangeRateRepository.findMaxExchangeDate();
+        if (endDate == null || endDate.isAfter(maxDate)) {
+            endDate = maxDate;
         }
 
         // Calculate month pagination.
