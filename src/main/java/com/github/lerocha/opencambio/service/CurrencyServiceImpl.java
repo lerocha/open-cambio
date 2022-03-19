@@ -167,10 +167,12 @@ public class CurrencyServiceImpl implements CurrencyService {
                 }
             }
 
-            if (baseRate != null) {
-                for (Map.Entry<String, BigDecimal> entry : ratesByCurrency.entrySet()) {
-                    entry.setValue(entry.getValue().divide(baseRate, baseRate.scale(), RoundingMode.CEILING));
-                }
+            if (baseRate == null) {
+                throw new IllegalArgumentException("Invalid currency code.");
+            }
+
+            for (Map.Entry<String, BigDecimal> entry : ratesByCurrency.entrySet()) {
+                entry.setValue(entry.getValue().divide(baseRate, baseRate.scale(), RoundingMode.CEILING));
             }
         }
         return new Rate(date, code, ratesByCurrency);

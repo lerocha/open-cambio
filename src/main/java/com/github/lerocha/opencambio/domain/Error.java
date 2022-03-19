@@ -16,14 +16,25 @@
 
 package com.github.lerocha.opencambio.domain;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.http.HttpStatus;
+
+import java.time.Instant;
 
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
-public class Pagination {
-    private int offset;
-    private int total;
+public class Error {
+    private Instant timestamp = Instant.now();
+    private int status;
+    private String error;
+    private String message;
+    private String path;
+
+    public Error(HttpStatus status, String message, String path) {
+        this.status = status.value();
+        this.error = status.getReasonPhrase();
+        this.message = message;
+        this.path = path;
+    }
 }
