@@ -228,6 +228,22 @@ curl http://api.opencambio.org/v1/currencies/USD/rates/latest
 ./gradlew build
 ```
 
+## Running tests
+
+### Integration tests
+```
+./gradlew test --tests "*integration.*"
+```
+
+### Karate tests
+```
+./gradlew test --tests "*karate.*" -Dkarate.env=local
+```
+
+```
+./gradlew test --tests "*karate.*" -Dkarate.env=dev
+```
+
 ### Running locally
 
 ```

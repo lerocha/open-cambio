@@ -1,4 +1,4 @@
-package karate.currencies;
+package com.github.lerocha.opencambio.karate.currencies;
 
 import com.intuit.karate.junit5.Karate;
 

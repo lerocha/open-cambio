@@ -1,4 +1,4 @@
-package karate;
+package com.github.lerocha.opencambio.karate;
 
 import com.intuit.karate.Results;
 import com.intuit.karate.Runner;
@@ -10,7 +10,7 @@ class ApiTest {
 
     @Test
     void testParallel() {
-        Results results = Runner.path("classpath:karate")
+        Results results = Runner.path("classpath:com/github/lerocha/opencambio/karate")
                 //.outputCucumberJson(true)
                 .parallel(5);
         assertEquals(0, results.getFailCount(), results.getErrorMessages());

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.github.lerocha.opencambio;
+package com.github.lerocha.opencambio.integration;
 
 import com.github.lerocha.opencambio.service.CurrencyService;
 import org.junit.jupiter.api.Test;

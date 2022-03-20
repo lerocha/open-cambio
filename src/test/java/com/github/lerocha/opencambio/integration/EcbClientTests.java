@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.github.lerocha.opencambio;
+package com.github.lerocha.opencambio.integration;
 
 import com.github.lerocha.opencambio.ecb.EcbClient;
 import com.github.lerocha.opencambio.ecb.dto.CurrencyExchangeRate;
