@@ -157,7 +157,7 @@ public class CurrencyServiceImpl implements CurrencyService {
         if (exchangeRates != null) {
             List<ExchangeRate> sortedRates = exchangeRates.stream()
                     .sorted(Comparator.comparing(o -> o.getCurrency().getCode()))
-                    .collect(Collectors.toList());
+                    .toList();
 
             BigDecimal baseRate = null;
             for (ExchangeRate exchangeRate : sortedRates) {
@@ -254,7 +254,7 @@ public class CurrencyServiceImpl implements CurrencyService {
         List<DailyExchangeRate> dailyExchangeRates = response.getBody().getDailyExchangeRates().stream()
                 .filter(o -> lastRefresh == null || o.getDate().isAfter(lastRefresh))
                 .sorted(Comparator.comparing(DailyExchangeRate::getDate))
-                .collect(Collectors.toList());
+                .toList();
 
         // Convert into entity objects.
         List<ExchangeRate> exchangeRates = new ArrayList<>();

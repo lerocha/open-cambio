@@ -51,8 +51,7 @@ public class LoggerFilter implements Filter {
     }
 
     private String getRequestDetails(ServletRequest request) {
-        if (request instanceof RequestFacade) {
-            RequestFacade requestFacade = (RequestFacade) request;
+        if (request instanceof RequestFacade requestFacade) {
             Map<String, String> map = new LinkedHashMap<>();
             map.put("method", requestFacade.getMethod());
             map.put("uri", requestFacade.getRequestURI());
@@ -66,8 +65,7 @@ public class LoggerFilter implements Filter {
     }
 
     private String getResponseDetails(ServletResponse response) {
-        if (response instanceof ResponseFacade) {
-            ResponseFacade responseFacade = (ResponseFacade) response;
+        if (response instanceof ResponseFacade responseFacade) {
             Map<String, String> map = new LinkedHashMap<>();
             map.put("status", String.valueOf(responseFacade.getStatus()));
             map.put("content-type", responseFacade.getContentType());
