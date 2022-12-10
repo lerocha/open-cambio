@@ -21,6 +21,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
@@ -29,8 +30,15 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(IllegalArgumentException.class)
     ResponseEntity<Object> handleBadRequests(Exception ex, WebRequest request) {
-        Error error = new Error(HttpStatus.BAD_REQUEST, ex.getMessage(), request.getContextPath());
+        Error error = new Error(HttpStatus.BAD_REQUEST, ex.getMessage(), getPath(request));
         return ResponseEntity.status(error.getStatus()).body(error);
+    }
+
+    private String getPath(WebRequest request) {
+        if (request instanceof ServletWebRequest servletWebRequest) {
+            return servletWebRequest.getRequest().getServletPath();
+        }
+        return "";
     }
 
 }
