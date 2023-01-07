@@ -66,14 +66,11 @@ public class CurrencyController {
     }
 
     @GetMapping(path = "{code}")
-    public ResponseEntity<Currency> getCurrency(@RequestHeader(value = HttpHeaders.ACCEPT_LANGUAGE, defaultValue = DEFAULT_LANGUAGE) String language,
+    public Currency getCurrency(@RequestHeader(value = HttpHeaders.ACCEPT_LANGUAGE, defaultValue = DEFAULT_LANGUAGE) String language,
                                                 @PathVariable(name = "code") String code) {
         Locale locale = Locale.forLanguageTag(language);
         com.github.lerocha.opencambio.entity.Currency currency = currencyService.getCurrency(code, locale);
-        if (currency == null) {
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.ok(new Currency(currency));
+        return new Currency(currency);
     }
 
     @GetMapping(path = "{code}/rates")

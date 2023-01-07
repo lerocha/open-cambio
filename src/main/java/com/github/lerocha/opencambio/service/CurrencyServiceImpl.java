@@ -86,10 +86,9 @@ public class CurrencyServiceImpl implements CurrencyService {
     @Override
     @Cacheable(cacheNames = "currencies")
     public Currency getCurrency(String code, Locale locale) {
-        Currency currency = currencyRepository.findById(code).orElse(null);
-        if (currency != null) {
-            currency.setDisplayName(java.util.Currency.getInstance(code).getDisplayName(locale != null ? locale : Locale.US));
-        }
+        Currency currency = currencyRepository.findById(code)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid currency code"));
+        currency.setDisplayName(java.util.Currency.getInstance(code).getDisplayName(locale != null ? locale : Locale.US));
         log.info("getCurrency; locale={}", locale);
         return currency;
     }
