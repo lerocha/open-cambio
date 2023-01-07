@@ -168,7 +168,7 @@ public class CurrencyServiceImpl implements CurrencyService {
             }
 
             if (baseRate == null) {
-                throw new IllegalArgumentException("Invalid currency code.");
+                throw new IllegalArgumentException("Invalid currency code");
             }
 
             for (Map.Entry<String, BigDecimal> entry : ratesByCurrency.entrySet()) {

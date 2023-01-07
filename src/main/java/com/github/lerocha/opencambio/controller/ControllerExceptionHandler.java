@@ -16,12 +16,11 @@
 
 package com.github.lerocha.opencambio.controller;
 
-import com.github.lerocha.opencambio.domain.Error;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
@@ -30,15 +29,14 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(IllegalArgumentException.class)
     ResponseEntity<Object> handleBadRequests(Exception ex, WebRequest request) {
-        Error error = new Error(HttpStatus.BAD_REQUEST, ex.getMessage(), getPath(request));
-        return ResponseEntity.status(error.getStatus()).body(error);
+        ProblemDetail problemDetail = createProblemDetail(ex, HttpStatus.BAD_REQUEST, ex.getMessage(), null, null, request);
+        return ResponseEntity.status(problemDetail.getStatus()).body(problemDetail);
     }
 
-    private String getPath(WebRequest request) {
-        if (request instanceof ServletWebRequest servletWebRequest) {
-            return servletWebRequest.getRequest().getServletPath();
-        }
-        return "";
+    @ExceptionHandler(Exception.class)
+    ResponseEntity<Object> handleInternalServerError(Exception ex, WebRequest request) {
+        ProblemDetail problemDetail = createProblemDetail(ex, HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage(), null, null, request);
+        return ResponseEntity.status(problemDetail.getStatus()).body(problemDetail);
     }
 
 }
