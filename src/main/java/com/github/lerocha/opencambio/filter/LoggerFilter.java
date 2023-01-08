@@ -47,7 +47,7 @@ public class LoggerFilter implements Filter {
 
         Instant stop = Instant.now();
         String responseDetails = getResponseDetails(response);
-        log.info("response; {}; {}; time={}", requestDetails, responseDetails, Duration.between(start, stop).toMillis());
+        log.info("response; {}; time={}; {}", responseDetails, Duration.between(start, stop).toMillis(), requestDetails);
     }
 
     private String getRequestDetails(ServletRequest request) {
@@ -59,6 +59,7 @@ public class LoggerFilter implements Filter {
             String forwardedFor = requestFacade.getHeader("X-FORWARDED-FOR");
             String ipAddress = forwardedFor != null ? forwardedFor.split(",")[0] : requestFacade.getRemoteAddr();
             map.put("ipAddress", ipAddress);
+            map.put("userAgent", requestFacade.getHeader("User-Agent"));
             return mapToString(map);
         }
         return "";
