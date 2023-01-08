@@ -41,4 +41,4 @@ Feature: Get Currencies API
     And path 'v1/currencies/ZZZ/rates', date
     When method get
     Then status 400
-    And match response contains { status: 400, error: 'Bad Request', message: 'Invalid currency code.'}
+    And match response contains { status: 400, title: 'Bad Request', detail: 'Invalid currency code'}
