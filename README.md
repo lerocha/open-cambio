@@ -90,10 +90,6 @@ curl http://api.opencambio.org/v1/currencies/USD/rates?start=2022-01-01&end=2022
             }
         },
         
-        .
-        .
-        .
-        
         {
             "date": "2022-12-01",
             "base": "USD",
@@ -130,6 +126,7 @@ curl http://api.opencambio.org/v1/currencies/USD/rates?start=2022-01-01&end=2022
                 "TRY": 18.631912,
                 "ZAR": 17.734169
             }
+        }
     ],
     "pagination": {
         "offset": 0,
