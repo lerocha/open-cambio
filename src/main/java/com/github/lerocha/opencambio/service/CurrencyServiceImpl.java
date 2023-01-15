@@ -109,7 +109,7 @@ public class CurrencyServiceImpl implements CurrencyService {
         }
 
         // Calculate month pagination.
-        int months = (int) MONTHS.between(startDate, endDate) + 1;
+        int months = (int) MONTHS.between(startDate.withDayOfMonth(1), endDate.plusMonths(1).withDayOfMonth(1).minusDays(1)) + 1;
 
         if (offset == null || offset < 0) {
             offset = 0;
@@ -117,14 +117,18 @@ public class CurrencyServiceImpl implements CurrencyService {
             offset = months - 1;
         }
 
-        // if not the first page, then adjust start as the first day of the month of this page.
-        LocalDate pageStart = (offset > 0) ? startDate.plusMonths(offset).withDayOfMonth(1) : startDate;
+        LocalDate pageStart = endDate.minusMonths(offset).withDayOfMonth(1);
+        if (pageStart.isBefore(startDate)) {
+            pageStart = startDate;
+        }
 
-        // if not the last page, then adjust end as the last day of the month of this page.
-        LocalDate pageEnd = (offset < months - 1) ? pageStart.plusMonths(1).withDayOfMonth(1).minusDays(1) : endDate;
+        LocalDate pageEnd = pageStart.plusMonths(1).withDayOfMonth(1).minusDays(1);
+        if (pageEnd.isAfter(endDate)) {
+            pageEnd = endDate;
+        }
 
         // Get exchange rates from the database.
-        List<ExchangeRate> allExchangeRates = exchangeRateRepository.findByExchangeDateBetweenOrderByExchangeDate(pageStart, pageEnd);
+        List<ExchangeRate> allExchangeRates = exchangeRateRepository.findByExchangeDateBetweenOrderByExchangeDateDesc(pageStart, pageEnd);
 
         // Group them by day and transform into a List of Rate objects.
         List<ExchangeRate> dailyExchangeRates = new ArrayList<>();
@@ -166,7 +170,7 @@ public class CurrencyServiceImpl implements CurrencyService {
                 }
             }
 
-            if (baseRate == null) {
+            if (sortedRates.size() > 0 && baseRate == null) {
                 throw new IllegalArgumentException("Invalid currency code");
             }
 
@@ -183,21 +187,11 @@ public class CurrencyServiceImpl implements CurrencyService {
         Assert.notNull(code, "currency code is required");
         Assert.notNull(date, "date is required");
         // Get the last 7 days in case requested date falls in a non-business day.
-        List<ExchangeRate> allExchangeRates = exchangeRateRepository.findByExchangeDateBetweenOrderByExchangeDate(date.minusDays(7), date);
-        List<ExchangeRate> exchangeRates = new ArrayList<>();
-        LocalDate availableDate = date;
-        if (allExchangeRates.size() > 0) {
-            // Get the latest date, which is the date of the last element of the ordered list.
-            availableDate = allExchangeRates.get(allExchangeRates.size() - 1).getExchangeDate();
-            // Loop through the ordered list on the reverse order to get the last records.
-            for (int i = allExchangeRates.size() - 1; i >= 0; i--) {
-                ExchangeRate exchangeRate = allExchangeRates.get(i);
-                if (!exchangeRate.getExchangeDate().equals(availableDate)) {
-                    break;
-                }
-                exchangeRates.add(exchangeRate);
-            }
-        }
+        List<ExchangeRate> allExchangeRates = exchangeRateRepository.findByExchangeDateBetweenOrderByExchangeDateDesc(date.minusDays(7), date);
+        LocalDate availableDate = allExchangeRates.size() > 0 ? allExchangeRates.get(0).getExchangeDate() : date;
+        List<ExchangeRate> exchangeRates = allExchangeRates.stream()
+                .filter(exchangeRate -> exchangeRate.getExchangeDate().equals(availableDate))
+                .toList();
         log.info("getCurrencyRatesByDate; code={}; requestedDate={}; availableDate={}", code, date, availableDate);
         return createRate(code, availableDate, exchangeRates);
     }
