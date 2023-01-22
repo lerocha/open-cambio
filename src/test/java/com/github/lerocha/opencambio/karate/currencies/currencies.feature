@@ -33,7 +33,7 @@ Feature: Get Currencies API
     Then status 200
     And match response.date == date
     And match response.base == 'USD'
-    And match response.rates.BRL == 5.067588
+    And match response.rates contains { BRL: 5.067588, CAD: 1.263718, EUR: 0.908431, USD: 1.000000 }
 
   Scenario: get exchange rates for a specific date using invalid currency
 

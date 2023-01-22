@@ -47,6 +47,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static java.time.temporal.ChronoUnit.MONTHS;
@@ -59,7 +60,8 @@ import static java.time.temporal.ChronoUnit.MONTHS;
 @RequiredArgsConstructor
 public class CurrencyServiceImpl implements CurrencyService {
 
-    private static final Currency BASE_CURRENCY = new Currency("EUR", java.util.Currency.getInstance("EUR").getDisplayName(), LocalDate.parse("1999-01-04"), LocalDate.now());
+    private static final String SOURCE_BASE_CURRENCY = "EUR";
+    private static final String TARGET_BASE_CURRENCY = "USD";
 
     private final CurrencyRepository currencyRepository;
     private final ExchangeRateRepository exchangeRateRepository;
@@ -255,17 +257,27 @@ public class CurrencyServiceImpl implements CurrencyService {
         for (DailyExchangeRate dailyExchangeRate : dailyExchangeRates) {
             List<CurrencyExchangeRate> currencyExchangeRates = dailyExchangeRate.getCurrencyExchangeRates();
 
-            // Add the base currency with exchange rate = 1.0 since it is not part of the response.
-            currencyExchangeRates.add(new CurrencyExchangeRate(BASE_CURRENCY.getCode(), BigDecimal.ONE.setScale(6, RoundingMode.HALF_UP)));
+            Optional<CurrencyExchangeRate> base = currencyExchangeRates.stream()
+                    .filter(o -> o.getCurrency().equals(TARGET_BASE_CURRENCY))
+                    .findFirst();
 
-            List<ExchangeRate> exchangeRatesPerDay = currencyExchangeRates.stream()
-                    .sorted(Comparator.comparing(CurrencyExchangeRate::getCurrency))
-                    .map(o -> new ExchangeRate(null, currencyMap.get(o.getCurrency()), dailyExchangeRate.getDate(), o.getRate()))
-                    .collect(Collectors.toList());
+            if (base.isPresent()) {
+                BigDecimal baseRate = base.get().getRate();
+                // Add the base currency with exchange rate = 1.0 since it is not part of the response.
+                currencyExchangeRates.add(new CurrencyExchangeRate(SOURCE_BASE_CURRENCY, BigDecimal.ONE.setScale(6, RoundingMode.HALF_UP)));
 
-            // Bulk save exchange rates.
-            exchangeRateRepository.saveAll(exchangeRatesPerDay);
-            exchangeRates.addAll(exchangeRatesPerDay);
+                List<ExchangeRate> exchangeRatesPerDay = currencyExchangeRates.stream()
+                        .sorted(Comparator.comparing(CurrencyExchangeRate::getCurrency))
+                        .map(o -> new ExchangeRate(null,
+                                currencyMap.get(o.getCurrency()),
+                                dailyExchangeRate.getDate(),
+                                o.getRate().divide(baseRate, 6, RoundingMode.CEILING)))
+                        .collect(Collectors.toList());
+
+                // Bulk save exchange rates.
+                exchangeRateRepository.saveAll(exchangeRatesPerDay);
+                exchangeRates.addAll(exchangeRatesPerDay);
+            }
         }
         log.info("refreshExchangeRates; status=saved; total={}", exchangeRates.size());
 
