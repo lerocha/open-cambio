@@ -2,6 +2,7 @@ Feature: Get Currencies API
 
   Background:
     * url url
+    * configure headers = { Accept: 'application/json' }
 
   Scenario: get all currencies, then the first by currency code and its rates.
     Given path 'v1/currencies'
