@@ -21,6 +21,9 @@ import com.github.lerocha.opencambio.domain.Pagination;
 import com.github.lerocha.opencambio.domain.Rate;
 import com.github.lerocha.opencambio.domain.RatesResponse;
 import com.github.lerocha.opencambio.service.CurrencyService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -50,13 +53,19 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "v1/currencies", produces = "application/json")
+@Tag(name = "Currencies", description = "REST API for currency exchange rates from the European Central Bank")
 public class CurrencyController {
     private static final String DEFAULT_LANGUAGE = "en-US";
 
     private final CurrencyService currencyService;
 
     @GetMapping
-    public ResponseEntity<List<Currency>> getCurrencies(@RequestHeader(value = HttpHeaders.ACCEPT_LANGUAGE, defaultValue = DEFAULT_LANGUAGE) String language) {
+    @Operation(summary = "Get all available currencies",
+            description = "Get a list of all available currencies.",
+            operationId = "getCurrencies")
+    public ResponseEntity<List<Currency>> getCurrencies(
+            @RequestHeader(value = HttpHeaders.ACCEPT_LANGUAGE, defaultValue = DEFAULT_LANGUAGE)
+            String language) {
         Locale locale = Locale.forLanguageTag(language);
         List<Currency> currencies = currencyService.getCurrencies(locale)
                 .stream()
@@ -66,24 +75,43 @@ public class CurrencyController {
     }
 
     @GetMapping(path = "{code}")
-    public Currency getCurrency(@RequestHeader(value = HttpHeaders.ACCEPT_LANGUAGE, defaultValue = DEFAULT_LANGUAGE) String language,
-                                                @PathVariable(name = "code") String code) {
+    @Operation(summary = "Get currency by currency code",
+            description = "Get currency details by the currency code.",
+            operationId = "getCurrency")
+    public Currency getCurrency(
+            @RequestHeader(value = HttpHeaders.ACCEPT_LANGUAGE, defaultValue = DEFAULT_LANGUAGE)
+            String language,
+
+            @Parameter(required = true, example = "USD")
+            @PathVariable(name = "code")
+            String code) {
         Locale locale = Locale.forLanguageTag(language);
         com.github.lerocha.opencambio.entity.Currency currency = currencyService.getCurrency(code, locale);
         return new Currency(currency);
     }
 
     @GetMapping(path = "{code}/rates")
-    public ResponseEntity<RatesResponse> getCurrencyRates(@PathVariable(name = "code")
-                                                                  String code,
-                                                          @RequestParam(name = "start", required = false)
-                                                          @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-                                                                  LocalDate startDate,
-                                                          @RequestParam(name = "end", required = false)
-                                                          @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-                                                                  LocalDate endDate,
-                                                          @RequestParam(required = false)
-                                                                  Integer offset) {
+    @Operation(summary = "Get exchange rates for a currency",
+            description = "Get a list of exchange rates for a currency. The response is paginated and the latest currency exchanges will show first",
+            operationId = "getCurrencyRates")
+    public ResponseEntity<RatesResponse> getCurrencyRates(
+            @PathVariable(name = "code")
+            @Parameter(required = true, example = "USD")
+            String code,
+
+            @RequestParam(name = "start", required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+            @Parameter(example = "2023-01-01", description = "")
+            LocalDate startDate,
+
+            @RequestParam(name = "end", required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+            @Parameter(example = "2023-05-31", description = "")
+            LocalDate endDate,
+
+            @RequestParam(required = false)
+            @Parameter(example = "0", description = "")
+            Integer offset) {
         Page<Rate> page = currencyService.getCurrencyRates(code, startDate, endDate, offset);
         List<Rate> rates = page.getContent();
 
@@ -103,17 +131,30 @@ public class CurrencyController {
     }
 
     @GetMapping(path = "{code}/rates/{date}")
-    public ResponseEntity<Rate> getCurrencyRatesByDate(@PathVariable(name = "code")
-                                                               String code,
-                                                       @PathVariable(name = "date")
-                                                       @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-                                                               LocalDate date) {
+    @Operation(summary = "Get exchange rates for a currency in a given day",
+            description = "Get a list of exchange rates for a currency in a given day.",
+            operationId = "getCurrencyRatesByDate")
+    public ResponseEntity<Rate> getCurrencyRatesByDate(
+            @PathVariable(name = "code")
+            @Parameter(required = true, example = "USD")
+            String code,
+
+            @PathVariable(name = "date")
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+            @Parameter(example = "2023-06-01", description = "")
+            LocalDate date) {
         Rate rate = currencyService.getCurrencyRatesByDate(code, date);
         return ResponseEntity.ok(rate);
     }
 
     @GetMapping(path = "{code}/rates/latest")
-    public ResponseEntity<Rate> getCurrencyLatestRates(@PathVariable(name = "code") String code) {
+    @Operation(summary = "Get the latest exchange rates for a currency",
+            description = "Get the latest exchange rates for a currency.",
+            operationId = "getCurrencyLatestRates")
+    public ResponseEntity<Rate> getCurrencyLatestRates(
+            @PathVariable(name = "code")
+            @Parameter(required = true, example = "USD")
+            String code) {
         Rate rate = currencyService.getLatestCurrencyRates(code);
         return ResponseEntity.ok(rate);
     }

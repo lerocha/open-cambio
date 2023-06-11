@@ -6,6 +6,10 @@ Exchange rates are usually updated around 16:00 CET on business days.
 
 ## API Documentation
 
+### Swagger
+* Local: http://localhost:5000/swagger-ui/index.html
+* Production: http://api.opencambio.org/swagger-ui/index.html
+
 #### 1. Get all currencies
 ```
 GET /v1/currencies
