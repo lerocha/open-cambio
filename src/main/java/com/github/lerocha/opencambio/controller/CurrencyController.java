@@ -109,7 +109,7 @@ public class CurrencyController {
             @Parameter(example = "2024-05-31", description = "end date for the exchange rates")
             LocalDate endDate,
 
-            @RequestParam(required = false)
+            @RequestParam(name = "offset", required = false)
             @Parameter(example = "0", description = "the number of the page to start getting the exchange rates")
             Integer offset) {
         Page<Rate> page = currencyService.getCurrencyRates(code, startDate, endDate, offset);
