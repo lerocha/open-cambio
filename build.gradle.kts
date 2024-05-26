@@ -6,7 +6,7 @@ plugins {
 
 group = "com.github.lerocha"
 version = "0.0.2-SNAPSHOT"
-java.sourceCompatibility = JavaVersion.VERSION_17
+java.sourceCompatibility = JavaVersion.VERSION_21
 
 configurations {
     compileOnly {
