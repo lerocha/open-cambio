@@ -101,16 +101,16 @@ public class CurrencyController {
 
             @RequestParam(name = "start", required = false)
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-            @Parameter(example = "2023-01-01", description = "")
+            @Parameter(example = "2024-01-01", description = "start date for the exchange rates")
             LocalDate startDate,
 
             @RequestParam(name = "end", required = false)
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-            @Parameter(example = "2023-05-31", description = "")
+            @Parameter(example = "2024-05-31", description = "end date for the exchange rates")
             LocalDate endDate,
 
             @RequestParam(required = false)
-            @Parameter(example = "0", description = "")
+            @Parameter(example = "0", description = "the number of the page to start getting the exchange rates")
             Integer offset) {
         Page<Rate> page = currencyService.getCurrencyRates(code, startDate, endDate, offset);
         List<Rate> rates = page.getContent();
@@ -141,7 +141,7 @@ public class CurrencyController {
 
             @PathVariable(name = "date")
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-            @Parameter(example = "2023-06-01", description = "")
+            @Parameter(example = "2024-06-01", description = "exchange rate date")
             LocalDate date) {
         Rate rate = currencyService.getCurrencyRatesByDate(code, date);
         return ResponseEntity.ok(rate);
