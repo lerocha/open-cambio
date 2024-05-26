@@ -146,7 +146,7 @@ public class CurrencyServiceImpl implements CurrencyService {
             }
             dailyExchangeRates.add(exchangeRate);
         }
-        if (dailyExchangeRates.size() > 0) {
+        if (!dailyExchangeRates.isEmpty()) {
             rates.add(createRate(code, date, dailyExchangeRates));
         }
 
@@ -172,7 +172,7 @@ public class CurrencyServiceImpl implements CurrencyService {
                 }
             }
 
-            if (sortedRates.size() > 0 && baseRate == null) {
+            if (!sortedRates.isEmpty() && baseRate == null) {
                 throw new IllegalArgumentException("Invalid currency code");
             }
 
@@ -190,7 +190,7 @@ public class CurrencyServiceImpl implements CurrencyService {
         Assert.notNull(date, "date is required");
         // Get the last 7 days in case requested date falls in a non-business day.
         List<ExchangeRate> allExchangeRates = exchangeRateRepository.findByExchangeDateBetweenOrderByExchangeDateDesc(date.minusDays(7), date);
-        LocalDate availableDate = allExchangeRates.size() > 0 ? allExchangeRates.get(0).getExchangeDate() : date;
+        LocalDate availableDate = !allExchangeRates.isEmpty() ? allExchangeRates.get(0).getExchangeDate() : date;
         List<ExchangeRate> exchangeRates = allExchangeRates.stream()
                 .filter(exchangeRate -> exchangeRate.getExchangeDate().equals(availableDate))
                 .toList();
@@ -216,7 +216,7 @@ public class CurrencyServiceImpl implements CurrencyService {
 
         // Initialize currency table.
         List<Currency> currencies = currencyRepository.findAll();
-        if (currencies.size() == 0) {
+        if (currencies.isEmpty()) {
             currencies = java.util.Currency.getAvailableCurrencies().stream()
                     .sorted(Comparator.comparing(java.util.Currency::getCurrencyCode))
                     .map(o -> new Currency(o.getCurrencyCode(), o.getDisplayName()))
@@ -294,8 +294,8 @@ public class CurrencyServiceImpl implements CurrencyService {
         currencyRepository.saveAll(currencies);
 
         log.info("refreshExchangeRates; status=ok; startDate={}; endDate={}; totalRates={}; totalCurrencies={}",
-                exchangeRates.size() > 0 ? exchangeRates.get(0).getExchangeDate() : null,
-                exchangeRates.size() > 0 ? exchangeRates.get(exchangeRates.size() - 1).getExchangeDate() : null,
+                !exchangeRates.isEmpty() ? exchangeRates.get(0).getExchangeDate() : null,
+                !exchangeRates.isEmpty() ? exchangeRates.get(exchangeRates.size() - 1).getExchangeDate() : null,
                 exchangeRates.size(),
                 currencies.size());
         return exchangeRates;
