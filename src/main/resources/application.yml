@@ -14,10 +14,10 @@ spring.h2.console:
 spring.jpa:
   hibernate:
     ddlAuto: update
-    naming_strategy: org.hibernate.cfg.EJB3NamingStrategy
-    show-sql: true
-    format_sql: true
-  show-sql: false
+  properties:
+    hibernate:
+      show_sql: true
+      format_sql: false
 #  properties:
 #    jadira:
 #      usertype:
