@@ -46,3 +46,4 @@ application-default.yml
 .elasticbeanstalk/*
 !.elasticbeanstalk/*.cfg.yml
 !.elasticbeanstalk/*.global.yml
+!gradle/wrapper/gradle-wrapper.jar
