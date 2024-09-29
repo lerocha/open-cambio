@@ -26,6 +26,16 @@ spring.jpa:
 spring.jmx:
   enabled: false
 
-spring.jackson.serialization:
-  WRITE_DATES_AS_TIMESTAMPS: false
-  INDENT_OUTPUT: true
+spring.jackson:
+  serialization:
+    WRITE_DATES_AS_TIMESTAMPS: false
+    INDENT_OUTPUT: true
+  default-property-inclusion: non_null
+
+springdoc:
+  swagger-ui:
+    display-operation-id: true
+    display-request-duration: true
+    operations-sorter: method
+    tags-sorter: alpha
+    try-it-out-enabled: true
