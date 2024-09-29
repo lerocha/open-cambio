@@ -40,7 +40,7 @@ overridedb.*
 .idea
 .DS_STORE
 .java-version
-application-default.yml
+application-local.yml
 
 # Elastic Beanstalk Files
 .elasticbeanstalk/*
