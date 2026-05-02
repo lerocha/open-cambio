@@ -9,7 +9,7 @@ version = "0.0.2-SNAPSHOT"
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(21)
+        languageVersion = JavaLanguageVersion.of(25)
     }
 }
 
@@ -39,7 +39,7 @@ dependencies {
     runtimeOnly("org.postgresql:postgresql")
     annotationProcessor("org.projectlombok:lombok")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testImplementation("com.intuit.karate:karate-junit5:1.1.0")
+    testImplementation("io.karatelabs:karate-junit5:1.5.2")
 }
 
 tasks.withType<Test> {
@@ -50,6 +50,18 @@ tasks.withType<Test> {
     outputs.upToDateWhen { false }
     systemProperty("karate.options", System.getProperty("karate.options"))
     systemProperty("karate.env", System.getProperty("karate.env"))
+}
+
+tasks.named<Test>("test") {
+    exclude("**/karate/**")
+}
+
+tasks.register<Test>("karateTest") {
+    description = "Runs Karate API tests. Requires the application to be running (use -Dkarate.env=local)."
+    group = "verification"
+    testClassesDirs = sourceSets["test"].output.classesDirs
+    classpath = sourceSets["test"].runtimeClasspath
+    include("**/karate/**")
 }
 
 sourceSets {

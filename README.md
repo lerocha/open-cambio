@@ -233,11 +233,11 @@ curl http://api.opencambio.org/v1/currencies/USD/rates/latest
 
 ### Karate tests
 ```
-./gradlew test --tests "*karate.*" -Dkarate.env=local
+./gradlew karateTest -Dkarate.env=local
 ```
 
 ```
-./gradlew test --tests "*karate.*" -Dkarate.env=dev
+./gradlew karateTest -Dkarate.env=dev
 ```
 
 ### Running locally
