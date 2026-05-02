@@ -16,7 +16,9 @@
 
 package com.github.lerocha.opencambio.configuration;
 
-import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.boot.restclient.RestTemplateBuilder;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
@@ -28,6 +30,11 @@ import org.springframework.web.client.RestTemplate;
 @Configuration
 @EnableJpaAuditing
 public class CurrencyConfiguration {
+
+    @Bean
+    public CacheManager cacheManager() {
+        return new ConcurrentMapCacheManager("currencies", "rates");
+    }
 
     @Bean
     public RestTemplate restTemplate() {

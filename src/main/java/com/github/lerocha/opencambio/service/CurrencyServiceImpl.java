@@ -39,7 +39,6 @@ import org.springframework.util.Assert;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.sql.Date;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -75,10 +74,8 @@ public class CurrencyServiceImpl implements CurrencyService {
         for (Object[] result : results) {
             String currencyCode = (String) result[0];
             Currency currency = new Currency(currencyCode, java.util.Currency.getInstance(currencyCode).getDisplayName(locale != null ? locale : Locale.US));
-            Date startDate = (Date) result[1];
-            currency.setStartDate(startDate.toLocalDate());
-            Date endDate = (Date) result[2];
-            currency.setEndDate(endDate.toLocalDate());
+            currency.setStartDate((LocalDate) result[1]);
+            currency.setEndDate((LocalDate) result[2]);
             currencies.add(currency);
         }
         log.info("getCurrencies; locale={}; total={}", locale, currencies.size());
