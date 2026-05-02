@@ -1,7 +1,7 @@
 function karateConfig() {
   const config = {
     local: {
-      url: 'http://localhost:5000',
+      url: 'http://localhost:5001',
     },
     dev: {
       url: 'http://api.opencambio.org',

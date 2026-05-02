@@ -16,9 +16,9 @@
 
 package com.github.lerocha.opencambio.ecb.dto;
 
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
+import com.fasterxml.jackson.annotation.JsonRootName;
+import tools.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
+import tools.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -30,7 +30,7 @@ import java.util.List;
  */
 @Data
 @NoArgsConstructor
-@JacksonXmlRootElement(namespace = "gesmes", localName = "Envelope")
+@JsonRootName(value = "Envelope", namespace = "gesmes")
 public class ExchangeRatesResponse implements Serializable {
     private static final long serialVersionUID = 6066345143583997388L;
 
