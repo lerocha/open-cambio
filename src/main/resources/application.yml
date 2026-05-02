@@ -2,7 +2,7 @@ server:
   port: 5000
 
 spring.datasource:
-  driverClassName: org.h2.Driver
+  driver-class-name: org.h2.Driver
   url: jdbc:h2:mem:exchange_rates;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;MODE=MySQL
   username: sa
   password:
@@ -13,7 +13,7 @@ spring.h2.console:
 
 spring.jpa:
   hibernate:
-    ddlAuto: update
+    ddl-auto: update
   properties:
     hibernate:
       show_sql: false
