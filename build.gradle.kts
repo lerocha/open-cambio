@@ -29,6 +29,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-webmvc")
     implementation("org.springframework.boot:spring-boot-starter-restclient")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
+    implementation("org.springframework.boot:spring-boot-starter-flyway")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.3")
     implementation("tools.jackson.dataformat:jackson-dataformat-xml")
     compileOnly("org.projectlombok:lombok")
@@ -50,6 +51,7 @@ tasks.withType<Test> {
     outputs.upToDateWhen { false }
     systemProperty("karate.options", System.getProperty("karate.options"))
     systemProperty("karate.env", System.getProperty("karate.env"))
+    systemProperty("generate.seed", System.getProperty("generate.seed", ""))
 }
 
 tasks.named<Test>("test") {
