@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2024 Luis Rocha
+ * Copyright 2017-2026 Luis Rocha
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,27 +16,26 @@
 
 package com.github.lerocha.opencambio.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.RepresentationModel;
 
-import java.util.ArrayList;
 import java.util.List;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
 public class RatesResponse extends RepresentationModel<RatesResponse> {
-    private List<Rate> rates = new ArrayList<>();
-    private Pagination pagination;
+    private final List<Rate> rates;
+    private final Pagination pagination;
 
     public RatesResponse(List<Rate> rates, Pagination pagination, Iterable<Link> initialLinks) {
         super(initialLinks);
-        this.pagination = pagination;
         this.rates = rates;
+        this.pagination = pagination;
+    }
+
+    public List<Rate> getRates() {
+        return rates;
+    }
+
+    public Pagination getPagination() {
+        return pagination;
     }
 }

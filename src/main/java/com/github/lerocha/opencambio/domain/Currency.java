@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2024 Luis Rocha
+ * Copyright 2017-2026 Luis Rocha
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,20 +16,9 @@
 
 package com.github.lerocha.opencambio.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
 import java.time.LocalDate;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-public class Currency {
-    private String code;
-    private String displayName;
-    private LocalDate startDate;
-    private LocalDate endDate;
+public record Currency(String code, String displayName, LocalDate startDate, LocalDate endDate) {
 
     public Currency(com.github.lerocha.opencambio.entity.Currency currency) {
         this(currency.getCode(), currency.getDisplayName(), currency.getStartDate(), currency.getEndDate());

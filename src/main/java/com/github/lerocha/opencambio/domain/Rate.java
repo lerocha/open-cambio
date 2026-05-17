@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2024 Luis Rocha
+ * Copyright 2017-2026 Luis Rocha
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,23 +16,9 @@
 
 package com.github.lerocha.opencambio.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
-/**
- * Created by lerocha on 2/14/17.
- */
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class Rate {
-    private LocalDate date;
-    private String base;
-    private Map<String, BigDecimal> rates = new LinkedHashMap<>();
+public record Rate(LocalDate date, String base, Map<String, BigDecimal> rates) {
 }
