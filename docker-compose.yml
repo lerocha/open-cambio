@@ -1,0 +1,10 @@
+name: open-cambio
+services:
+  postgres:
+    image: postgres:18.4-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: exchange_rates
+    ports:
+      - "5432:5432"
