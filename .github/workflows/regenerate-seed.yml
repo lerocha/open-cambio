@@ -1,0 +1,55 @@
+name: Regenerate ECB Seed Data
+
+on:
+  schedule:
+    - cron: '0 6 1 * *'  # 6am UTC on the 1st of every month
+  workflow_dispatch:        # Allow manual trigger
+
+jobs:
+  regenerate:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 25
+        uses: actions/setup-java@v4
+        with:
+          java-version: '25'
+          distribution: 'corretto'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@af1da67850ed9a4cedd57bfd976089dd991e2582 # v4.0.0
+
+      - name: Record current seed size
+        id: before
+        run: echo "size=$(wc -c < src/main/resources/db/migration/V2__seed_exchange_rates.sql)" >> $GITHUB_OUTPUT
+
+      - name: Regenerate seed data
+        run: ./gradlew test --tests "*.SeedDataGenerator" -Dgenerate.seed=true
+
+      - name: Verify seed data did not shrink
+        run: |
+          NEW=$(wc -c < src/main/resources/db/migration/V2__seed_exchange_rates.sql)
+          OLD=${{ steps.before.outputs.size }}
+          echo "Before: $OLD bytes, After: $NEW bytes"
+          if [ "$NEW" -lt "$OLD" ]; then
+            echo "Seed file shrank — aborting to avoid committing incomplete data."
+            exit 1
+          fi
+
+      - name: Open PR if seed data changed
+        uses: peter-evans/create-pull-request@v7
+        with:
+          commit-message: 'chore: regenerate ECB exchange rate seed data'
+          title: 'chore: regenerate ECB exchange rate seed data'
+          body: |
+            Automated regeneration of `V2__seed_exchange_rates.sql` with the latest ECB exchange rates.
+
+            Run `./gradlew test --tests "*.SeedDataGenerator" -Dgenerate.seed=true` to regenerate locally.
+          branch: chore/regenerate-seed-data
+          delete-branch: true
+          base: master
