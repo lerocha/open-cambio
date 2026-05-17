@@ -29,11 +29,13 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-webmvc")
     implementation("org.springframework.boot:spring-boot-starter-restclient")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
+    implementation("org.springframework.boot:spring-boot-starter-flyway")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.3")
     implementation("tools.jackson.dataformat:jackson-dataformat-xml")
     compileOnly("org.projectlombok:lombok")
     runtimeOnly("com.h2database:h2")
     runtimeOnly("org.postgresql:postgresql")
+    runtimeOnly("org.flywaydb:flyway-database-postgresql")
     annotationProcessor("org.projectlombok:lombok")
     testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
     testImplementation("org.springframework.boot:spring-boot-starter-data-jpa-test")
@@ -50,6 +52,7 @@ tasks.withType<Test> {
     outputs.upToDateWhen { false }
     systemProperty("karate.options", System.getProperty("karate.options"))
     systemProperty("karate.env", System.getProperty("karate.env"))
+    systemProperty("generate.seed", System.getProperty("generate.seed", ""))
 }
 
 tasks.named<Test>("test") {

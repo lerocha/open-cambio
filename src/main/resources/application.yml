@@ -3,7 +3,7 @@ server:
 
 spring.datasource:
   driver-class-name: org.h2.Driver
-  url: jdbc:h2:mem:exchange_rates;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;MODE=MySQL
+  url: jdbc:h2:mem:exchange_rates;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
   username: sa
   password:
 
@@ -13,7 +13,7 @@ spring.h2.console:
 
 spring.jpa:
   hibernate:
-    ddl-auto: update
+    ddl-auto: none
   properties:
     hibernate:
       show_sql: false
