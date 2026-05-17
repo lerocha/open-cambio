@@ -10,7 +10,6 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-      pull-requests: write
 
     steps:
       - uses: actions/checkout@v4
@@ -24,32 +23,27 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@af1da67850ed9a4cedd57bfd976089dd991e2582 # v4.0.0
 
-      - name: Record current seed size
+      - name: Record current rate count
         id: before
-        run: echo "size=$(wc -c < src/main/resources/db/migration/V2__seed_exchange_rates.sql)" >> $GITHUB_OUTPUT
+        run: echo "rates=$(grep -o 'totalRates=[0-9]*' src/main/resources/db/migration/V2__seed_exchange_rates.sql | grep -o '[0-9]*')" >> $GITHUB_OUTPUT
 
       - name: Regenerate seed data
         run: ./gradlew test --tests "*.SeedDataGenerator" -Dgenerate.seed=true
 
-      - name: Verify seed data did not shrink
+      - name: Commit if new rates were added
         run: |
-          NEW=$(wc -c < src/main/resources/db/migration/V2__seed_exchange_rates.sql)
-          OLD=${{ steps.before.outputs.size }}
-          echo "Before: $OLD bytes, After: $NEW bytes"
-          if [ "$NEW" -lt "$OLD" ]; then
-            echo "Seed file shrank — aborting to avoid committing incomplete data."
+          NEW=$(grep -o 'totalRates=[0-9]*' src/main/resources/db/migration/V2__seed_exchange_rates.sql | grep -o '[0-9]*')
+          OLD=${{ steps.before.outputs.rates }}
+          echo "Before: $OLD rates, After: $NEW rates"
+          if [ "$NEW" -gt "$OLD" ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add src/main/resources/db/migration/V2__seed_exchange_rates.sql
+            git commit -m "chore: regenerate ECB exchange rate seed data"
+            git push
+          elif [ "$NEW" -lt "$OLD" ]; then
+            echo "Rate count decreased from $OLD to $NEW — aborting to avoid committing incomplete data."
             exit 1
+          else
+            echo "No new rates — skipping commit."
           fi
-
-      - name: Open PR if seed data changed
-        uses: peter-evans/create-pull-request@v7
-        with:
-          commit-message: 'chore: regenerate ECB exchange rate seed data'
-          title: 'chore: regenerate ECB exchange rate seed data'
-          body: |
-            Automated regeneration of `V2__seed_exchange_rates.sql` with the latest ECB exchange rates.
-
-            Run `./gradlew test --tests "*.SeedDataGenerator" -Dgenerate.seed=true` to regenerate locally.
-          branch: chore/regenerate-seed-data
-          delete-branch: true
-          base: master
