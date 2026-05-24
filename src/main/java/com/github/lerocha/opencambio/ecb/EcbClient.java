@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2024 Luis Rocha
+ * Copyright 2017-2026 Luis Rocha
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,9 @@ package com.github.lerocha.opencambio.ecb;
 import com.github.lerocha.opencambio.ecb.dto.ExchangeRatesResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.service.annotation.GetExchange;
+import org.springframework.web.service.annotation.HttpExchange;
 
+@HttpExchange(url = "https://www.ecb.europa.eu/stats/eurofxref")
 public interface EcbClient {
     @GetExchange("/eurofxref-daily.xml")
     ResponseEntity<ExchangeRatesResponse> getCurrentExchangeRates();

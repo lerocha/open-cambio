@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2024 Luis Rocha
+ * Copyright 2017-2026 Luis Rocha
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,10 +40,9 @@ public class CurrencyConfiguration {
     @Bean
     public EcbClient ecbClient(RestClient.Builder builder) {
         RestClient restClient = builder
-                .baseUrl("https://www.ecb.europa.eu/stats/eurofxref")
                 .requestInterceptor((request, body, execution) -> {
                     var response = execution.execute(request, body);
-                    log.info("ecbClient; uri={} status={}", request.getURI(), response.getStatusCode());
+                    log.info("ecbClient: uri={}, status={}", request.getURI(), response.getStatusCode().value());
                     return response;
                 })
                 .build();
