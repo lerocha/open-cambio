@@ -19,6 +19,8 @@ configurations {
     }
 }
 
+val mockitoAgent: Configuration by configurations.creating
+
 repositories {
     mavenCentral()
 }
@@ -42,9 +44,11 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-restclient-test")
     testImplementation("io.karatelabs:karate-junit5:1.5.2")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    mockitoAgent("org.mockito:mockito-core") { isTransitive = false }
 }
 
 tasks.withType<Test> {
+    jvmArgs("-javaagent:${mockitoAgent.asPath}")
     useJUnitPlatform()
     testLogging {
         events("passed", "skipped", "failed")
