@@ -18,14 +18,15 @@ package com.github.lerocha.opencambio.ecb;
 
 import com.github.lerocha.opencambio.ecb.dto.ExchangeRatesResponse;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.service.annotation.GetExchange;
 
-/**
- * Created by lerocha on 2/20/17.
- */
 public interface EcbClient {
+    @GetExchange("/eurofxref-daily.xml")
     ResponseEntity<ExchangeRatesResponse> getCurrentExchangeRates();
 
+    @GetExchange("/eurofxref-hist-90d.xml")
     ResponseEntity<ExchangeRatesResponse> getLast90DaysExchangeRates();
 
+    @GetExchange("/eurofxref-hist.xml")
     ResponseEntity<ExchangeRatesResponse> getAllExchangeRates();
 }

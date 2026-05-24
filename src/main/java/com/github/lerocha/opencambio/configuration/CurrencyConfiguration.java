@@ -16,17 +16,18 @@
 
 package com.github.lerocha.opencambio.configuration;
 
-import org.springframework.boot.restclient.RestTemplateBuilder;
+import com.github.lerocha.opencambio.ecb.EcbClient;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.RestClient;
+import org.springframework.web.client.support.RestClientAdapter;
+import org.springframework.web.service.invoker.HttpServiceProxyFactory;
 
-/**
- * Created by lerocha on 2/1/17.
- */
+@Slf4j
 @Configuration
 @EnableJpaAuditing
 public class CurrencyConfiguration {
@@ -37,8 +38,19 @@ public class CurrencyConfiguration {
     }
 
     @Bean
-    public RestTemplate restTemplate() {
-        return new RestTemplateBuilder().build();
+    public EcbClient ecbClient(RestClient.Builder builder) {
+        RestClient restClient = builder
+                .baseUrl("https://www.ecb.europa.eu/stats/eurofxref")
+                .requestInterceptor((request, body, execution) -> {
+                    var response = execution.execute(request, body);
+                    log.info("ecbClient; uri={} status={}", request.getURI(), response.getStatusCode());
+                    return response;
+                })
+                .build();
+        return HttpServiceProxyFactory
+                .builderFor(RestClientAdapter.create(restClient))
+                .build()
+                .createClient(EcbClient.class);
     }
 
 }
